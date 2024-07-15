@@ -19,7 +19,7 @@ from scripts.fit_config import (
 
 # Get subject IDs
 fnames = listdir(f'{DATA_PATH}/training')
-subj_ids = sorted([int(search('\d+', f)[0]) for f in fnames])[:2]
+subj_ids = sorted([int(search('\d+', f)[0]) for f in fnames])
 
 # Make results directory if it does not exist
 for subj in subj_ids:
@@ -46,6 +46,8 @@ except:
         'success',
         'n_starts',
         'nll',
+        'aic',
+        'null_nll',
         'alpha',
         'beta',
         'beta_test',
@@ -97,19 +99,23 @@ if __name__ == '__main__':
             this_result, this_agent_config = future.result()
             
             # Export results to .csv
+            subj = this_agent_config['id']
             results = pd.concat([results, pd.DataFrame([{
                 'id': subj,
                 'success': this_result.success,
                 'n_starts': this_result.n_starts,
                 'nll': this_result.fun,
+                'aic': this_result.aic,
+                'null_nll': this_result.null_nll,
                 **this_agent_config
             }])], ignore_index=True)
             results = results.sort_values(by=['id', 'model_label'])
-            results.to_csv(f'{RESULTS_PATH}/results.csv', index=False)
+            results.to_csv(f'{RESULTS_PATH}/model_fits.csv', index=False)
 
             # Export agent config to pickle
-            dpath = f'{RESULTS_PATH}/fit_agent_configs/subj/'
+            dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
             fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
+            print(f'{dpath}/{fname}')
             with open(f'{dpath}/{fname}', 'wb') as f:
                 pickle.dump(this_agent_config, f)
 

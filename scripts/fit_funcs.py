@@ -4,6 +4,42 @@ from scipy.optimize import minimize
 from scripts.Successor_Features import Successor_Features
 from scripts.Env import Env
 
+def probs_to_nll(probs):
+    """
+    Convert choice probabilities to negative log likelihood.
+
+    Arguments
+    ---------
+    probs : numpy.ndarray
+        Array of choice probabilities.
+
+    Returns
+    -------
+    nll : float
+        Negative log likelihood.
+    """
+    nll = -np.sum(np.log(probs))
+    return nll
+
+def nll_to_aic(nll, n_params):
+    """
+    Convert negative log likelihood to Akaike Information Criterion (AIC).
+
+    Arguments
+    ---------
+    nll : float
+        Negative log likelihood.
+    n_params : int
+        Number of parameters in the model.
+
+    Returns
+    -------
+    aic : float
+        Akaike Information Criterion.
+    """
+    aic = 2*nll + 2*n_params
+    return aic
+
 def convert_state_str(state_str):
     """
     Convert a string representation of a state to a numpy array.
@@ -174,8 +210,9 @@ def likfun(
     this_agent_config = agent_config.copy()
     for j, param in enumerate(params_to_fit):
         this_agent_config[param] = params[j]
-    if not 'beta_test' in params_to_fit:
-        this_agent_config['beta_test'] = this_agent_config['beta']
+    for key in this_agent_config.keys():
+        if this_agent_config[key] in this_agent_config.keys():
+            this_agent_config[key] = this_agent_config[this_agent_config[key]]
 
     # Initialize environment and agent
     env = Env(**env_config)
@@ -190,7 +227,7 @@ def likfun(
     # Calculate negative log likelihood
     if np.any(np.isnan(probs)):
         print(probs)
-    nLL = -np.sum(np.log(probs))
+    nLL = probs_to_nll(probs)
 
     return nLL
 
@@ -293,12 +330,18 @@ def fit_model(
             break
     best_result.n_starts = start + 1
 
+    # Get null nLL and AIC
+    null_probs = [.5]*len(data['training']) + [.5]*len(data['test'])
+    best_result.null_nll = probs_to_nll(null_probs)
+    best_result.aic = nll_to_aic(best_result.fun, len(params_to_fit))
+
     # Construct agent config with fit parameters
     fit_agent_config = agent_config.copy()
     for i, param in enumerate(params_to_fit):
         fit_agent_config[param] = best_result.x[i]
-    if not 'beta_test' in params_to_fit:
-        fit_agent_config['beta_test'] = fit_agent_config['beta']
+    for key in agent_config.keys():
+        if agent_config[key] in agent_config.keys():
+            fit_agent_config[key] = fit_agent_config[fit_agent_config[key]]
 
     return best_result, fit_agent_config
 
