@@ -40,6 +40,24 @@ def nll_to_aic(nll, n_params):
     aic = 2*nll + 2*n_params
     return aic
 
+def drop_missed_trials(data):
+    """
+    Drop trials with missing data.
+
+    Arguments
+    ---------
+    data : pandas.DataFrame
+        The data to clean.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        The cleaned data.
+    """
+    data = data.dropna(subset=['successor'])
+    data = data.reset_index(drop=True)
+    return data
+
 def convert_state_str(state_str):
     """
     Convert a string representation of a state to a numpy array.
@@ -379,6 +397,8 @@ def fit_model_parallel(args):
         'training': pd.read_csv(f'{data_path}/training/training_{subj}.csv'),
         'test': pd.read_csv(f'{data_path}/test/test_{subj}.csv')
     }
+    agent_data['training'] = drop_missed_trials(agent_data['training'])
+    agent_data['test'] = drop_missed_trials(agent_data['test'])
 
     # Convert state strings to arrays
     for phase in agent_data.keys():
