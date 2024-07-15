@@ -300,7 +300,7 @@ def simulate_agent(
     
     # Simulate agent
     training_data = train_agent(agent, env, training_targets)
-    agent.beta = np.inf
+    agent.beta = agent.beta_test
     test_data = test_agent(agent, env, test_combs_set, test_targets)
     
     return training_data, test_data
@@ -339,6 +339,12 @@ def generate_agent_configs(n_agents, model_configs):
                         agent_config[key] = 1 + 1/np.random.uniform(0, 1)
                     else:
                         agent_config[key] = np.random.uniform(0, 1)
+
+            # Set parameter to match value of specified parameter
+            for key in agent_config.keys():
+                if agent_config[key] in agent_config.keys():
+                    agent_config[key] = agent_config[agent_config[key]]
+                    
             agent_configs.append(agent_config)
 
     return agent_configs
