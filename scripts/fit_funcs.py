@@ -243,8 +243,6 @@ def likfun(
     probs = np.concatenate([training_probs, test_probs])
 
     # Calculate negative log likelihood
-    if np.any(np.isnan(probs)):
-        print(probs)
     nLL = probs_to_nll(probs)
 
     return nLL
