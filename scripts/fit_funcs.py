@@ -413,16 +413,22 @@ def fit_model_parallel(args):
     }
     agent_data['training'] = drop_missed_trials(agent_data['training'])
     agent_data['test'] = drop_missed_trials(agent_data['test'])
-
-    # Check whether to re-order features for between condition
-    if not 'between_cond' in agent_data['training'].columns:
-        feature_reorder = []
     
     # Convert state strings to arrays
     for phase in agent_data.keys():
         for state_type in ['target', 'options_comb', 'composition']:
+
+            # Check whether to re-order features for between condition
+            this_feature_order = []
+            if 'between_cond' in agent_data['training'].columns:
+                condition = agent_data['training']['between_cond'].iloc[0]
+                if (state_type == 'target') and (condition == 1):
+                    this_feature_order = args['feature_reorder']
+            
+            # Perfom re-ordering
             agent_data[phase][state_type] = transform_state_array(
-                agent_data[phase][state_type]
+                agent_data[phase][state_type],
+                feature_reorder = this_feature_order
             )
 
     # Fit this model
