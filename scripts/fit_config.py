@@ -2,11 +2,11 @@ import numpy as np
 
 # Choice data path
 DATA_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data/ff'
-#DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2'
+DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2'
 
 # Results path
 RESULTS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/results'
-#RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
+RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
 
 # Optimizer settings
 N_STARTS = 100 # Max number of random starts
@@ -79,10 +79,10 @@ MODEL_CONFIGS = [
 
 # Parameter bounds
 PARAMETER_BOUNDS = {
-    'alpha': (0, 1),
-    'beta': (0, np.inf),
-    'beta_test': (0, np.inf),
-    'segmentation': (0, 1),
+    'alpha': (.0001, 1),
+    'beta': (.0001, np.inf),
+    'beta_test': (.0001, np.inf),
+    'segmentation': (0, .9999),
     'sampler_feature_weight': (0, 1),
     'sampler_recency_weight': (0, 1),
     'sampler_specificity': (1, np.inf)
@@ -103,3 +103,8 @@ ENV_CONFIG = {
     'r': np.array([[-1, 0, 0, 1]]),
     'continuous_features': False
 }
+
+
+
+
+
