@@ -191,6 +191,7 @@ def test_agent(agent, env, data):
 
         # Get composition
         p = agent.compose_from_set(env.a, set_composition=composition)[1]
+        probs.append(p)
 
     probs = np.array(probs)
     return probs
@@ -241,6 +242,12 @@ def likfun(
     agent.beta = agent.beta_test
     test_probs = test_agent(agent, env, data['test'])
     probs = np.concatenate([training_probs, test_probs])
+
+    if np.any(np.isnan(probs)):
+        print('NaN in probs!')
+
+    if np.any(probs == 0):
+        probs[probs == 0] = 1e-10
 
     # Calculate negative log likelihood
     nLL = probs_to_nll(probs)
@@ -347,7 +354,7 @@ def fit_model(
     best_result.n_starts = start + 1
 
     # Get null nLL and AIC
-    null_probs = [.5]*len(data['training']) + [.5]*len(data['test'])
+    null_probs = [.25]*len(data['training']) + [.25]*len(data['test'])
     best_result.null_nll = probs_to_nll(null_probs)
     best_result.aic = nll_to_aic(best_result.fun, len(params_to_fit))
 
