@@ -13,7 +13,8 @@ from scripts.fit_config import (
     NUM_CORES,
     MODEL_CONFIGS,
     PARAMETER_BOUNDS,
-    ENV_CONFIG
+    ENV_CONFIG,
+    FEATURE_REORDER
 )
 
 
@@ -79,7 +80,8 @@ for subj in subj_ids:
             'env_config': ENV_CONFIG,
             'parameter_bounds': PARAMETER_BOUNDS,
             'n_starts': N_STARTS,
-            'max_unchanged': MAX_UNCHANGED
+            'max_unchanged': MAX_UNCHANGED,
+            'feature_reorder': FEATURE_REORDER.copy()
         })
 
 # Run paralellized fitting prcedure
