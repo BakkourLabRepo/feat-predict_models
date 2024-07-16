@@ -115,7 +115,6 @@ if __name__ == '__main__':
             # Export agent config to pickle
             dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
             fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
-            print(f'{dpath}/{fname}')
             with open(f'{dpath}/{fname}', 'wb') as f:
                 pickle.dump(this_agent_config, f)
 
