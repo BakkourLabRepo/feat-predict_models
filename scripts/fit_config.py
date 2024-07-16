@@ -1,7 +1,7 @@
 import numpy as np
 
 # Choice data path
-DATA_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data/ff'
+DATA_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data/ss-sampler'
 DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2'
 
 # Results path
@@ -104,7 +104,8 @@ ENV_CONFIG = {
     'continuous_features': False
 }
 
-
+# How features reorder for the between-feature transitions condition
+FEATURE_REORDER = np.array([2,3,0,1])
 
 
 

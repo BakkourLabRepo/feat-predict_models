@@ -76,7 +76,7 @@ def convert_state_str(state_str):
     state_arr = np.array(state_str, dtype=int)
     return state_arr
 
-def transform_state_array(state_array):
+def transform_state_array(state_array, feature_reorder=[]):
     """
     Applies convert_state_str to a list of state strings.
 
@@ -84,14 +84,21 @@ def transform_state_array(state_array):
     ---------
     state_array : list
         A list of state strings.
+    feature_reorder : list
+        A list of indices to reorder the features.
 
     Returns
     -------
-    state_array : list
+    converted_state_arrat : list
         A list of converted state values.
     """
-    state_array = [convert_state_str(state_str) for state_str in state_array]
-    return state_array
+    converted_state_arrat = []
+    for state_str in state_array:
+        state = convert_state_str(state_str)
+        if len(feature_reorder) > 0:
+            state = state[feature_reorder]
+        converted_state_arrat.append(state)
+    return converted_state_arrat
 
 def train_agent(agent, env, data):
     """
@@ -383,6 +390,8 @@ def fit_model_parallel(args):
         - 'parameter_bounds' (dict): Model parameters bounds.
         - 'n_starts' (int): The random starts for optimization.
         - 'max_unchanged' (int): Max iterations without improvement.
+        - 'feature_reorder' (list): List of indices to reorder features
+          in the between-feature transitions condition.
 
     Returns
     -------
@@ -405,6 +414,10 @@ def fit_model_parallel(args):
     agent_data['training'] = drop_missed_trials(agent_data['training'])
     agent_data['test'] = drop_missed_trials(agent_data['test'])
 
+    # Check whether to re-order features for between condition
+    if not 'between_cond' in agent_data['training'].columns:
+        feature_reorder = []
+    
     # Convert state strings to arrays
     for phase in agent_data.keys():
         for state_type in ['target', 'options_comb', 'composition']:
