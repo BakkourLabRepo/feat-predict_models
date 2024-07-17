@@ -105,8 +105,6 @@ def train_agent(agent, env, training_targets):
 
         # Store trial data
         training_data.append([
-            agent.id,
-            agent.model_label,
             t + 1,
             target_comb,
             options_comb,
@@ -116,12 +114,7 @@ def train_agent(agent, env, training_targets):
             env.s_new,
             p,
             reward,
-            correct,
-            agent.alpha,
-            agent.gamma,
-            agent.beta,
-            agent.beta_test,
-            agent.segmentation
+            correct
         ])
     training_data = np.array(training_data, dtype=object)
 
@@ -183,8 +176,6 @@ def test_agent(agent, env, test_combs_set, test_targets):
 
             # Store trial data
             test_data.append([
-                agent.id,
-                agent.model_label,
                 t + 1,
                 target_comb,
                 options_comb,
@@ -194,12 +185,7 @@ def test_agent(agent, env, test_combs_set, test_targets):
                 env.s_new,
                 p,
                 reward,
-                correct,
-                agent.alpha,
-                agent.gamma,
-                agent.beta,
-                agent.beta_test,
-                agent.segmentation
+                correct
             ])
     test_data = np.array(test_data, dtype=object)
 
@@ -409,8 +395,6 @@ def run_experiment(
 
         # Convert data to dataframe
         data_colnames = [
-            'id',
-            'model_label',
             'trial',
             'target_comb',
             'options_comb',
@@ -420,15 +404,15 @@ def run_experiment(
             'successor',
             'p',
             'reward',
-            'correct',
-            'alpha',
-            'gamma',
-            'beta',
-            'beta_test',
-            'segmentation'
+            'correct'
         ]
         training_df = pd.DataFrame(training_data, columns=data_colnames)
         test_df = pd.DataFrame(test_data, columns=data_colnames)
+
+        # Add agent information to data
+        for key in [*agent_config][::-1]:
+            training_df.insert(0, key, agent_config[key])
+            test_df.insert(0, key, agent_config[key])
 
         # Save data to csv
         if output_path:
