@@ -5,6 +5,8 @@ from scripts.simulate_config import (
     TRAINING_TARGETS_SET,
     N_TRAINING_TARGET_REPEATS,
     TEST_COMBS_SET,
+    LOAD_AGENT_CONFIGS,
+    AGENT_CONFIGS_PATH,
     MODEL_CONFIGS,
     OUTPUT_PATH,
     SEED
@@ -17,7 +19,9 @@ run_experiment(
     TRAINING_TARGETS_SET,
     N_TRAINING_TARGET_REPEATS,
     TEST_COMBS_SET,
-    MODEL_CONFIGS,
+    load_agent_configs = LOAD_AGENT_CONFIGS,
+    agent_configs_path = AGENT_CONFIGS_PATH,
+    model_configs = MODEL_CONFIGS,
     output_path = OUTPUT_PATH,
     seed = SEED
 )
