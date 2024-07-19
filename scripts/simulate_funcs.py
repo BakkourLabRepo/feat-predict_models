@@ -342,9 +342,9 @@ def generate_agent_configs(n_agents, model_configs):
             for key in agent_config.keys():
                 if agent_config[key] is None:
                     if key == 'beta' or key == 'beta_test':
-                        agent_config[key] = 1/np.random.uniform(0, 1)
+                        agent_config[key] = 1/np.random.uniform(0, 1) - 1
                     elif key == 'sampler_specificity':
-                        agent_config[key] = 1 + 1/np.random.uniform(0, 1)
+                        agent_config[key] = 1/np.random.uniform(0, 1)
                     else:
                         agent_config[key] = np.random.uniform(0, 1)
 

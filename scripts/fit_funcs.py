@@ -334,9 +334,9 @@ def fit_model(
         x0 = []
         for param in params_to_fit:
             if (param == 'beta') or (param == 'beta_test'):
-                x0.append(1/np.random.uniform(0, 1))
+                x0.append(1/np.random.uniform(0, 1) - 1)
             elif param == 'sampler_specificity':
-                x0.append(1 + 1/np.random.uniform(0, 1))
+                x0.append(1/np.random.uniform(0, 1))
             else:
                 x0.append(np.random.uniform(0, 1))
 
