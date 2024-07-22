@@ -2,11 +2,12 @@ import numpy as np
 
 # Choice data path
 DATA_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data/ff'
-#DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2'
+DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2'
 
-# Results path
+# Results path and file name
 RESULTS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/results'
-#RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
+RESULTS_FNAME = 'model_fits'
+RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
 
 # Optimizer settings
 N_STARTS = 100 # Max number of random starts

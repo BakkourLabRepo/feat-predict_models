@@ -7,6 +7,7 @@ from scripts.fit_funcs import fit_model_parallel
 from scripts.fit_config import (
     DATA_PATH,
     RESULTS_PATH,
+    RESULTS_FNAME,
     N_STARTS,
     MAX_UNCHANGED,
     OVERWRITE,
@@ -28,7 +29,7 @@ for subj in subj_ids:
 
 # Load existing results
 try:
-    results = pd.read_csv(f'{RESULTS_PATH}/results.csv')
+    results = pd.read_csv(f'{RESULTS_PATH}/{RESULTS_FNAME}.csv')
 
     # Only fit for subjects and models with no results
     if OVERWRITE:
@@ -112,7 +113,7 @@ if __name__ == '__main__':
                 **this_agent_config
             }])], ignore_index=True)
             results = results.sort_values(by=['id', 'model_label'])
-            results.to_csv(f'{RESULTS_PATH}/model_fits.csv', index=False)
+            results.to_csv(f'{RESULTS_PATH}/{RESULTS_FNAME}.csv', index=False)
 
             # Export agent config to pickle
             dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
