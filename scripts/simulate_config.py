@@ -9,10 +9,16 @@ SEED = 3244343
 # Number of training trials
 N_TRAINING_TARGET_REPEATS = 6
 
+# Simulate based on existing agent configurations
+LOAD_AGENT_CONFIGS = False
+AGENT_CONFIGS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2/fit_agent_configs'
+
 # Number of agents per basic agent config
-N_AGENTS = 100
+# Only need to set if LOAD_AGENT_CONFIGS = False
+N_AGENTS = 1000
 
 # Configurations for models to simulate
+# Only need to set if LOAD_AGENT_CONFIGS = False
 MODEL_CONFIGS = [
 
     # Feature -> Feature model

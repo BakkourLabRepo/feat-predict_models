@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from os import makedirs
+from os import makedirs, listdir
+import pickle
 from scripts.Successor_Features import Successor_Features
 from scripts.Env import Env
 
@@ -105,8 +106,6 @@ def train_agent(agent, env, training_targets):
 
         # Store trial data
         training_data.append([
-            agent.id,
-            agent.model_label,
             t + 1,
             target_comb,
             options_comb,
@@ -116,12 +115,7 @@ def train_agent(agent, env, training_targets):
             env.s_new,
             p,
             reward,
-            correct,
-            agent.alpha,
-            agent.gamma,
-            agent.beta,
-            agent.beta_test,
-            agent.segmentation
+            correct
         ])
     training_data = np.array(training_data, dtype=object)
 
@@ -183,8 +177,6 @@ def test_agent(agent, env, test_combs_set, test_targets):
 
             # Store trial data
             test_data.append([
-                agent.id,
-                agent.model_label,
                 t + 1,
                 target_comb,
                 options_comb,
@@ -194,12 +186,7 @@ def test_agent(agent, env, test_combs_set, test_targets):
                 env.s_new,
                 p,
                 reward,
-                correct,
-                agent.alpha,
-                agent.gamma,
-                agent.beta,
-                agent.beta_test,
-                agent.segmentation
+                correct
             ])
     test_data = np.array(test_data, dtype=object)
 
@@ -305,6 +292,27 @@ def simulate_agent(
     
     return training_data, test_data
 
+def load_configs(agent_configs_path):
+    """
+    Load agent configurations from the specified path.
+
+    Arguments
+    ---------
+    agent_configs_path : str
+        The path to the agent configurations.
+    
+    Returns
+    -------
+    agent_configs : list
+        A list of agent configurations.
+    """
+    agent_configs = []
+    for f in listdir(agent_configs_path):
+        if f.endswith('.pkl'):
+            with open(f'{agent_configs_path}/{f}', 'rb') as file:
+                agent_configs.append(pickle.load(file))
+    return agent_configs
+
 def generate_agent_configs(n_agents, model_configs):
     """
     Generate agent configurations based on the given number of agents
@@ -334,9 +342,9 @@ def generate_agent_configs(n_agents, model_configs):
             for key in agent_config.keys():
                 if agent_config[key] is None:
                     if key == 'beta' or key == 'beta_test':
-                        agent_config[key] = 1/np.random.uniform(0, 1)
+                        agent_config[key] = 1/np.random.uniform(0, 1) - 1
                     elif key == 'sampler_specificity':
-                        agent_config[key] = 1 + 1/np.random.uniform(0, 1)
+                        agent_config[key] = 1/np.random.uniform(0, 1)
                     else:
                         agent_config[key] = np.random.uniform(0, 1)
 
@@ -355,7 +363,9 @@ def run_experiment(
         training_targets_set,
         n_training_target_repeats,
         test_combs_set,
-        model_configs,
+        load_agent_configs = False,
+        agent_configs_path = None,
+        model_configs = None,
         output_path = False,
         seed = None
     ):
@@ -391,8 +401,18 @@ def run_experiment(
             makedirs(f'{output_path}/{model_label}/training', exist_ok=True)
             makedirs(f'{output_path}/{model_label}/test', exist_ok=True)
 
+    # Load all agent configurations
+    if load_agent_configs:
+        agent_configs = []
+        for subj in listdir(agent_configs_path):
+            if subj == '.DS_Store': continue
+            agent_configs.extend(load_configs(f'{agent_configs_path}/{subj}'))
+
     # Generate all agent configurations
-    agent_configs = generate_agent_configs(n_agents, model_configs)
+    else:
+        agent_configs = generate_agent_configs(n_agents, model_configs)
+
+    # Simulate all agents
     for agent_config in agent_configs:
         subj = agent_config['id']
         model_label = agent_config['model_label']
@@ -409,8 +429,6 @@ def run_experiment(
 
         # Convert data to dataframe
         data_colnames = [
-            'id',
-            'model_label',
             'trial',
             'target_comb',
             'options_comb',
@@ -420,15 +438,15 @@ def run_experiment(
             'successor',
             'p',
             'reward',
-            'correct',
-            'alpha',
-            'gamma',
-            'beta',
-            'beta_test',
-            'segmentation'
+            'correct'
         ]
         training_df = pd.DataFrame(training_data, columns=data_colnames)
         test_df = pd.DataFrame(test_data, columns=data_colnames)
+
+        # Add agent information to data
+        for key in [*agent_config][::-1]:
+            training_df.insert(0, key, agent_config[key])
+            test_df.insert(0, key, agent_config[key])
 
         # Save data to csv
         if output_path:
