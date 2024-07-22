@@ -493,7 +493,7 @@ class Successor_Features:
         """
         
         # Initialize empty composition and choice probabilities
-        composition = np.zeros(self.n_insts, dtype=int)
+        composition = np.zeros(self.n_feats, dtype=int)
         probs = []
 
         # Conjunctive composition constructs the set of all possible
