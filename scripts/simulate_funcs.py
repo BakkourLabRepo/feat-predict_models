@@ -289,8 +289,22 @@ def simulate_agent(
     training_data = train_agent(agent, env, training_targets)
     agent.beta = agent.beta_test
     test_data = test_agent(agent, env, test_combs_set, test_targets)
+
+    # Get agent representations
+    representations = {
+        'agent_info': agent_config,
+        'S': agent.S,
+        'F': agent.F,
+        'F_raw': agent.F_raw,
+        'M': agent.M,
+        'bias': agent.bias,
+        'bias_factorization': agent.bias_factorization,
+        'bias_terminal': agent.bias_terminal,
+        'recency': agent.recency,
+        'frequency': agent.frequency
+    }
     
-    return training_data, test_data
+    return training_data, test_data, representations
 
 def load_configs(agent_configs_path):
     """
@@ -400,6 +414,7 @@ def run_experiment(
             model_label = model_config['model_label']
             makedirs(f'{output_path}/{model_label}/training', exist_ok=True)
             makedirs(f'{output_path}/{model_label}/test', exist_ok=True)
+            makedirs(f'{output_path}/{model_label}/representations', exist_ok=True)
 
     # Load all agent configurations
     if load_agent_configs:
@@ -419,7 +434,7 @@ def run_experiment(
         print(f'Simulating - Agent: {subj}/{len(agent_configs)}, Model: {model_label}')
         
         # Simulate agent
-        training_data, test_data = simulate_agent(
+        training_data, test_data, representations = simulate_agent(
             agent_config,
             env_config,
             training_targets_set,
@@ -448,14 +463,19 @@ def run_experiment(
             training_df.insert(0, key, agent_config[key])
             test_df.insert(0, key, agent_config[key])
 
-        # Save data to csv
+        # Save data 
         if output_path:
             model_path = f'{output_path}/{model_label}'
             training_df.to_csv(
-                f"{model_path}/training/training_{subj}.csv",
+                f'{model_path}/training/training_{subj}.csv',
                 index=False
             )
             test_df.to_csv(
-                f"{model_path}/test/test_{subj}.csv",
+                f'{model_path}/test/test_{subj}.csv',
                 index=False
             )
+            with open(
+                f'{model_path}/representations/representations_{subj}.pkl',
+                'wb'
+            ) as file:
+                pickle.dump(representations, file)
