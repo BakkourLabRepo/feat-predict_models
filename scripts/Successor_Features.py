@@ -15,6 +15,9 @@ class Successor_Features:
         the model.
     alpha : float
         Learning rate, bounded [0, 1]
+    alpha_decay : float
+        Degree to which learning rate decays based on state visitation
+        frequency, bounded [0, inf)
     beta : float
         Inverse temperature parameter in the softmax function. A higher
         values produces more deterministic choice.
@@ -58,6 +61,7 @@ class Successor_Features:
         id = 0,
         model_label = 'Successor_Features',
         alpha = 1.,
+        alpha_decay = 0,
         beta = np.inf,
         beta_test = np.inf,
         gamma = 1.,
@@ -73,6 +77,7 @@ class Successor_Features:
         self.id = id
         self.model_label = model_label
         self.alpha = alpha
+        self.alpha_decay = alpha_decay
         self.beta = beta
         self.beta_test = beta_test
         self.gamma = gamma
@@ -264,6 +269,8 @@ class Successor_Features:
             self.M = np.array([[0.]])
             self.recency = np.array([0])
             self.frequency = np.array([1])
+            self.F_recency = np.array([0])
+            self.F_frequency = np.array([1])
 
         # Update state memory
         self.recency += 1
@@ -286,14 +293,20 @@ class Successor_Features:
         for i in range(len(features)):
             feature = features[i]
             feature_raw = features_raw[i]
-            present = np.any(np.all(feature == self.F, axis=1))
+            idx = np.all(feature == self.F, axis=1)
+            present = np.any(idx)
             if not present:
                 self.F = np.vstack((self.F, feature))
                 self.F_raw = np.vstack((self.F_raw, feature_raw))
+                self.F_recency = np.append(self.F_recency, 0)
+                self.F_frequency = np.append(self.F_frequency, 1)
                 if not self.conjunctive_starts:
                     self.add_row_to_M()
                 if not self.conjunctive_successors:
                     self.add_col_to_M()
+            else:
+                self.F_recency[idx] = 0
+                self.F_frequency[idx] += 1
 
         # If a new state has been encountered, re-compute bias
         if updated:
@@ -727,16 +740,28 @@ class Successor_Features:
         )
 
         # Get features of present state to use in successor update
-        if self.conjunctive_successors:
+        if self.conjunctive_starts == self.conjunctive_successors:
+            features = np.eye(len(self.M))
+        elif self.conjunctive_successors:
             features = self.get_state_index(state)
         elif not self.continuous_features:
             features = self.get_discrete_feature_index(state)
         else:
             features = state
 
+        # Learning rate decay for each row of M
+        # Accounts for inflating values in the successor matrix over
+        # many training iterations
+        if self.conjunctive_starts:
+            frequency = self.frequency
+        else:
+            frequency = self.F_frequency
+        alpha = frequency**-self.alpha_decay
+
+
         # Update bias based on current state
         bias = s_weight*bias
         
         # Perform update
         delta = features + self.gamma*s_new_weight@self.M - self.M
-        self.M += bias*self.alpha*delta
+        self.M += bias*alpha*delta

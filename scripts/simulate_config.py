@@ -1,7 +1,7 @@
 import numpy as np
 
 # Output directory
-OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data_2'
+OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data_3'
 
 # Random seed for reproducibility
 SEED = 3244343
@@ -26,6 +26,7 @@ MODEL_CONFIGS = [
         'id': None,
         'model_label': 'ff',
         'alpha': None, 
+        'alpha_decay': 0, 
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
@@ -44,6 +45,7 @@ MODEL_CONFIGS = [
         'id': None,
         'model_label': 'ss',
         'alpha': None, 
+        'alpha_decay': 0, 
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
@@ -62,6 +64,7 @@ MODEL_CONFIGS = [
         'id': None,
         'model_label': 'ss-sampler',
         'alpha': None, 
+        'alpha_decay': 0, 
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
@@ -82,34 +85,46 @@ TRAINING_TARGETS_SET = np.array([
 
     # Block 1
     [
-        [1,1,0,0],
-        [1,4,0,0],
-        [1,4,0,0],
-        [4,1,0,0],
-        [4,1,0,0],
-        [4,4,0,0],
+        [1,1,1,0,0],
+        [1,1,4,0,0],
+        [1,1,4,0,0],
+        [1,4,1,0,0],
+        [1,4,1,0,0],
+        [1,4,4,0,0],
+        [4,1,1,0,0],
+        [4,1,4,0,0],
+        [4,1,4,0,0],
+        [4,4,1,0,0],
+        [4,4,1,0,0],
+        [4,4,4,0,0],
     ],
 
     # Block 2
     [
-        [0,0,1,1],
-        [0,0,1,4],
-        [0,0,1,4],
-        [0,0,4,1],
-        [0,0,4,1],
-        [0,0,4,4]
+        [1,0,0,1,1],
+        [1,0,0,1,4],
+        [1,0,0,1,4],
+        [1,0,0,4,1],
+        [1,0,0,4,1],
+        [1,0,0,4,4],
+        [4,0,0,1,1],
+        [4,0,0,1,4],
+        [4,0,0,1,4],
+        [4,0,0,4,1],
+        [4,0,0,4,1],
+        [4,0,0,4,4]
     ]
 
 ])
 
 # Test feature combinations in the composition set
 TEST_COMBS_SET = np.array([
-    [1,1,0,0],
-    [1,0,1,0],
-    [1,0,0,1],
-    [0,1,1,0],
-    [0,1,0,1],
-    [0,0,1,1],
+    [1,1,1,0,0],
+    [1,1,0,1,0],
+    [1,1,0,0,1],
+    [1,0,1,1,0],
+    [1,0,1,0,1],
+    [1,0,0,1,1],
 ])
 
 
@@ -121,9 +136,9 @@ ENV_CONFIG = {
         [0,0,0,1],
         [0,0,0,1]
     ]),
-    'n_feats': 4,
-    'n_fixed': 0,
-    'n_per': 2,
+    'n_feats': 5,
+    'n_fixed': 1,
+    'n_per': 3,
     'start_insts': np.array([2, 3]),
     'r': np.array([[-1, 0, 0, 1]]),
     'continuous_features': False
