@@ -84,6 +84,7 @@ MODEL_CONFIGS = [
 # Parameter bounds
 PARAMETER_BOUNDS = {
     'alpha': (.0001, 1),
+    'alpha_decay': (0, np.inf), 
     'beta': (.0001, np.inf),
     'beta_test': (.0001, np.inf),
     'segmentation': (0, .9999),

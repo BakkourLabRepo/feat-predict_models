@@ -333,7 +333,11 @@ def fit_model(
         # Random initialization
         x0 = []
         for param in params_to_fit:
-            if (param == 'beta') or (param == 'beta_test'):
+            if (
+                (param == 'beta') or
+                (param == 'beta_test') or
+                (param == 'alpha_decay')
+            ):
                 x0.append(1/np.random.uniform(0, 1) - 1)
             elif param == 'sampler_specificity':
                 x0.append(1/np.random.uniform(0, 1))
