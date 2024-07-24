@@ -356,7 +356,7 @@ def fit_model(
         # Update best result
         if result.fun < best_result.fun:
             best_result = result
-        else:
+        elif result.success:
             unchanged_count += 1
 
         # Break if no improvement in fit after some number of starts
