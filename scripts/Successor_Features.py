@@ -211,31 +211,6 @@ class Successor_Features:
                 for start in starts
             ], dtype=float)
 
-        # Compute bias factorization matrix
-        self.compute_bias_factorization_matrix()
-
-    def compute_bias_factorization_matrix(self):
-        """
-        Compute bias factorization matrix, which reflects how
-        factorized biases are for each pair of rows of M
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        None
-        """
-
-        # (non-) overlap in bias vectors reflects learning factorization 
-        self.bias_factorization = self.bias@self.bias.T
-
-        # Normalize matrix
-        row_norms = np.linalg.norm(self.bias, axis=1)
-        norm_matrix = np.outer(row_norms, row_norms)
-        self.bias_factorization = self.bias_factorization/norm_matrix
-
     def update_memory(self, state):
         """
         Adds information about the current state to memory
@@ -657,45 +632,98 @@ class Successor_Features:
             idx += np.all(feature == self.F, axis=1)
         idx = idx.astype(bool)
         return idx
-
-    def norm_successor_weight(self, s_weight, s_new_weight, bias_factorization):
+    
+    def get_M_update_weights(self, state, state_new):
         """
-        Normalize weights corresponding to the successor state. When two
-        states have similar biases (similar bias vectors) the successor
-        vector will be split between these two state.
+        Get weights on rows of M for the present and successor states
 
         Arguments
         ---------
-        s_weight : numpy.Array
-            Weights on rows of M corresponding to the current state.
-            A 2d (n x 1) array.
-        s_new_weight : numpy.Array
-            Weights on rows of M corresponding to the successor state.
-            A 1d (n) array.
-        bias_factorization : numpy.Array
-            Bias factorization matrix, which reflects how factorized
-            biases are for each pair of rows of M
+        state : numpy.Array
+            One-dimensional current state array
+        state_new : numpy.Array
+            One-dimensional successor state array
 
         Returns
         -------
-        s_new_weight_norm : numpy.Array
-            The normalized successor weights
+        s_weight : numpy.Array
+            Weight for present state
+        s_new_weight : numpy.Array
+            Weight for successor state
         """
+        if self.conjunctive_starts:
+            s_weight = self.get_state_index(state)
+            s_new_weight = self.get_state_index(state_new)
+        elif not self.continuous_features:
+            s_weight = self.get_discrete_feature_index(state)
+            s_new_weight = self.get_discrete_feature_index(state_new)
+        else:
+            s_weight = state
+            s_new_weight = state_new
+        s_weight = s_weight.reshape(-1, 1)
+        return s_weight, s_new_weight
+    
+    def get_feature_vector(self, state):
+        """
+        Get feature vector for successor matrix update
 
-        # Get relevant rows in factorization matrix for present and
-        # successor states
-        bias_factorization = s_weight*bias_factorization
-        bias_factorization = s_new_weight*bias_factorization
+        Arguments
+        ---------
+        state : numpy.Array
+            One-dimensional state array
+        
+        Returns
+        -------
+        features : numpy.Array
+            Feature vector for state
+        """
+        if self.conjunctive_starts == self.conjunctive_successors:
+            features = np.eye(len(self.M))
+        elif self.conjunctive_successors:
+            features = self.get_state_index(state)
+        elif not self.continuous_features:
+            features = self.get_discrete_feature_index(state)
+        else:
+            features = state
+        return features
+    
+    def weight_bias_matrix(self, weight, bias):
+        """
+        Weight and normalize bias matrix
 
-        # Compute normalization factor
-        norms = np.sum(bias_factorization, axis=0)
-        s_new_weight[norms == 0] = 0 
-        norms[norms == 0] = 1
+        Arguments
+        ---------
+        weight : numpy.Array
+            One-dimensional weight array
+        bias : numpy.Array
+            Two-dimensional bias matrix
 
-        # Apply normalization
-        s_new_weight_norm = s_new_weight/norms
+        Returns
+        -------
+        bias : numpy.Array
+            Weighted and normalized bias matrix
+        """
+        bias = weight*bias
+        norm = np.sum(bias, axis=1)
+        norm[norm == 0] = 1
+        bias = bias/norm
+        return bias
+    
+    def decay_alpha(self):
+        """
+        Decay learning rate based on state visitation frequency
 
-        return s_new_weight_norm
+        Returns
+        -------
+        alpha : float
+            Decayed learning rate
+        """
+        if self.conjunctive_starts:
+            frequency = self.frequency
+        else:
+            frequency = self.F_frequency
+        alpha = self.alpha*frequency**-self.alpha_decay
+        return alpha
 
     def update_M(self, state, state_new):
         """
@@ -713,55 +741,26 @@ class Successor_Features:
         None
         """
 
-        # Is this an absorbing state / terminal transition
+        # Bias matrix differs for terminal/absorbing states
         terminal = np.all(state == state_new)
         if terminal:
             bias = self.bias_terminal
-            bias_factorization = np.eye(len(bias))
         else:
             bias = self.bias
-            bias_factorization = self.bias_factorization
 
         # Get weights for rows of M for the present and successor states
-        if self.conjunctive_starts:
-            s_weight = self.get_state_index(state)
-            s_new_weight = self.get_state_index(state_new)
-        elif not self.continuous_features:
-            s_weight = self.get_discrete_feature_index(state)
-            s_new_weight = self.get_discrete_feature_index(state_new)
-        else:
-            s_weight = state
-            s_new_weight = state_new
-        s_weight = s_weight.reshape(-1, 1)
-        s_new_weight = self.norm_successor_weight(
-            s_weight,
-            s_new_weight,
-            bias_factorization
-        )
+        s_weight, s_new_weight = self.get_M_update_weights(state, state_new)
 
-        # Get features of present state to use in successor update
-        if self.conjunctive_starts == self.conjunctive_successors:
-            features = np.eye(len(self.M))
-        elif self.conjunctive_successors:
-            features = self.get_state_index(state)
-        elif not self.continuous_features:
-            features = self.get_discrete_feature_index(state)
-        else:
-            features = state
+        # Weight and normalize bias matrix based on the successor weight
+        bias = self.weight_bias_matrix(s_new_weight, bias)
 
-        # Learning rate decay for each row of M
-        # Accounts for inflating values in the successor matrix over
-        # many training iterations
-        if self.conjunctive_starts:
-            frequency = self.frequency
-        else:
-            frequency = self.F_frequency
-        alpha = frequency**-self.alpha_decay
+        # Get feature representation in M for present state 
+        features = self.get_feature_vector(state)
 
+        # Decay learning rate by state/feature visitation frequency
+        # Can account for inflated values in the successor matrix
+        alpha = self.decay_alpha()
 
-        # Update bias based on current state
-        bias = s_weight*bias
-        
         # Perform update
-        delta = features + self.gamma*s_new_weight@self.M - self.M
-        self.M += bias*alpha*delta
+        delta = features + self.gamma*bias@self.M - self.M
+        self.M += alpha*s_weight*delta
