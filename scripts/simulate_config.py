@@ -1,13 +1,13 @@
 import numpy as np
 
 # Output directory
-OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data_3'
+OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data'
 
 # Random seed for reproducibility
 SEED = 3244343
 
 # Number of training trials
-N_TRAINING_TARGET_REPEATS = 40
+N_TRAINING_TARGET_REPEATS = 6
 
 # Simulate based on existing agent configurations
 LOAD_AGENT_CONFIGS = False
@@ -85,46 +85,34 @@ TRAINING_TARGETS_SET = np.array([
 
     # Block 1
     [
-        [1,1,1,0,0],
-        [1,1,4,0,0],
-        [1,1,4,0,0],
-        [1,4,1,0,0],
-        [1,4,1,0,0],
-        [1,4,4,0,0],
-        [4,1,1,0,0],
-        [4,1,4,0,0],
-        [4,1,4,0,0],
-        [4,4,1,0,0],
-        [4,4,1,0,0],
-        [4,4,4,0,0],
+        [1,1,0,0],
+        [1,4,0,0],
+        [1,4,0,0],
+        [4,1,0,0],
+        [4,1,0,0],
+        [4,4,0,0]
     ],
 
     # Block 2
     [
-        [1,0,0,1,1],
-        [1,0,0,1,4],
-        [1,0,0,1,4],
-        [1,0,0,4,1],
-        [1,0,0,4,1],
-        [1,0,0,4,4],
-        [4,0,0,1,1],
-        [4,0,0,1,4],
-        [4,0,0,1,4],
-        [4,0,0,4,1],
-        [4,0,0,4,1],
-        [4,0,0,4,4]
+        [0,0,1,1],
+        [0,0,1,4],
+        [0,0,1,4],
+        [0,0,4,1],
+        [0,0,4,1],
+        [0,0,4,4]
     ]
 
 ])
 
 # Test feature combinations in the composition set
 TEST_COMBS_SET = np.array([
-    [1,1,1,0,0],
-    [1,1,0,1,0],
-    [1,1,0,0,1],
-    [1,0,1,1,0],
-    [1,0,1,0,1],
-    [1,0,0,1,1],
+    [1,1,0,0],
+    [1,0,1,0],
+    [1,0,0,1],
+    [0,1,1,0],
+    [0,1,0,1],
+    [0,0,1,1],
 ])
 
 
@@ -136,9 +124,9 @@ ENV_CONFIG = {
         [0,0,0,1],
         [0,0,0,1]
     ]),
-    'n_feats': 5,
-    'n_fixed': 1,
-    'n_per': 3,
+    'n_feats': 4,
+    'n_fixed': 0,
+    'n_per': 2,
     'start_insts': np.array([2, 3]),
     'r': np.array([[-1, 0, 0, 1]]),
     'continuous_features': False
