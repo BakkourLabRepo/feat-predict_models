@@ -298,7 +298,6 @@ def simulate_agent(
         'F_raw': agent.F_raw,
         'M': agent.M,
         'bias': agent.bias,
-        'bias_factorization': agent.bias_factorization,
         'bias_terminal': agent.bias_terminal,
         'recency': agent.recency,
         'frequency': agent.frequency
