@@ -47,7 +47,7 @@ def get_reward(target, successor):
     )
     return reward
 
-def train_agent(agent, env, training_targets):
+def train_agent(agent, env, targets, options):
     """
     Run agent on the training phase.
 
@@ -57,8 +57,10 @@ def train_agent(agent, env, training_targets):
         Instance of the Successor_Features agent.
     env : Env
         Instance of the environment.
-    training_targets : numpy.ndarray
+    targets : numpy.ndarray
         The list of training targets.
+    options : numpy.ndarray
+        The list of training options.
 
     Returns
     -------
@@ -66,14 +68,15 @@ def train_agent(agent, env, training_targets):
         Simulated training data.
     """
     training_data = []
-    for t, target in enumerate(training_targets):
+    for t in range(len(targets)):
+        target = targets[t]
+        options_comb = options[t]
 
         # Set target as task
         agent.set_task(target)
         target_comb = (target > 0).astype(int)
 
         # Generate feature set
-        options_comb = target_comb
         env.sample_features(
             comb = options_comb,
             terminal = False
@@ -121,7 +124,7 @@ def train_agent(agent, env, training_targets):
 
     return training_data
 
-def test_agent(agent, env, test_combs_set, test_targets):
+def test_agent(agent, env, targets, options):
     """
     Run agent on the test phase. Trials will be all unique combinations
     of test_combs_set and test_targets.
@@ -132,10 +135,10 @@ def test_agent(agent, env, test_combs_set, test_targets):
         Instance of the Successor_Features agent.
     env : Env
         Instance of the environment.
-    test_combs_set : numpy.ndarray
-        Set of options.
-    test_targets : numpy.ndarray
-        Set of targets.
+    targets : numpy.ndarray
+        The list of test targets.
+    options : numpy.ndarray
+        The list of test options.
 
     Returns
     -------
@@ -143,56 +146,56 @@ def test_agent(agent, env, test_combs_set, test_targets):
         Simulated test data.
     """
     test_data = []
-    t = 0
-    for target in test_targets:
+    for t in range(len(targets)):
+        target = targets[t]
+        options_comb = options[t]
 
         # Set target as task
         agent.set_task(target)
         target_comb = (target > 0).astype(int)
 
-        # Test target inference for every test feature set
-        for options_comb in test_combs_set:
-            t += 1
+        # Generate feature set
+        env.sample_features(
+            options_comb,
+            terminal = False
+        )
 
-            # Generate feature set
-            env.sample_features(
-                options_comb,
-                terminal = False
-            )
+        # Get composition
+        composition, p = agent.compose_from_set(env.a)
 
-            # Get composition
-            composition, p = agent.compose_from_set(env.a)
+        # Step environment to get absorbing state, do not update agent
+        env.s = composition
+        while True:
+            env.step()
+            if env.check_absorbing():
+                break
+            env.update_current_state() 
 
-            # Step environment to get absorbing state, do not update agent
-            env.s = composition
-            while True:
-                env.step()
-                if env.check_absorbing():
-                    break
-                env.update_current_state() 
+        # Get reward and whether composition was correct or not
+        reward = get_reward(target, env.s_new)
+        correct = int(check_state_match(target, env.s_new))
 
-            # Get reward and whether composition was correct or not
-            reward = get_reward(target, env.s_new)
-            correct = int(check_state_match(target, env.s_new))
-
-            # Store trial data
-            test_data.append([
-                t + 1,
-                target_comb,
-                options_comb,
-                target,
-                env.a,
-                composition,
-                env.s_new,
-                p,
-                reward,
-                correct
-            ])
+        # Store trial data
+        test_data.append([
+            t + 1,
+            target_comb,
+            options_comb,
+            target,
+            env.a,
+            composition,
+            env.s_new,
+            p,
+            reward,
+            correct
+        ])
     test_data = np.array(test_data, dtype=object)
 
     return test_data
 
-def generate_training_targets(training_targets_set, n_training_target_repeats):
+def generate_training_trial_info(
+        training_targets_set,
+        n_training_target_repeats
+    ):
     """
     Generate training targets by repeating and permuting the target
     sets specified in training_targets_set.
@@ -206,10 +209,9 @@ def generate_training_targets(training_targets_set, n_training_target_repeats):
 
     Returns
     -------
-    targets : numpy.ndarray
-        An array of training targets with shape (n_samples, n_features).
+    trial_info : dict
+        Training trial targets and options.
     """
-
     targets = []
     for target_set in training_targets_set:
         block_targets = np.repeat(
@@ -221,7 +223,11 @@ def generate_training_targets(training_targets_set, n_training_target_repeats):
         targets.append(block_targets)
     targets = np.array(targets)
     targets = targets.reshape(-1, len(targets[0][0]))
-    return targets
+    trial_info = {
+        'targets': targets,
+        'options': (targets != 0).astype(int)
+    }
+    return trial_info
     
 def generate_test_targets(env):
     """
@@ -243,12 +249,39 @@ def generate_test_targets(env):
     targets = np.array(targets).reshape(-1, env.n_feats)
     return targets
 
+def generate_test_trial_info(
+    env,
+    test_combs_set
+):
+    """
+    Generate test targets and options.
+
+    Arguments
+    ---------
+    env : Env
+        An instance of the agent's environment.
+    test_combs_set : numpy.ndarray
+        Set of test options.
+
+    Returns
+    -------
+    trial_info : dict
+        Test trial targets and options.
+    """
+    targets = generate_test_targets(env)
+    options = np.repeat(test_combs_set, len(targets), axis=0)
+    targets = np.tile(targets, (len(test_combs_set), 1))
+    trial_info = {
+        'targets': targets,
+        'options': options
+    }
+    return trial_info
+
 def simulate_agent(
         agent_config,
         env_config,
-        training_targets_set,
-        n_training_target_repeats,
-        test_combs_set
+        training_trial_info,
+        test_trial_info
     ):
     """
     Simulates the agent in the given environment using the provided configurations.
@@ -259,12 +292,10 @@ def simulate_agent(
         Agent configuration
     env_config : dict
         Environment configuration.
-    training_targets_set : numpy.ndarray
-        The set of target sets to be used in training.
-    n_training_target_repeats : int
-        The number of times each target set should be repeated.
-    test_combs_set : list
-        Set of test options
+    training_trial_info : dict
+        Training trial targets and options
+    test_trial_info : dict
+        Test trial targets and options
 
     Returns
     -------
@@ -278,17 +309,13 @@ def simulate_agent(
     env = Env(**env_config)
     agent = Successor_Features(env, **agent_config)
 
-    # Generate training and test target orders
-    training_targets = generate_training_targets(
-        training_targets_set,
-        n_training_target_repeats
-    )
+    # Generate test target orders
     test_targets = generate_test_targets(env)
     
     # Simulate agent
-    training_data = train_agent(agent, env, training_targets)
+    training_data = train_agent(agent, env, **training_trial_info)
     agent.beta = agent.beta_test
-    test_data = test_agent(agent, env, test_combs_set, test_targets)
+    test_data = test_agent(agent, env, **test_trial_info)
 
     # Get agent representations
     representations = {
@@ -431,14 +458,23 @@ def run_experiment(
         subj = agent_config['id']
         model_label = agent_config['model_label']
         print(f'Simulating - Agent: {subj}/{len(agent_configs)}, Model: {model_label}')
+
+        # Generate training and test trials
+        training_trial_info = generate_training_trial_info(
+            training_targets_set,
+            n_training_target_repeats
+        )
+        test_trial_info = generate_test_trial_info(
+            Env(**env_config),
+            test_combs_set
+        )
         
         # Simulate agent
         training_data, test_data, representations = simulate_agent(
             agent_config,
             env_config,
-            training_targets_set,
-            n_training_target_repeats,
-            test_combs_set
+            training_trial_info,
+            test_trial_info
         )
 
         # Convert data to dataframe
