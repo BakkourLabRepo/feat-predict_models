@@ -1,13 +1,6 @@
 
 import numpy as np
-from scipy.stats import rankdata
 from itertools import permutations
-from feat_predict.modelling.helper_funcs import (
-    assign_insts_to_cats,
-    id_from_feats,
-    sample_from_array,
-    sample_row_except
-)
 
 ### Environment class ##########################################################
 
@@ -90,6 +83,44 @@ class Env:
         comb = np.repeat(np.eye(len(comb), dtype=int)[comb.astype(bool)], n_insts, axis=0).reshape(n_cats, n_insts, -1)
         self.a = comb*insts.reshape(-1, 1)
 
+    def sample_from_array(self, arr, n=1, replace=False, p=None):
+        """
+        Randomly sample from n-d array
+        :param arr: array to sample from
+        :param n: number of samples (default is 1)
+        :param replace: if True, sample with replacement
+        :param p: probabilities assocaited with each element in arr
+        """
+        return arr[np.random.choice(len(arr), n, replace=replace, p=p)]
+    
+    def sample_row_except(self, arr, exception):
+        """
+        Sample any row from an array but a given exception row
+        
+        Arguments
+        ---------
+        arr : numpy.Array
+            Array to sample from
+        exception : numpy.Array
+            Sub-array to ignore
+            
+        Returns
+        -------
+        sample : numpy.Array
+            Sampled sub-array
+        """
+
+        # Create an array of indices excluding the target row
+        idx = np.arange(len(arr))
+        idx = np.delete(idx, np.where(np.all(arr == exception, axis=1)))
+
+        # Randomly choose an index from the remaining indices
+        idx = np.random.choice(idx)
+
+        # Sample row
+        sample = arr[idx]
+
+        return sample
 
     def sample_actions(self, comb=[], terminal=False, n_actions=2,
                        transitions=False, feature_overlap=0, probe=False):
@@ -131,7 +162,7 @@ class Env:
                 )
                 freq_comb_overlap = np.sum(comb_overlap, axis=1)
                 idx = freq_comb_overlap == 1
-                self.target_comb = sample_from_array(combs[idx], 1)[0]
+                self.target_comb = self.sample_from_array(combs[idx], 1)[0]
 
                 # Re-define action feature combination so that actions
                 # do no have overlapping features with the target
@@ -141,7 +172,7 @@ class Env:
                 )
                 freq_comb_overlap = np.sum(comb_overlap, axis=1)
                 idx = freq_comb_overlap == 0
-                self.comb = sample_from_array(combs[idx], 1)[0]                
+                self.comb = self.sample_from_array(combs[idx], 1)[0]                
 
             # Action sample probabilities
             p_sample = self.states[tuple(self.comb)]['p_sample']
@@ -165,7 +196,7 @@ class Env:
             if feature_overlap:
 
                 # Sample first action
-                self.a = sample_from_array(action_set, 1, p=p_sample)
+                self.a = self.sample_from_array(action_set, 1, p=p_sample)
 
                 # Sample additional actions
                 for _ in range(n_actions - 1):
@@ -189,13 +220,13 @@ class Env:
                     p_sample_action = p_sample_action/np.sum(p_sample_action)
                     self.a = np.append(
                         self.a,
-                        sample_from_array(action_set, 1, p=p_sample),
+                        self.sample_from_array(action_set, 1, p=p_sample),
                         axis=0
                     )
 
             # Sample for non-matched target
             else:
-                self.a = sample_from_array(action_set, n_actions, p=p_sample)
+                self.a = self.sample_from_array(action_set, n_actions, p=p_sample)
 
             # Sample target if transition training
             if transitions:
@@ -235,7 +266,7 @@ class Env:
             if np.random.rand() < .5: # direct
                 start_item = self.a[0]
             else: # non-direct
-                start_item = sample_row_except(action_set, self.a[0])
+                start_item = self.sample_row_except(action_set, self.a[0])
 
             # Target is successor of sampled item
             self.target = self.get_successor(start_item, most_likely=True)
@@ -244,7 +275,7 @@ class Env:
         elif feature_overlap == -1:
 
             # Target is the most likley direct successor of one action state
-            start_item = sample_from_array(self.a)[0]
+            start_item = self.sample_from_array(self.a)[0]
             self.target = np.array([self.get_successor(start_item, most_likely=True)])
 
             # Check no target features overlap with action state features
@@ -258,7 +289,7 @@ class Env:
             p_target = poss_targets/np.sum(poss_targets)
 
             # Target is a random sample from these successors
-            self.target = sample_from_array(s_set, n=1, p=p_target)
+            self.target = self.sample_from_array(s_set, n=1, p=p_target)
 
         return False
     
@@ -377,6 +408,16 @@ class Env:
         # Most likely rewards
         self.lik_r = self.r[np.argmax(self.pr)]
 
+    def assign_insts_to_cats(self, cat_comb, inst_combs):
+        """
+        Assign feature instances to category combination
+        :param cat_comb: array of feature category combinations
+        :param inst_combs: array of feature instance combinations
+        """
+        states = np.tile(cat_comb, (len(inst_combs), 1))
+        states[states.astype(bool)] = inst_combs.flatten()
+        return states
+
     def gen_start_states(self):
         """
         Generate dictionary of start states indexed by feature
@@ -410,9 +451,9 @@ class Env:
 
             # Create states
             self.states[tuple(comb)] = {
-                'start': assign_insts_to_cats(comb, start_combs),
-                'terminal': assign_insts_to_cats(comb, terminal_combs),
-                'likely_successor': assign_insts_to_cats(comb, successor_combs)
+                'start': self.assign_insts_to_cats(comb, start_combs),
+                'terminal': self.assign_insts_to_cats(comb, terminal_combs),
+                'likely_successor': self.assign_insts_to_cats(comb, successor_combs)
                 }
             
 
