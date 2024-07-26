@@ -1,7 +1,7 @@
 import numpy as np
 
 # Output directory
-OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data'
+OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data_4'
 
 # Random seed for reproducibility
 SEED = 3244343
@@ -10,8 +10,12 @@ SEED = 3244343
 N_TRAINING_TARGET_REPEATS = 6
 
 # Simulate based on existing agent configurations
-LOAD_AGENT_CONFIGS = False
 AGENT_CONFIGS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2/fit_agent_configs'
+
+# Load existing trial information
+TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/training'
+TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/test'
+MATCH_TRIALS_TO_AGENTS = True
 
 # Number of agents per basic agent config
 # Only need to set if LOAD_AGENT_CONFIGS = False

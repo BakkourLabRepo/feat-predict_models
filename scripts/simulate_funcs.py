@@ -192,6 +192,61 @@ def test_agent(agent, env, targets, options):
 
     return test_data
 
+def simulate_agent(
+        agent_config,
+        env_config,
+        training_trial_info,
+        test_trial_info
+    ):
+    """
+    Simulates the agent in the given environment using the provided configurations.
+
+    Arguments
+    ---------
+    agent_config : dict
+        Agent configuration
+    env_config : dict
+        Environment configuration.
+    training_trial_info : dict
+        Training trial targets and options
+    test_trial_info : dict
+        Test trial targets and options
+
+    Returns
+    -------
+    training_data : numpy.ndarray
+        Simulated training data.
+    test_data : numpy.ndarray
+        Simulated test data.
+    """
+
+    # Initialize environment and agent
+    env = Env(**env_config)
+    agent = Successor_Features(env, **agent_config)
+
+    # Generate test target orders
+    test_targets = generate_test_targets(env)
+    
+    # Simulate agent
+    training_data = train_agent(agent, env, **training_trial_info)
+    agent.beta = agent.beta_test
+    test_data = test_agent(agent, env, **test_trial_info)
+
+    # Get agent representations
+    representations = {
+        'agent_info': agent_config,
+        'S': agent.S,
+        'F': agent.F,
+        'F_raw': agent.F_raw,
+        'M': agent.M,
+        'bias': agent.bias,
+        'bias_terminal': agent.bias_terminal,
+        'recency': agent.recency,
+        'frequency': agent.frequency
+    }
+    
+    return training_data, test_data, representations
+
 def generate_training_trial_info(
         training_targets_set,
         n_training_target_repeats
@@ -277,60 +332,124 @@ def generate_test_trial_info(
     }
     return trial_info
 
-def simulate_agent(
-        agent_config,
-        env_config,
-        training_trial_info,
-        test_trial_info
-    ):
+def convert_state_str(state_str):
     """
-    Simulates the agent in the given environment using the provided configurations.
+    Convert a string representation of a state to a numpy array.
 
     Arguments
     ---------
-    agent_config : dict
-        Agent configuration
-    env_config : dict
-        Environment configuration.
-    training_trial_info : dict
-        Training trial targets and options
-    test_trial_info : dict
-        Test trial targets and options
+    state_str : str
+        The string representation of the state.
 
     Returns
     -------
-    training_data : numpy.ndarray
-        Simulated training data.
-    test_data : numpy.ndarray
-        Simulated test data.
+    state_arr : numpy.ndarray
+        The numpy array representation of the state
+    """
+    state_str = state_str[1:-1].split(' ')
+    state_arr = np.array(state_str, dtype=int)
+    return state_arr
+
+def transform_state_array(state_array, feature_reorder=[]):
+    """
+    Applies convert_state_str to a list of state strings.
+
+    Arguments
+    ---------
+    state_array : list
+        A list of state strings.
+    feature_reorder : list
+        A list of indices to reorder the features.
+
+    Returns
+    -------
+    converted_state_arrat : list
+        A list of converted state values.
+    """
+    converted_state_array = []
+    for state_str in state_array:
+        state = convert_state_str(state_str)
+        if len(feature_reorder) > 0:
+            state = state[feature_reorder]
+        converted_state_array.append(state)
+    converted_state_array = np.array(converted_state_array)
+    return converted_state_array
+
+def load_trial_info(trial_info_path):
+    """
+    Load trial information from the specified path.
+
+    Arguments
+    ---------
+    trial_info_path : str
+        The path to the trial information.
+    
+    Returns
+    -------
+    trial_info_set : dict
+        The set of trial information.
     """
 
-    # Initialize environment and agent
-    env = Env(**env_config)
-    agent = Successor_Features(env, **agent_config)
+    # Check if only one set of trial orders is to be loaded
+    if '.csv' in trial_info_path:
+        fnames = [trial_info_path]
+    else:
+        fnames = listdir(trial_info_path)
 
-    # Generate test target orders
-    test_targets = generate_test_targets(env)
-    
-    # Simulate agent
-    training_data = train_agent(agent, env, **training_trial_info)
-    agent.beta = agent.beta_test
-    test_data = test_agent(agent, env, **test_trial_info)
+    # Load trial information
+    trial_info_set = {}
+    for f in fnames:
+        if f.endswith('.csv'):
 
-    # Get agent representations
-    representations = {
-        'agent_info': agent_config,
-        'S': agent.S,
-        'F': agent.F,
-        'F_raw': agent.F_raw,
-        'M': agent.M,
-        'bias': agent.bias,
-        'bias_terminal': agent.bias_terminal,
-        'recency': agent.recency,
-        'frequency': agent.frequency
-    }
+            # Get targets and options
+            trial_info = pd.read_csv(f'{trial_info_path}/{f}')
+            targets = trial_info['target'].values
+            options = trial_info['options_comb'].values  
+
+            # If between-features condition, reorder target features
+            feature_reorder = []  
+            if 'between_cond' in trial_info.columns:
+                between_cond = trial_info['between_cond'].values[0]
+                if between_cond:
+                    feature_reorder = [2,3,0,1]
+            targets = transform_state_array(targets, feature_reorder)
+            options = transform_state_array(options)
+            
+            # Add trial information to set
+            subj = int(f.split('_')[1].split('.')[0])
+            trial_info_set[subj] = {
+                'targets': targets,
+                'options': options
+            }
+    return trial_info_set
+
+def select_trial_info(
+    trial_info_set,
+    match_trials_to_agents = False,
+    key = None
+):
+    """
+    Select trial information from the trial_info_set.
+
+    Arguments
+    ---------
+    trial_info_set : dict or list
+        The set of trial information.
+    match_trials_to_agents : bool
+        If True, will match trials to agent IDs
+    key : str
+        Specify the key to select from the trial_info_set.
     
-    return training_data, test_data, representations
+    Returns
+    -------
+    trial_info : dict
+        The selected trial information.
+    """
+    if not match_trials_to_agents:
+        key = np.random.choice(list(trial_info_set.keys()))
+    trial_info = trial_info_set[key]
+    return trial_info
+
 
 def load_configs(agent_configs_path):
     """
@@ -395,7 +514,7 @@ def generate_agent_configs(n_agents, model_configs):
                     
             agent_configs.append(agent_config)
 
-    return agent_configs
+    return agent_configs    
 
 def run_experiment(
         n_agents,
@@ -403,8 +522,10 @@ def run_experiment(
         training_targets_set,
         n_training_target_repeats,
         test_combs_set,
-        load_agent_configs = False,
-        agent_configs_path = None,
+        agent_configs_path = False,
+        training_trial_info_path = False,
+        test_trial_info_path = False,
+        match_trials_to_agents = False,
         model_configs = None,
         output_path = False,
         seed = None
@@ -422,10 +543,25 @@ def run_experiment(
         The set of target sets to be used in training.
     n_training_target_repeats : int
         The number of times each target set should be repeated.
+    test_combs_set : numpy.ndarray
+        Set of test options.
+    agent_configs_path : str
+        Path to load fit agent configurations. If left as False,
+        will generate new configurations.
+    training_trial_info_path : str
+        Path to load training trial information. If left as False,
+        will generate training trials.
+    test_trial_info_path : str
+        Path to load test trial information. If left as False,
+        will generate test trials.
+    match_trials_to_agents : bool
+        If True, will match loaded trials to fit agent IDs.
     model_configs : list
         A list of basic model configurations.
     output_path : str
         The path to save the data. If left as False, will not save data.
+    seed : int
+        Random seed for reproducibility.
 
     Returns
     -------
@@ -443,7 +579,7 @@ def run_experiment(
             makedirs(f'{output_path}/{model_label}/representations', exist_ok=True)
 
     # Load all agent configurations
-    if load_agent_configs:
+    if agent_configs_path:
         agent_configs = []
         for subj in listdir(agent_configs_path):
             if subj == '.DS_Store': continue
@@ -453,21 +589,47 @@ def run_experiment(
     else:
         agent_configs = generate_agent_configs(n_agents, model_configs)
 
+    # Load all trial information
+    if training_trial_info_path:
+        training_trial_info_set = load_trial_info(training_trial_info_path)
+    if test_trial_info_path:
+        test_trial_info_set = load_trial_info(test_trial_info_path)
+
     # Simulate all agents
     for agent_config in agent_configs:
         subj = agent_config['id']
         model_label = agent_config['model_label']
-        print(f'Simulating - Agent: {subj}/{len(agent_configs)}, Model: {model_label}')
+        print(f'Simulating - Agent: {subj}, Model: {model_label}')
 
-        # Generate training and test trials
-        training_trial_info = generate_training_trial_info(
-            training_targets_set,
-            n_training_target_repeats
-        )
-        test_trial_info = generate_test_trial_info(
-            Env(**env_config),
-            test_combs_set
-        )
+        # Load training trials
+        if training_trial_info_path:
+            training_trial_info = select_trial_info(
+                training_trial_info_set,
+                match_trials_to_agents = match_trials_to_agents,
+                key = subj
+            )
+                
+        # Generate training trials
+        else:
+            training_trial_info = generate_training_trial_info(
+                training_targets_set,
+                n_training_target_repeats
+            )
+
+        # Load test trials
+        if test_trial_info_path:
+            test_trial_info = select_trial_info(
+                test_trial_info_set,
+                match_trials_to_agents = match_trials_to_agents,
+                key = subj
+            )   
+        
+        # Generate test trials
+        else:
+            test_trial_info = generate_test_trial_info(
+                Env(**env_config),
+                test_combs_set
+            )
         
         # Simulate agent
         training_data, test_data, representations = simulate_agent(
