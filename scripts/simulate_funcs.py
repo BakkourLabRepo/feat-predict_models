@@ -603,7 +603,6 @@ def run_experiment(
     for agent_config in agent_configs:
         subj = agent_config['id']
         model_label = agent_config['model_label']
-        print(f'Simulating - Agent: {subj}, Model: {model_label}')
 
         # Load training trials
         if training_trial_info_path:
@@ -640,6 +639,7 @@ def run_experiment(
             )
         
         # Simulate agent
+        print(f'Simulating - Agent: {subj}, Model: {model_label}')
         training_data, test_data, representations = simulate_agent(
             agent_config,
             env_config,

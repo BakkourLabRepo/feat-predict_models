@@ -1,7 +1,7 @@
 import numpy as np
 
 # Output directory
-OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data_validation/ff'
+OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data_validation/ss-sampler'
 
 # Random seed for reproducibility
 SEED = 342332
@@ -16,8 +16,8 @@ AGENT_CONFIGS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_
 # Load existing trial information
 #TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/training'
 #TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/test'
-TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ff/training'
-TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ff/test'
+TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ss-sampler/training'
+TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ss-sampler/test'
 MATCH_TRIALS_TO_AGENTS = True
 
 # Number of agents per basic agent config
