@@ -1,20 +1,23 @@
 import numpy as np
 
 # Output directory
-OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data_4'
+OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data_validation/ff'
 
 # Random seed for reproducibility
-SEED = 3244343
+SEED = 342332
 
 # Number of training trials
 N_TRAINING_TARGET_REPEATS = 6
 
 # Simulate based on existing agent configurations
-AGENT_CONFIGS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2/fit_agent_configs'
+#AGENT_CONFIGS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2/fit_agent_configs'
+AGENT_CONFIGS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/results/fit_agent_configs'
 
 # Load existing trial information
-TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/training'
-TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/test'
+#TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/training'
+#TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/test'
+TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ff/training'
+TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ff/test'
 MATCH_TRIALS_TO_AGENTS = True
 
 # Number of agents per basic agent config

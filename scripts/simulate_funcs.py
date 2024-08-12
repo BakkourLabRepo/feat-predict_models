@@ -442,11 +442,15 @@ def select_trial_info(
     
     Returns
     -------
-    trial_info : dict
-        The selected trial information.
+    trial_info : dict or bool
+        The selected trial information. If match_trials_to_agents = True
+        but there is not trial information for the agent ID, return
+        False. This will skip this simulation.
     """
     if not match_trials_to_agents:
         key = np.random.choice(list(trial_info_set.keys()))
+    elif key not in trial_info_set.keys():
+        return False
     trial_info = trial_info_set[key]
     return trial_info
 
@@ -608,6 +612,8 @@ def run_experiment(
                 match_trials_to_agents = match_trials_to_agents,
                 key = subj
             )
+            if not training_trial_info:
+                continue
                 
         # Generate training trials
         else:
@@ -622,7 +628,9 @@ def run_experiment(
                 test_trial_info_set,
                 match_trials_to_agents = match_trials_to_agents,
                 key = subj
-            )   
+            )
+            if not test_trial_info:
+                continue
         
         # Generate test trials
         else:
