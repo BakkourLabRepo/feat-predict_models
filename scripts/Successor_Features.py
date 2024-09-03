@@ -32,6 +32,9 @@ class Successor_Features:
     segmentation : float
         Controls the degree of bias to learn within-features, bounded 
         [0, 1]
+    initial_bias_weight : float
+        Weight of initial versus dynamic bias in bias matrix, bounded
+        [0, 1]
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
