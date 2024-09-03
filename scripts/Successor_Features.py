@@ -66,6 +66,7 @@ class Successor_Features:
         beta_test = np.inf,
         gamma = 1.,
         segmentation = 0,
+        initial_bias_weight = 0,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -82,9 +83,11 @@ class Successor_Features:
         self.beta_test = beta_test
         self.gamma = gamma
         self.segmentation = segmentation
+        self.initial_bias_weight = initial_bias_weight
         self.conjunctive_starts = conjunctive_starts
         self.conjunctive_successors = conjunctive_successors
         self.conjunctive_composition = conjunctive_composition
+
         self.S = np.array([])
         self.F = np.array([])
         self.F_raw = np.array([])
@@ -166,6 +169,35 @@ class Successor_Features:
         """
         self.M = np.hstack((self.M, np.zeros((len(self.M), 1))))
 
+    def update_dynamic_bias(self):
+        """
+        Update dynamic bias derived from successor matrix M
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        None
+        """
+        
+        # Compute "dynamic" bias from successor matrix M
+        if np.max(self.M) == 0:
+            self.dynamic_bias = np.ones(np.shape(self.semantic_bias))
+        else:
+            self.dynamic_bias = self.M/np.max(self.M)
+        
+        # Weight dynamic bias and static initial bias
+        self.bias = self.initial_bias_weight*self.semantic_bias
+        self.bias += (1 - self.initial_bias_weight)*self.dynamic_bias
+
+        # Re-normalize
+        self.bias = self.bias/np.max(self.bias)
+
+        # Apply degree of bias
+        self.bias = self.bias*self.segmentation + (1 - self.segmentation)
+
     def compute_bias(self, start_categories, successor_categories):
         """
         Compute bias on successor matrix learning based on feature
@@ -186,17 +218,16 @@ class Successor_Features:
         -------
         None
         """
-
-        # Compute bias based on feature overlap
+        
+        # Compute "semantic" bias based on feature overlap
         start_categories = start_categories.astype(bool).astype(float)
         successor_categories = successor_categories.astype(bool).astype(float)
-        self.bias = start_categories@successor_categories.T
+        self.semantic_bias = start_categories@successor_categories.T
         if self.conjunctive_starts and self.conjunctive_successors:
-            self.bias = self.bias/self.n_per
+            self.semantic_bias = self.semantic_bias/self.n_per
 
-        # Segmentation parameter controls the extent of category bias
-        self.bias *= self.segmentation
-        self.bias += (1 - self.segmentation)*np.ones(np.shape(self.bias))
+        # Incoprorate "dynamic" bias derived from successor matrix M
+        self.update_dynamic_bias()
 
         # Set terminal bias (make instances encode for self)        
         if self.conjunctive_starts == self.conjunctive_successors:
@@ -764,3 +795,6 @@ class Successor_Features:
         # Perform update
         delta = features + self.gamma*bias@self.M - self.M
         self.M += alpha*s_weight*delta
+
+        # Update dynamic bias derived from M
+        self.update_dynamic_bias()
