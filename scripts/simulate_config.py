@@ -1,23 +1,26 @@
 import numpy as np
 
 # Output directory
-OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data_validation/ss-sampler'
+OUTPUT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_6/data'
 
 # Random seed for reproducibility
 SEED = 342332
 
 # Number of training trials
-N_TRAINING_TARGET_REPEATS = 6
+N_TRAINING_TARGET_REPEATS = 40
 
 # Simulate based on existing agent configurations
 #AGENT_CONFIGS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2/fit_agent_configs'
-AGENT_CONFIGS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/results/fit_agent_configs'
+AGENT_CONFIGS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_5/results/fit_agent_configs'
+AGENT_CONFIGS_PATH = False
 
 # Load existing trial information
 #TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/training'
 #TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2/test'
-TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ss-sampler/training'
-TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_1/data/ss-sampler/test'
+TRAINING_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_5/data/ff/training'
+TEST_TRIAL_INFO_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp_5/data/ff/test'
+TRAINING_TRIAL_INFO_PATH = False
+TEST_TRIAL_INFO_PATH = False
 MATCH_TRIALS_TO_AGENTS = True
 
 # Number of agents per basic agent config
@@ -38,6 +41,7 @@ MODEL_CONFIGS = [
         'beta_test': 'beta',
         'gamma': 1.,
         'segmentation': None,
+        'initial_bias_weight': None,
         'conjunctive_starts': False,
         'conjunctive_successors': False,
         'conjunctive_composition': False,
@@ -56,7 +60,8 @@ MODEL_CONFIGS = [
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
-        'segmentation': 1,
+        'segmentation': None,
+        'initial_bias_weight': None,
         'conjunctive_starts': True,
         'conjunctive_successors': True,
         'conjunctive_composition': True,
@@ -75,7 +80,8 @@ MODEL_CONFIGS = [
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
-        'segmentation': 1,
+        'segmentation': None,
+        'initial_bias_weight': None,
         'conjunctive_starts': True,
         'conjunctive_successors': True,
         'conjunctive_composition': False,
