@@ -32,7 +32,7 @@ MODEL_CONFIGS = [
         'beta_test': 'beta',
         'gamma': 1.,
         'segmentation': None,
-        'initial_bias_weight': None,
+        'initial_bias_weight': 1,
         'conjunctive_starts': False,
         'conjunctive_successors': False,
         'conjunctive_composition': False,
@@ -51,8 +51,8 @@ MODEL_CONFIGS = [
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
-        'segmentation': None,
-        'initial_bias_weight': None,
+        'segmentation': 0,
+        'initial_bias_weight': 1,
         'conjunctive_starts': True,
         'conjunctive_successors': True,
         'conjunctive_composition': True,
@@ -71,8 +71,8 @@ MODEL_CONFIGS = [
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
-        'segmentation': None,
-        'initial_bias_weight': None,
+        'segmentation': 0,
+        'initial_bias_weight': 1,
         'conjunctive_starts': True,
         'conjunctive_successors': True,
         'conjunctive_composition': False,
@@ -80,6 +80,26 @@ MODEL_CONFIGS = [
         'sampler_feature_weight': None,
         'sampler_recency_weight': 0,
         'sampler_specificity': None
+    },
+
+    # Feature -> Feature model (dynamic bias)
+    {
+        'id': None,
+        'model_label': 'ff_dynamic',
+        'alpha': None, 
+        'alpha_decay': 0, 
+        'beta': None,
+        'beta_test': 'beta',
+        'gamma': 1.,
+        'segmentation': None,
+        'initial_bias_weight': None,
+        'conjunctive_starts': False,
+        'conjunctive_successors': False,
+        'conjunctive_composition': False,
+        'memory_sampler': False,
+        'sampler_feature_weight': 1,
+        'sampler_recency_weight': 0,
+        'sampler_specificity': 1
     }
 
 ]
