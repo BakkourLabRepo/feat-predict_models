@@ -504,9 +504,9 @@ def generate_agent_configs(n_agents, model_configs):
             # Sample parameters if they are not set
             for key in agent_config.keys():
                 if agent_config[key] is None:
-                    if key == 'beta' or key == 'beta_test':
+                    if key in ['beta', 'beta_test']:
                         agent_config[key] = 1/np.random.uniform(0, 1) - 1
-                    elif key == 'sampler_specificity':
+                    elif key in ['sampler_specificity', 'inference_inhibition']:
                         agent_config[key] = 1/np.random.uniform(0, 1)
                     else:
                         agent_config[key] = np.random.uniform(0, 1)

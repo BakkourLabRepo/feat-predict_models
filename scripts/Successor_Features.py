@@ -32,9 +32,12 @@ class Successor_Features:
     segmentation : float
         Controls the degree of bias to learn within-features, bounded 
         [0, 1]
-    initial_bias_weight : float
-        Weight of initial versus dynamic bias in bias matrix, bounded
-        [0, 1]
+    bias_learning_rate : float
+
+    
+
+
+
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
@@ -69,7 +72,7 @@ class Successor_Features:
         beta_test = np.inf,
         gamma = 1.,
         segmentation = 0,
-        initial_bias_weight = 0,
+        inference_inhibition = 0,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -86,7 +89,7 @@ class Successor_Features:
         self.beta_test = beta_test
         self.gamma = gamma
         self.segmentation = segmentation
-        self.initial_bias_weight = initial_bias_weight
+        self.inference_inhibition = inference_inhibition
         self.conjunctive_starts = conjunctive_starts
         self.conjunctive_successors = conjunctive_successors
         self.conjunctive_composition = conjunctive_composition
@@ -94,6 +97,7 @@ class Successor_Features:
         self.S = np.array([])
         self.F = np.array([])
         self.F_raw = np.array([])
+        self.bias = np.array([[]])
         self.continuous_features = env.continuous_features
         self.n_insts = len(env.tmat)
         self.n_feats = env.n_feats
@@ -186,20 +190,23 @@ class Successor_Features:
         """
         
         # Compute "dynamic" bias from successor matrix M
-        if np.max(self.M) == 0:
-            self.dynamic_bias = np.ones(np.shape(self.semantic_bias))
-        else:
-            self.dynamic_bias = self.M/np.max(self.M)
+        #if np.max(self.M) == 0:
+        #    self.dynamic_bias = np.ones(np.shape(self.semantic_bias))
+        #else:
+        #    self.dynamic_bias = self.M/np.max(self.M)
         
         # Weight dynamic bias and static initial bias
-        self.bias = self.initial_bias_weight*self.semantic_bias
-        self.bias += (1 - self.initial_bias_weight)*self.dynamic_bias
+        #self.bias = self.initial_bias_weight*self.semantic_bias
+        #self.bias += (1 - self.initial_bias_weight)*self.dynamic_bias
 
         # Re-normalize
-        self.bias = self.bias/np.max(self.bias)
+        #self.bias = self.bias/np.max(self.bias)
+
+        # Update bias
+        self.bias += self.bias_learning_rate*(self.semantic_bias - self.bias)
 
         # Apply degree of bias
-        self.bias = self.bias*self.segmentation + (1 - self.segmentation)
+        #self.bias = self.bias*self.segmentation + (1 - self.segmentation)
 
     def compute_bias(self, start_categories, successor_categories):
         """
@@ -228,9 +235,22 @@ class Successor_Features:
         self.semantic_bias = start_categories@successor_categories.T
         if self.conjunctive_starts and self.conjunctive_successors:
             self.semantic_bias = self.semantic_bias/self.n_per
+        
+        # Apply bias degree
+        self.semantic_bias *= self.segmentation
+        self.semantic_bias += (1 - self.segmentation)
+        self.bias = self.semantic_bias
+
+        # Add rows to bias
+        #bias_new = np.ones(np.shape(self.semantic_bias))
+        #bias_shape = np.shape(self.bias)
+        #bias_new[:bias_shape[0], :bias_shape[1]] = self.bias
+        #self.bias = bias_new
+
 
         # Incoprorate "dynamic" bias derived from successor matrix M
-        self.update_dynamic_bias()
+        #self.update_dynamic_bias()
+
 
         # Set terminal bias (make instances encode for self)        
         if self.conjunctive_starts == self.conjunctive_successors:
@@ -267,7 +287,10 @@ class Successor_Features:
         if self.continuous_features:
             features = features_raw
         else:
-            features = [self.binarize_state(feature) for feature in features_raw]
+            features = [
+                self.binarize_state(feature)
+                for feature in features_raw
+            ]
 
         # Initialize memory
         if len(self.S) == 0: 
@@ -469,8 +492,16 @@ class Successor_Features:
 
         else:
 
+            
+            weight = np.sum(self.M, axis=1).reshape(-1, 1)
+            norm = self.M/np.max(self.M, axis=1).reshape(-1, 1)
+            norm = norm**self.inference_inhibition
+            norm = norm/np.sum(norm, axis=1).reshape(-1, 1)
+            M_inference = norm*weight
+
             # Evaluate states based on task
-            self.V = self.M@self.w
+            #self.V = self.M@self.w
+            self.V = M_inference@self.w
             
             # Evaluate actions based on state evaluation
             action_values = []
@@ -800,4 +831,4 @@ class Successor_Features:
         self.M += alpha*s_weight*delta
 
         # Update dynamic bias derived from M
-        self.update_dynamic_bias()
+        #self.update_dynamic_bias()

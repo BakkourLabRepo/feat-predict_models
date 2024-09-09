@@ -54,7 +54,7 @@ except:
         'beta',
         'beta_test',
         'segmentation',
-        'initial_bias_weight',
+        'bias_learning_rate',
         'conjunctive_starts',
         'conjunctive_successors',
         'conjunctive_composition',
