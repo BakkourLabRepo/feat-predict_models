@@ -330,23 +330,41 @@ class Env:
             return True
         return False
 
-    def get_successor(self, s, most_likely=False):
+    def get_successor(self, s, most_likely=False, invert=False):
         """
         Get successor to state
         :param s: state to get successor for
         :param most_likely: if True, get the most likely successor. if False,
             get successor based on raw transition matrix
+        :param invert: if True, get the predecessor instead of the successor
         """
         if most_likely:
             tmat = self.lik_tmat
         else:
             tmat = self.tmat
+        if invert:
+            tmat = tmat.T
+            np.fill_diagonal(tmat, 0) # avoid absorbing states
+            terminal_insts = self.start_insts
+        else:
+            terminal_insts = self.terminal_insts
         s_new = np.copy(s)
-        if not np.any(np.isin(s, self.terminal_insts)):
+        if not np.any(np.isin(s, terminal_insts)):
             for feat in range(len(s)):
                 if s[feat] != 0:
                     s_new[feat] = np.random.choice(np.arange(len(tmat)) + 1, p=tmat[s[feat] - 1])
         return s_new
+    
+    def get_start_state(self, s):
+        """
+        Get the start state for a given state
+        :param s: state to get start state for
+        """
+        pred = np.copy(s)
+        while not np.any(np.isin(pred, self.start_insts)):
+            pred = self.get_successor(pred, most_likely=True, invert=True)
+        return pred
+        
 
     def step(self):
         """

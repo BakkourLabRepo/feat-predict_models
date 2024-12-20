@@ -237,9 +237,13 @@ class Successor_Features:
             self.semantic_bias = self.semantic_bias/self.n_per
         
         # Apply bias degree
-        self.semantic_bias *= self.segmentation
-        self.semantic_bias += (1 - self.segmentation)
+        if self.segmentation < 0: # incidental weight
+            self.semantic_bias = 1 - self.semantic_bias
+        abs_segmentation = np.abs(self.segmentation)
+        self.semantic_bias *= abs_segmentation
+        self.semantic_bias += (1 - abs_segmentation)
         self.bias = self.semantic_bias
+        
 
         # Add rows to bias
         #bias_new = np.ones(np.shape(self.semantic_bias))

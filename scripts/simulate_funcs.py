@@ -47,7 +47,7 @@ def get_reward(target, successor):
     )
     return reward
 
-def train_agent(agent, env, targets, options):
+def train_agent(agent, env, targets, options, fixed_training=True):
     """
     Run agent on the training phase.
 
@@ -61,6 +61,9 @@ def train_agent(agent, env, targets, options):
         The list of training targets.
     options : numpy.ndarray
         The list of training options.
+    fixed_training : bool
+        If True, the agent will always compose the target's predecessor.
+
 
     Returns
     -------
@@ -82,8 +85,17 @@ def train_agent(agent, env, targets, options):
             terminal = False
         )
 
+        # Set composition as predecessor of target
+        if fixed_training:
+            set_composition = env.get_start_state(target)
+        else:
+            set_composition = []
+
         # Get composition
-        composition, p = agent.compose_from_set(env.a)
+        composition, p = agent.compose_from_set(
+            env.a, 
+            set_composition = set_composition
+            )
         env.s = composition
         agent.update_memory(env.s)
 
@@ -225,7 +237,7 @@ def simulate_agent(
     agent = Successor_Features(env, **agent_config)
 
     # Generate test target orders
-    test_targets = generate_test_targets(env)
+    #test_targets = generate_test_targets(env)
     
     # Simulate agent
     training_data = train_agent(agent, env, **training_trial_info)
@@ -526,6 +538,7 @@ def run_experiment(
         training_targets_set,
         n_training_target_repeats,
         test_combs_set,
+        fixed_training = False,
         agent_configs_path = False,
         training_trial_info_path = False,
         test_trial_info_path = False,
@@ -549,6 +562,8 @@ def run_experiment(
         The number of times each target set should be repeated.
     test_combs_set : numpy.ndarray
         Set of test options.
+    fixed_training : bool
+        If True, the agent will always compose the target's predecessor.
     agent_configs_path : str
         Path to load fit agent configurations. If left as False,
         will generate new configurations.
@@ -637,6 +652,9 @@ def run_experiment(
                 Env(**env_config),
                 test_combs_set
             )
+
+        # Set whether to fix training choices or not
+        training_trial_info['fixed_training'] = fixed_training
         
         # Simulate agent
         print(f'Simulating - Agent: {subj}, Model: {model_label}')
