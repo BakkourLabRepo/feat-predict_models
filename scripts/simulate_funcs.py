@@ -533,11 +533,11 @@ def generate_agent_configs(n_agents, model_configs):
     return agent_configs    
 
 def run_experiment(
-        n_agents,
-        env_config,
-        training_targets_set,
-        n_training_target_repeats,
-        test_combs_set,
+        n_agents = None,
+        env_config = None,
+        training_targets_set = None,
+        n_training_target_repeats = None,
+        test_combs_set = None,
         fixed_training = False,
         agent_configs_path = False,
         training_trial_info_path = False,
