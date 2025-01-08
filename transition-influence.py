@@ -10,6 +10,7 @@ from os import listdir, makedirs
 
 
 PROJECT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/env-4'
+PROJECT_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2'
 DATA_PATH = f'{PROJECT_PATH}/data'
 RESULTS_PATH = f'{PROJECT_PATH}/results'
 BETWEEN_ORDER = [2,3,0,1]
@@ -19,18 +20,6 @@ SAVE_RESIDUALS = False
 
 # Select specific project subgroups to run
 GROUP_LABELS = [
-    'model-ff_edim-2_sdim-2_depth-1',
-    'model-ff_edim-2_sdim-2_depth-2',
-    'model-ff_edim-2_sdim-2_depth-3',
-    'model-ff_edim-2_sdim-2_depth-4',
-    'model-ff_edim-3_sdim-2_depth-1',
-    'model-ff_edim-3_sdim-2_depth-2',
-    'model-ff_edim-3_sdim-2_depth-3',
-    'model-ff_edim-3_sdim-2_depth-4',
-    'model-ff_edim-4_sdim-2_depth-1',
-    'model-ff_edim-4_sdim-2_depth-2',
-    'model-ff_edim-4_sdim-2_depth-3',
-    'model-ff_edim-4_sdim-2_depth-4',
 ]
 
 # Number of Bambi cores to use
@@ -637,7 +626,7 @@ def get_group_labels(data_path):
     """
     group_labels = [
         group_label
-        for group_label in listdir(DATA_PATH)
+        for group_label in listdir(data_path)
         if group_label[0] != '.'
     ]
     if 'training' in group_labels:

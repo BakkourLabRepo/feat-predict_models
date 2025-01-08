@@ -42,7 +42,8 @@ def main():
     experiment_config = import_config(config_fname)
 
     # Run the experiment
-    run_experiment(**experiment_config)
+    for key in experiment_config:
+        run_experiment(**experiment_config[key])
 
 if __name__ == "__main__":
     main()

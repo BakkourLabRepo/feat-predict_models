@@ -488,6 +488,8 @@ class Successor_Features:
             Index in actions for the action executed
         p : numpy.Array
             Probabilities of each action in actions
+        action_values : numpy.Array
+            Estimated value of candidate compositions
         """
 
         # If memory is empty, choose randomly
@@ -525,7 +527,7 @@ class Successor_Features:
         # Sample action
         action = np.random.choice(len(p), p=p)
 
-        return action, p
+        return action, p, action_values
 
     def compose_from_set(self, feature_set, set_composition=[]):
         """
@@ -547,11 +549,14 @@ class Successor_Features:
             A 1-d array for the composed state
         p : float
             Probability of this composition
+        ev : float
+            Estimated cmposition value
         """
         
         # Initialize empty composition and choice probabilities
         composition = np.zeros(self.n_feats, dtype=int)
         probs = []
+        comp_value = []
 
         # Conjunctive composition constructs the set of all possible
         # compositions, and chooses within this set of conjunctions
@@ -580,9 +585,10 @@ class Successor_Features:
         # Make composition
         if len(set_composition) == 0:
             for options in actions:
-                action, p = self.make_action(options)
+                action, p, av = self.make_action(options)
                 composition += options[action]
                 probs.append(p[action])
+                comp_value.append(av[action])
 
         # Set composition
         else:
@@ -600,13 +606,17 @@ class Successor_Features:
             # Get action probabilities
             for i, options in enumerate(actions):
                 action = np.all(comp_feats[i] == options, axis=1)
-                p = self.make_action(options)[1]
+                p, av = self.make_action(options)[1:]
                 probs.append(p[action][0])
+                comp_value.append(av[action][0])
 
         # Composition probability as product of action probabilities
         p = np.prod(probs)
 
-        return composition, p
+        # Composition value as sum of action values
+        ev = np.sum(comp_value)
+
+        return composition, p, ev
 
     def p_argmax(self, values):
         """
