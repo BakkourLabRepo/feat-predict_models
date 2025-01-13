@@ -13,7 +13,10 @@ PROJECT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/env-4'
 PROJECT_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2'
 DATA_PATH = f'{PROJECT_PATH}/data'
 RESULTS_PATH = f'{PROJECT_PATH}/results'
-BETWEEN_ORDER = [2,3,0,1]
+SUCCESSOR_FEATURE_RECODING = [
+    [0,1,2,3],
+    [2,3,0,1]
+]
 OVERWRITE = False
 RUN_TEST_ANALYSIS = False
 SAVE_RESIDUALS = False
@@ -75,7 +78,7 @@ def convert_str_to_array(array_string):
     return arr
 
 
-def unpack_feature_arrays(state_str):
+def unpack_feature_arrays(state_str, feature_recoding_index=False):
     """
     Upack a 1d state string into a 2d array of features (one feature
     per row)
@@ -84,6 +87,8 @@ def unpack_feature_arrays(state_str):
     ---------
     state_str : str
         State string
+    feature_recoding_index : list
+        List of indices to recode features
         
     Returns
     -------
@@ -91,6 +96,8 @@ def unpack_feature_arrays(state_str):
         Array of integers
     """
     f_arr = convert_str_to_array(state_str)
+    if feature_recoding_index:
+        f_arr = f_arr[feature_recoding_index]
     f_arr = f_arr*np.eye(len(f_arr), dtype=int)
     f_arr = f_arr[np.any(f_arr, axis=1)]
     return f_arr
@@ -195,7 +202,7 @@ def recode_for_task_based_features(conj, feature_tmat):
     return conj
 
 
-def get_trial_wise_target_predictions(df, feature_tmat):
+def get_trial_wise_target_predictions(df, successor_feature_recoding):
     """
     Get trial-wise target predictions for each possible composition
 
@@ -203,8 +210,9 @@ def get_trial_wise_target_predictions(df, feature_tmat):
     ---------
     df : pandas.DataFrame
         Data frame of training data
-    feature_tmat : numpy.Array
-        Feature-category transition matrix
+    successor_feature_recoding : list
+        List of indices to recode successor features (based on
+        between-feature transition structure by condition)
     
     Returns
     -------
@@ -223,15 +231,32 @@ def get_trial_wise_target_predictions(df, feature_tmat):
     last_edges = {}
     for t in range(len(df)):
 
-        # Unpack composition, successor, and target features
-        comp_features = unpack_feature_arrays(df.iloc[t]['composition'])
-        succ_features = unpack_feature_arrays(df.iloc[t]['successor'])
-        target_features = unpack_feature_arrays(df.iloc[t]['target'])
+        try:
+            missed_trial = False
+
+            # Unpack composition, successor, and target features
+            comp_features = unpack_feature_arrays(df.iloc[t]['composition'])
+            succ_features = unpack_feature_arrays(
+                df.iloc[t]['successor'],
+                feature_recoding_index = successor_feature_recoding
+            )
+            target_features = unpack_feature_arrays(
+                df.iloc[t]['target'],
+                feature_recoding_index = successor_feature_recoding
+            )
+
+        except:
+            missed_trial = True
         
         # Get set of possible pairs of features for the composition
         options = df.iloc[t]['options']
         options = convert_str_to_array(options)
         actions = get_possible_compositions(options, unpack_features=True)
+
+        # Mark missed trials with NaNs
+        if missed_trial:
+            comp_action_evidence_true.append([np.nan]*(len(actions) - 1))
+            comp_action_evidence_incidental.append([np.nan]*(len(actions) - 1))
         
         # Get composition index in possible compositions set
         action = np.all(np.all(comp_features == actions, axis=2), axis=1)
@@ -254,10 +279,10 @@ def get_trial_wise_target_predictions(df, feature_tmat):
                     ######### DO OUTSIDE OF THIS FUNCTION (ASSUME TRUE TRANSITIONS ARE WITHIN FEATURE)
                     # Re-code features so that true transitions are
                     # within column
-                    target_f = recode_for_task_based_features(
-                        target_f,
-                        feature_tmat
-                    )
+                    #target_f = recode_for_task_based_features(
+                    #    target_f,
+                    #    feature_tmat
+                    #)
                     target_f_key = tuple(target_f)
 
                     #true_found = False
@@ -312,10 +337,10 @@ def get_trial_wise_target_predictions(df, feature_tmat):
             ######### DO OUTSIDE OF THIS FUNCTION (ASSUME TRUE TRANSITIONS ARE WITHIN FEATURE)
             # Re-code features so that true transitions are
             # within column
-            f_succ = recode_for_task_based_features(
-                f_succ,
-                feature_tmat
-            )
+            #f_succ = recode_for_task_based_features(
+            #    f_succ,
+            #    feature_tmat
+            #)
             succ_keys.append(tuple(f_succ))
         for act_f in comp_features:
 
@@ -365,7 +390,7 @@ def get_trial_wise_target_predictions(df, feature_tmat):
 def get_trial_wise_target_predictions_test(
         test_df,
         transition_props,
-        feature_tmat
+        successor_feature_recoding
     ):
     """
     Get trial-wise target predictions for each possible composition
@@ -377,8 +402,9 @@ def get_trial_wise_target_predictions_test(
         Data frame of test data
     transition_props : dict
         Dictionary of composition-successor training transition rates
-    feature_tmat : numpy.Array
-        Feature-category transition matrix
+    successor_feature_recoding : list
+        List of indices to recode successor features (based on
+        between-feature transition structure by condition)
     
     Returns
     -------
@@ -395,13 +421,26 @@ def get_trial_wise_target_predictions_test(
         
         ######## UPDATE TO CONTROL FOR N FEATURES SELECTEV < n_feats 
         # Unpack composition and target features
-        comp_features = unpack_feature_arrays(test_df.iloc[t]['composition'])
-        target_features = unpack_feature_arrays(test_df.iloc[t]['target'])
+        try:
+            missed_trial = False
+            comp_features = unpack_feature_arrays(test_df.iloc[t]['composition'])
+            target_features = unpack_feature_arrays(
+                test_df.iloc[t]['target'],
+                feature_recoding_index = successor_feature_recoding
+            )
+
+        except:
+            missed_trial = True
 
         # Get set of possible compositions
         options = test_df.iloc[t]['options']
         options = convert_str_to_array(options)
         actions = get_possible_compositions(options, unpack_features=True)
+
+        # Mark missed trials with NaNs
+        if missed_trial:
+            comp_action_evidence_true.append([np.nan]*(len(actions) - 1))
+            comp_action_evidence_incidental.append([np.nan]*(len(actions) - 1))
         
         # Get composition index in possible compositions set
         action = np.all(np.all(comp_features == actions, axis=2), axis=1)
@@ -421,10 +460,10 @@ def get_trial_wise_target_predictions_test(
                 ######### DO OUTSIDE OF THIS FUNCTION (ASSUME TRUE TRANSITIONS ARE WITHIN FEATURE)
                 # Re-code features so that "true" transitions are
                 # within column
-                target_f = recode_for_task_based_features(
-                    target_f,
-                    feature_tmat
-                )
+                #target_f = recode_for_task_based_features(
+                #    target_f,
+                #    feature_tmat
+                #)
                 target_f_key = tuple(target_f)
 
                 for act_f in act_features:
@@ -654,12 +693,12 @@ def update_paths(data_path, results_path, group_label):
     results_path : str
         Updated results path with group label
     """
-    if len(group_label) == 0:
-        data_path = DATA_PATH
-        results_path = RESULTS_PATH
-    else:
+    if group_label:
         data_path = f'{DATA_PATH}/{group_label}'
         results_path = f'{RESULTS_PATH}/{group_label}'
+    else:
+        data_path = DATA_PATH
+        results_path = RESULTS_PATH
     return data_path, results_path
 
 def create_results_directories(
@@ -825,20 +864,21 @@ def compute_transition_predictions(
     # Get number of environment features
     target_comb = training_df['target_comb'].values[0]
     target_comb = convert_str_to_array(target_comb)
-    n_feats = len(target_comb)
 
     # Get between-feature transition matrix
     ###### UPDATE THIS TO BE FLEXIBLE WITH MRI CONDITIONS
-    feature_tmat = np.eye(n_feats, dtype=int)
+    #feature_tmat = np.eye(n_feats, dtype=int)
     if 'between_cond' in training_df.columns:
-        if training_df['between_cond'].values[0]:
-            feature_tmat = feature_tmat[BETWEEN_ORDER]
+        condition = training_df['between_cond'].values[0]
+        successor_feature_recoding = SUCCESSOR_FEATURE_RECODING[condition]
+    #    if training_df['between_cond'].values[0]:
+    #        feature_tmat = feature_tmat[FEATURE_RECODING_INDEX]
             
     # Get training trial-wise target predictions and phase-wise
     # transition proportions
     transitions_df, transition_props = get_trial_wise_target_predictions(
         training_df,
-        feature_tmat
+        successor_feature_recoding
     )
 
     # Save the training transition predictions
@@ -859,7 +899,7 @@ def compute_transition_predictions(
         test_transitions_df = get_trial_wise_target_predictions_test(
             test_df,
             transition_props,
-            feature_tmat
+            successor_feature_recoding
         )
 
         # Save the test transition predictions
@@ -980,6 +1020,10 @@ def main():
         group_labels = get_group_labels(DATA_PATH)
     else:
         group_labels = GROUP_LABELS
+
+    # Account for projects with no group labels
+    if not group_labels:
+        group_labels = [False]
     
     # Init lists to store transition prediction configurations
     trans_pred_configs = []
