@@ -255,8 +255,11 @@ def get_trial_wise_target_predictions(df, successor_feature_recoding):
 
         # Mark missed trials with NaNs
         if missed_trial:
-            comp_action_evidence_true.append([np.nan]*(len(actions) - 1))
-            comp_action_evidence_incidental.append([np.nan]*(len(actions) - 1))
+            if t > 0:
+                comp_action_evidence_true.append([np.nan]*(len(actions) - 1))
+                comp_action_evidence_incidental.append([np.nan]*(len(actions) - 1))
+                all_actions.append(np.nan)
+            continue
         
         # Get composition index in possible compositions set
         action = np.all(np.all(comp_features == actions, axis=2), axis=1)
@@ -332,31 +335,32 @@ def get_trial_wise_target_predictions(df, successor_feature_recoding):
     
         # For each feature of the executed action, count
         # transitions to the successors' features
-        succ_keys = []
-        for f_succ in succ_features:
-            ######### DO OUTSIDE OF THIS FUNCTION (ASSUME TRUE TRANSITIONS ARE WITHIN FEATURE)
-            # Re-code features so that true transitions are
-            # within column
-            #f_succ = recode_for_task_based_features(
-            #    f_succ,
-            #    feature_tmat
-            #)
-            succ_keys.append(tuple(f_succ))
-        for act_f in comp_features:
+        if not missed_trial:
+            succ_keys = []
+            for f_succ in succ_features:
+                ######### DO OUTSIDE OF THIS FUNCTION (ASSUME TRUE TRANSITIONS ARE WITHIN FEATURE)
+                # Re-code features so that true transitions are
+                # within column
+                #f_succ = recode_for_task_based_features(
+                #    f_succ,
+                #    feature_tmat
+                #)
+                succ_keys.append(tuple(f_succ))
+            for act_f in comp_features:
 
-            # Update last edges observed
-            act_f_key = tuple(act_f)
-            last_edges[act_f_key] = succ_keys
+                # Update last edges observed
+                act_f_key = tuple(act_f)
+                last_edges[act_f_key] = succ_keys
 
-            # Add to total edge counts
-            if not act_f_key in composition_counts.keys():
-                composition_counts[act_f_key] = 0
-                composition_successor_counts[act_f_key] = {}
-            composition_counts[act_f_key] += 1
-            for f_succ in succ_keys:
-                if not f_succ in composition_successor_counts[act_f_key].keys():
-                    composition_successor_counts[act_f_key][f_succ] = 0
-                composition_successor_counts[act_f_key][f_succ] += 1
+                # Add to total edge counts
+                if not act_f_key in composition_counts.keys():
+                    composition_counts[act_f_key] = 0
+                    composition_successor_counts[act_f_key] = {}
+                composition_counts[act_f_key] += 1
+                for f_succ in succ_keys:
+                    if not f_succ in composition_successor_counts[act_f_key].keys():
+                        composition_successor_counts[act_f_key][f_succ] = 0
+                    composition_successor_counts[act_f_key][f_succ] += 1
 
     # Add trial-wise target predictions
     comp_action_evidence_incidental = np.array(comp_action_evidence_incidental)
@@ -365,11 +369,14 @@ def get_trial_wise_target_predictions(df, successor_feature_recoding):
     # Format into data frame for saving
     if 'trial' in df.columns:
         df['t'] = df['trial']
-    predictions_df = pd.DataFrame({
-        'id': df['id'].iloc[0],
-        'trial': df['t'].values[1:],
-        'action': all_actions,
-    })
+    try:
+        predictions_df = pd.DataFrame({
+            'id': df['id'].iloc[0],
+            'trial': df['t'].values[1:],
+            'action': all_actions,
+        })
+    except:
+        print(len(all_actions), len(df['t'].values[1:]), df['t'].values[0])
     for i in range(np.shape(comp_action_evidence_true)[1]):
         predictions_df[
             f'comp_action_evidence_{i + 1}_incidental'
@@ -377,7 +384,9 @@ def get_trial_wise_target_predictions(df, successor_feature_recoding):
         predictions_df[
             f'comp_action_evidence_{i + 1}_true'
             ] = comp_action_evidence_true[:, i]
-        
+    
+    # Drop trials with missing data
+    predictions_df = predictions_df.dropna()
 
     # Compute transition proportions
     for comp_key in composition_counts.keys():
@@ -419,6 +428,7 @@ def get_trial_wise_target_predictions_test(
     all_actions = []
     for t in range(len(test_df)):
         
+        
         ######## UPDATE TO CONTROL FOR N FEATURES SELECTEV < n_feats 
         # Unpack composition and target features
         try:
@@ -441,6 +451,8 @@ def get_trial_wise_target_predictions_test(
         if missed_trial:
             comp_action_evidence_true.append([np.nan]*(len(actions) - 1))
             comp_action_evidence_incidental.append([np.nan]*(len(actions) - 1))
+            all_actions.append(np.nan)
+            continue
         
         # Get composition index in possible compositions set
         action = np.all(np.all(comp_features == actions, axis=2), axis=1)
@@ -514,6 +526,9 @@ def get_trial_wise_target_predictions_test(
     predictions_df = predictions_df.dropna()
     predictions_df = predictions_df.reset_index(drop=True)
     predictions_df['action'] = predictions_df['action'].astype(int)
+
+    # Drop trials with missing data
+    predictions_df = predictions_df.dropna()
 
     
     return predictions_df
