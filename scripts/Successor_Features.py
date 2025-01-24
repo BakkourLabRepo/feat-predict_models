@@ -30,14 +30,14 @@ class Successor_Features:
         Discount parameter. A higher is less future discounting ("looks"
         further into the future)
     segmentation : float
-        Controls the degree of bias to learn within-features, bounded 
+        Controls the degree of bias bounded 
         [0, 1]
+    variance_threshold : float
+        Threshold for the proportion of variance explained by singular
+        vectors in the dynamic bias computation, bounded [0, 1]
     bias_learning_rate : float
-
-    
-
-
-
+        Learning rate for dynamic bias, bounded [0, 1]. Set to 0 to
+        disable dynamic bias.
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
@@ -71,7 +71,9 @@ class Successor_Features:
         beta = np.inf,
         beta_test = np.inf,
         gamma = 1.,
-        segmentation = 0,
+        segmentation = 0.,
+        variance_threshold = .9,
+        bias_learning_rate = 0.,
         inference_inhibition = 0,
         conjunctive_starts = False,
         conjunctive_successors = False,
@@ -89,6 +91,8 @@ class Successor_Features:
         self.beta_test = beta_test
         self.gamma = gamma
         self.segmentation = segmentation
+        self.variance_threshold = variance_threshold
+        self.bias_learning_rate = bias_learning_rate
         self.inference_inhibition = inference_inhibition
         self.conjunctive_starts = conjunctive_starts
         self.conjunctive_successors = conjunctive_successors
@@ -178,35 +182,41 @@ class Successor_Features:
 
     def update_dynamic_bias(self):
         """
-        Update dynamic bias derived from successor matrix M
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        None
+        Update dynamic bias based on SVD of M
         """
-        
-        # Compute "dynamic" bias from successor matrix M
-        #if np.max(self.M) == 0:
-        #    self.dynamic_bias = np.ones(np.shape(self.semantic_bias))
-        #else:
-        #    self.dynamic_bias = self.M/np.max(self.M)
-        
-        # Weight dynamic bias and static initial bias
-        #self.bias = self.initial_bias_weight*self.semantic_bias
-        #self.bias += (1 - self.initial_bias_weight)*self.dynamic_bias
 
-        # Re-normalize
-        #self.bias = self.bias/np.max(self.bias)
+        if self.bias_learning_rate == 0:
+            return
+
+        # Compute SVD
+        U, Sigma, _ = np.linalg.svd(self.M)
+
+        # Find k singular vectors that explain >threshold% of variance
+        cumulative_variance = np.cumsum(Sigma**2)/np.sum(Sigma**2)
+        k = np.argmax(cumulative_variance >= self.variance_threshold) + 1
+        top_vectors = U[:, :k] 
+
+        # Compute dot product similarity of singular vectors
+        denom = np.linalg.norm(top_vectors, axis=1, keepdims=True)
+        denom[denom == 0] = 1e-8
+        top_vectors = top_vectors/denom
+        dot_sim_matrix = top_vectors@top_vectors.T
+
+        # Compute absolute value of similarities to treat opposite
+        # vectors as similar
+        dot_sim_matrix = np.abs(dot_sim_matrix)
+
+        # If k is low, can produce all-zero rows. Make these rows
+        # all ones instead (no bias to learning)
+        dot_sim_matrix[np.all(dot_sim_matrix == 0, axis=1)] = 1
+
+        # Adjust degree of bias (higher segmentation is more bias)
+        dynamic_bias = dot_sim_matrix*(1 - self.segmentation)
+        dynamic_bias += self.segmentation
 
         # Update bias
-        self.bias += self.bias_learning_rate*(self.semantic_bias - self.bias)
+        self.bias += self.bias_learning_rate*(dynamic_bias - self.bias)
 
-        # Apply degree of bias
-        #self.bias = self.bias*self.segmentation + (1 - self.segmentation)
 
     def compute_bias(self, start_categories, successor_categories):
         """
@@ -236,25 +246,23 @@ class Successor_Features:
         if self.conjunctive_starts and self.conjunctive_successors:
             self.semantic_bias = self.semantic_bias/self.n_per
         
-        # Apply bias degree
+        # If segmentation is negative, the bias is counter to the 
+        # semantic structure
         if self.segmentation < 0: # incidental weight
             self.semantic_bias = 1 - self.semantic_bias
         abs_segmentation = np.abs(self.segmentation)
+
+        # Apply bias degree
         self.semantic_bias *= abs_segmentation
         self.semantic_bias += (1 - abs_segmentation)
-        self.bias = self.semantic_bias
         
-
-        # Add rows to bias
+        # Add new semantic bias rows to main bias matrix 
         #bias_new = np.ones(np.shape(self.semantic_bias))
         #bias_shape = np.shape(self.bias)
         #bias_new[:bias_shape[0], :bias_shape[1]] = self.bias
         #self.bias = bias_new
 
-
-        # Incoprorate "dynamic" bias derived from successor matrix M
-        #self.update_dynamic_bias()
-
+        self.bias = self.semantic_bias
 
         # Set terminal bias (make instances encode for self)        
         if self.conjunctive_starts == self.conjunctive_successors:
@@ -504,6 +512,7 @@ class Successor_Features:
             norm = norm**self.inference_inhibition
             norm = norm/np.sum(norm, axis=1).reshape(-1, 1)
             M_inference = norm*weight
+            print('M_INF', np.round(self.M, 3))
 
             # Evaluate states based on task
             #self.V = self.M@self.w
