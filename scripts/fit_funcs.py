@@ -157,7 +157,7 @@ def train_agent(agent, env, data):
             if env.check_absorbing():
                 break
             env.update_current_state() 
-
+            
     probs = np.array(probs)
     return probs
 
@@ -255,7 +255,7 @@ def likfun(
 
     if np.any(probs == 0):
         probs[probs == 0] = 1e-10
-
+    
     # Calculate negative log likelihood
     nLL = probs_to_nll(probs)
 

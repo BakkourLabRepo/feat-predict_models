@@ -6,7 +6,7 @@ DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/e
 
 # Results path and file name
 RESULTS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/results'
-RESULTS_FNAME = 'model_fits'
+RESULTS_FNAME = 'model_fits_new'
 RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
 
 # Optimizer settings
@@ -17,7 +17,7 @@ MAX_UNCHANGED = 5 # Max number of random starts without improvement
 OVERWRITE = False
 
 # Number of cores to use
-NUM_CORES = 4
+NUM_CORES = 1
 
 # Configurations for models to fit
 MODEL_CONFIGS = [
@@ -26,13 +26,13 @@ MODEL_CONFIGS = [
     {
         'id': None,
         'model_label': 'ff',
-        'alpha': None, 
+        'alpha': .2, 
         'alpha_decay': 0, 
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
-        'segmentation': None,
-        'bias_learning_rate': 1,
+        'segmentation': 1,
+        'bias_learning_rate': 0,
         'conjunctive_starts': False,
         'conjunctive_successors': False,
         'conjunctive_composition': False,
@@ -41,66 +41,7 @@ MODEL_CONFIGS = [
         'sampler_recency_weight': 0,
         'sampler_specificity': 1
     },
-
-    # State -> State model
-    {
-        'id': None,
-        'model_label': 'ss',
-        'alpha': None, 
-        'alpha_decay': 0, 
-        'beta': None,
-        'beta_test': 'beta',
-        'gamma': 1.,
-        'segmentation': 0,
-        'bias_learning_rate': 1,
-        'conjunctive_starts': True,
-        'conjunctive_successors': True,
-        'conjunctive_composition': True,
-        'memory_sampler': False,
-        'sampler_feature_weight': 1,
-        'sampler_recency_weight': 0,
-        'sampler_specificity': 1
-    },
-
-    # State -> State Sampler model
-    {
-        'id': None,
-        'model_label': 'ss-sampler',
-        'alpha': None, 
-        'alpha_decay': 0, 
-        'beta': None,
-        'beta_test': 'beta',
-        'gamma': 1.,
-        'segmentation': 0,
-        'bias_learning_rate': 1,
-        'conjunctive_starts': True,
-        'conjunctive_successors': True,
-        'conjunctive_composition': False,
-        'memory_sampler': True,
-        'sampler_feature_weight': None,
-        'sampler_recency_weight': 0,
-        'sampler_specificity': None
-    },
-
-    # Feature -> Feature model (dynamic bias)
-    {
-        'id': None,
-        'model_label': 'ff_dynamic',
-        'alpha': None, 
-        'alpha_decay': 0, 
-        'beta': None,
-        'beta_test': 'beta',
-        'gamma': 1.,
-        'segmentation': None,
-        'bias_learning_rate': None,
-        'conjunctive_starts': False,
-        'conjunctive_successors': False,
-        'conjunctive_composition': False,
-        'memory_sampler': False,
-        'sampler_feature_weight': 1,
-        'sampler_recency_weight': 0,
-        'sampler_specificity': 1
-    }
+    
 
 ]
 
@@ -111,6 +52,7 @@ PARAMETER_BOUNDS = {
     'beta': (.0001, np.inf),
     'beta_test': (.0001, np.inf),
     'segmentation': (0, .9999),
+    #'segmentation': (-.9999, .9999),
     'bias_learning_rate': (0, 1),
     'sampler_feature_weight': (0, 1),
     'sampler_recency_weight': (0, 1),
