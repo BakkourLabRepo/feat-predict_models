@@ -92,7 +92,7 @@ def train_agent(agent, env, targets, options, fixed_training=True):
             set_composition = []
 
         # Get composition
-        composition, p, ev = agent.compose_from_set(
+        composition, p = agent.compose_from_set(
             env.a, 
             set_composition = set_composition
             )
@@ -128,7 +128,6 @@ def train_agent(agent, env, targets, options, fixed_training=True):
             env.a,
             composition,
             env.s_new,
-            ev,
             p,
             reward,
             correct
@@ -174,7 +173,7 @@ def test_agent(agent, env, targets, options):
         )
 
         # Get composition
-        composition, p, ev = agent.compose_from_set(env.a)
+        composition, p = agent.compose_from_set(env.a)
 
         # Step environment to get absorbing state, do not update agent
         env.s = composition
@@ -197,7 +196,6 @@ def test_agent(agent, env, targets, options):
             env.a,
             composition,
             env.s_new,
-            ev,
             p,
             reward,
             correct
@@ -676,7 +674,6 @@ def run_experiment(
             'options',
             'composition',
             'successor',
-            'ev',
             'p',
             'reward',
             'correct'

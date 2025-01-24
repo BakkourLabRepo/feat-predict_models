@@ -157,7 +157,7 @@ def train_agent(agent, env, data):
             if env.check_absorbing():
                 break
             env.update_current_state() 
-            
+
     probs = np.array(probs)
     return probs
 
@@ -255,7 +255,7 @@ def likfun(
 
     if np.any(probs == 0):
         probs[probs == 0] = 1e-10
-    
+
     # Calculate negative log likelihood
     nLL = probs_to_nll(probs)
 
@@ -297,6 +297,8 @@ def fit_model(
         The best result from fitting the model.
     fit_agent_config : dict
         The agent configuration with the fit parameters.
+    null_result : dict
+        The null model results.
     """
 
     if seed:
@@ -366,7 +368,11 @@ def fit_model(
 
     # Get null nLL and AIC
     null_probs = [.25]*len(data['training']) + [.25]*len(data['test'])
-    best_result.null_nll = probs_to_nll(null_probs)
+    null_nll = probs_to_nll(null_probs)
+    null_result = {
+        'nll': null_nll,
+        'aic': nll_to_aic(null_nll, 0)
+    }
     best_result.aic = nll_to_aic(best_result.fun, len(params_to_fit))
 
     # Construct agent config with fit parameters
@@ -377,7 +383,7 @@ def fit_model(
         if agent_config[key] in agent_config.keys():
             fit_agent_config[key] = fit_agent_config[fit_agent_config[key]]
 
-    return best_result, fit_agent_config
+    return best_result, fit_agent_config, null_result
 
 def fit_model_parallel(args):
     """
@@ -436,7 +442,7 @@ def fit_model_parallel(args):
             )
 
     # Fit this model
-    result, fit_agent_config = fit_model(
+    result, fit_agent_config, null_result = fit_model(
         agent_data,
         args['model_config'],
         args['env_config'],
@@ -446,4 +452,4 @@ def fit_model_parallel(args):
         max_unchanged = args['max_unchanged']
     )
 
-    return result, fit_agent_config
+    return result, fit_agent_config, null_result

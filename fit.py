@@ -49,7 +49,6 @@ except:
         'n_starts',
         'nll',
         'aic',
-        'null_nll',
         'alpha',
         'beta',
         'beta_test',
@@ -67,24 +66,27 @@ except:
 
 # Generate fitting arguments
 fitting_args = []
+ids_for_null = subj_ids.copy()
 for subj in subj_ids:
     for model_config in MODEL_CONFIGS:
 
         # Skip if already fit
         model_label = model_config['model_label']
         if str(subj) + model_label in completed_fits:
+            if model_label == 'null':
+                ids_for_null.remove(subj)
             continue
-
-        fitting_args.append({
-            'subj': subj,
-            'model_config': model_config,
-            'data_path': DATA_PATH,
-            'env_config': ENV_CONFIG,
-            'parameter_bounds': PARAMETER_BOUNDS,
-            'n_starts': N_STARTS,
-            'max_unchanged': MAX_UNCHANGED,
-            'feature_reorder': FEATURE_REORDER.copy()
-        })
+        else:
+            fitting_args.append({
+                'subj': subj,
+                'model_config': model_config,
+                'data_path': DATA_PATH,
+                'env_config': ENV_CONFIG,
+                'parameter_bounds': PARAMETER_BOUNDS,
+                'n_starts': N_STARTS,
+                'max_unchanged': MAX_UNCHANGED,
+                'feature_reorder': FEATURE_REORDER.copy()
+            })
 
 # Run paralellized fitting prcedure
 if __name__ == '__main__':
@@ -100,19 +102,38 @@ if __name__ == '__main__':
         
         # Save results as they are produced
         for future in concurrent.futures.as_completed(futures):
-            this_result, this_agent_config = future.result()
+            this_result, this_agent_config, null_result = future.result()
             
-            # Export results to .csv
+            # Save results
             subj = this_agent_config['id']
+
+            # Fotmat model fits
             results = pd.concat([results, pd.DataFrame([{
                 'id': subj,
                 'success': this_result.success,
                 'n_starts': this_result.n_starts,
                 'nll': this_result.fun,
                 'aic': this_result.aic,
-                'null_nll': this_result.null_nll,
                 **this_agent_config
             }])], ignore_index=True)
+
+            # Save null result if it does not exist yet
+            if subj in ids_for_null:
+                null_result = pd.DataFrame([{
+                    'id': subj,
+                    'model_label': 'null',
+                    'success': True,
+                    'n_starts': 0,
+                    'nll': null_result['nll'],
+                    'aic': null_result['aic'],
+                }])
+                for k in this_agent_config.keys():
+                    if k not in null_result.keys():
+                        null_result[k] = -1
+                results = pd.concat([results, null_result], ignore_index=True)
+                ids_for_null.remove(subj)
+
+            # Expert fits to csv
             results = results.sort_values(by=['id', 'model_label'])
             results.to_csv(f'{RESULTS_PATH}/{RESULTS_FNAME}.csv', index=False)
 

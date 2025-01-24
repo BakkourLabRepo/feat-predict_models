@@ -3,11 +3,13 @@ import numpy as np
 # Choice data path
 DATA_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/data/ff'
 DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/data/human/exp_2'
+DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/data'
 
 # Results path and file name
 RESULTS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/results'
-RESULTS_FNAME = 'model_fits_new'
+RESULTS_FNAME = 'model_fits_new_check'
 RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
+RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results'
 
 # Optimizer settings
 N_STARTS = 100 # Max number of random starts
@@ -17,7 +19,7 @@ MAX_UNCHANGED = 5 # Max number of random starts without improvement
 OVERWRITE = False
 
 # Number of cores to use
-NUM_CORES = 1
+NUM_CORES = 4
 
 # Configurations for models to fit
 MODEL_CONFIGS = [
@@ -26,13 +28,13 @@ MODEL_CONFIGS = [
     {
         'id': None,
         'model_label': 'ff',
-        'alpha': .2, 
+        'alpha': None, 
         'alpha_decay': 0, 
         'beta': None,
         'beta_test': 'beta',
         'gamma': 1.,
-        'segmentation': 1,
-        'bias_learning_rate': 0,
+        'segmentation': None,
+        #'bias_learning_rate': 1,
         'conjunctive_starts': False,
         'conjunctive_successors': False,
         'conjunctive_composition': False,
@@ -41,7 +43,46 @@ MODEL_CONFIGS = [
         'sampler_recency_weight': 0,
         'sampler_specificity': 1
     },
-    
+
+    # State -> State model
+    {
+        'id': None,
+        'model_label': 'ss',
+        'alpha': None, 
+        'alpha_decay': 0, 
+        'beta': None,
+        'beta_test': 'beta',
+        'gamma': 1.,
+        'segmentation': 0,
+        #'bias_learning_rate': 1,
+        'conjunctive_starts': True,
+        'conjunctive_successors': True,
+        'conjunctive_composition': True,
+        'memory_sampler': False,
+        'sampler_feature_weight': 1,
+        'sampler_recency_weight': 0,
+        'sampler_specificity': 1
+    },
+
+    # State -> State Sampler model
+    {
+        'id': None,
+        'model_label': 'ss-sampler',
+        'alpha': None, 
+        'alpha_decay': 0, 
+        'beta': None,
+        'beta_test': 'beta',
+        'gamma': 1.,
+        'segmentation': 0,
+        #'bias_learning_rate': 1,
+        'conjunctive_starts': True,
+        'conjunctive_successors': True,
+        'conjunctive_composition': False,
+        'memory_sampler': True,
+        'sampler_feature_weight': None,
+        'sampler_recency_weight': 0,
+        'sampler_specificity': None
+    }
 
 ]
 
@@ -52,7 +93,6 @@ PARAMETER_BOUNDS = {
     'beta': (.0001, np.inf),
     'beta_test': (.0001, np.inf),
     'segmentation': (0, .9999),
-    #'segmentation': (-.9999, .9999),
     'bias_learning_rate': (0, 1),
     'sampler_feature_weight': (0, 1),
     'sampler_recency_weight': (0, 1),
