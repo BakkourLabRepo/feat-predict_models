@@ -31,11 +31,13 @@ class Successor_Features:
         further into the future)
     segmentation : float
         Controls the degree of bias to learn within-features, bounded 
-        [0, 1]
+        [-1, 1]
     bias_learning_rate : float
 
     
-
+    bias_accuracy : float
+        How accurate semantic bias matrix is to category overlap.
+        Bounded [0, 1]
 
 
     conjunctive_starts : bool
@@ -72,6 +74,7 @@ class Successor_Features:
         beta_test = np.inf,
         gamma = 1.,
         segmentation = 0,
+        bias_accuracy = 1.,
         inference_inhibition = 0,
         conjunctive_starts = False,
         conjunctive_successors = False,
@@ -89,6 +92,7 @@ class Successor_Features:
         self.beta_test = beta_test
         self.gamma = gamma
         self.segmentation = segmentation
+        self.bias_accuracy = bias_accuracy
         self.inference_inhibition = inference_inhibition
         self.conjunctive_starts = conjunctive_starts
         self.conjunctive_successors = conjunctive_successors
@@ -208,6 +212,90 @@ class Successor_Features:
         # Apply degree of bias
         #self.bias = self.bias*self.segmentation + (1 - self.segmentation)
 
+    def distort_bias(
+        self,
+        rows_to_update,
+        cols_to_update,
+        multipl = 3,
+        max_itr = 100,
+        min_per_row = 2
+    ):
+
+        # Index the region of the bias to update
+        idx = np.meshgrid(
+            np.arange(np.shape(self.semantic_bias)[0]),
+            np.arange(np.shape(self.semantic_bias)[1])
+        )
+        update_region = (
+            np.isin(idx[1], rows_to_update) |
+            np.isin(idx[0], cols_to_update)
+        )
+        non_update_region = np.logical_not(update_region)
+        np.fill_diagonal(update_region, False)
+        np.fill_diagonal(non_update_region, False)
+
+        # Index 1s within update region of semantic bias
+        update_region_ones = update_region & (self.semantic_bias == 1)
+        update_region_non_ones = update_region & (self.semantic_bias != 1)
+
+        # Count number of 1s (ignorning identity)
+        # Can think of this as biased assumptions of a transition
+        n_identity = len(self.semantic_bias)
+        n_ones = np.sum(self.semantic_bias == 1) - n_identity
+
+        # How many values are already flipped
+        n_flipped = np.sum((self.semantic_bias[non_update_region] == 1) & np.logical_not(self.bias[non_update_region] == 1))
+
+        # How many still need to be flipped (in the update region)
+        n_to_flip_ones = int(n_ones*(1 - self.bias_accuracy)) - n_flipped
+        n_to_flip_non_ones = n_to_flip_ones*multipl
+        n_update_region_ones = np.sum(update_region_ones)
+        n_update_region_non_ones = np.sum(update_region_non_ones)
+
+        # Don't flip any, too many already flipped
+        if n_to_flip_ones < 0:
+            n_to_flip_ones = 0
+        if n_to_flip_non_ones < 0:
+            n_to_flip_non_ones = 0
+            
+        # Run until there is at least one value per row
+        for _ in range(max_itr):
+
+            # Make update region equal to that of semantic bias
+            self.bias[update_region] = self.semantic_bias[update_region]
+
+            # Must flip the max amount if required new values exceeds number that's
+            # possible to flip in the update region
+            if n_update_region_ones <= n_to_flip_ones:
+                n_to_flip_ones = n_update_region_ones
+            if n_update_region_non_ones <= n_to_flip_non_ones:
+                n_to_flip_non_ones = n_update_region_non_ones
+
+            # Flips 0s to 1s
+            samples = np.random.choice(n_update_region_non_ones, n_to_flip_non_ones, replace=False)
+            to_flip = tuple(np.array(np.where(update_region_non_ones))[:, samples])
+            self.bias[to_flip] = 1 - self.bias[to_flip]
+
+            # Flips 1s to 0s
+            samples = np.random.choice(n_update_region_ones, n_to_flip_ones, replace=False)
+            to_flip = tuple(np.array(np.where(update_region_ones))[:, samples])
+            self.bias[to_flip] = 1 - self.bias[to_flip]
+
+            # Ensure there is at least one value per row
+            if not np.all(
+                (np.sum(self.bias > 0, axis=1) > min_per_row) |
+                (np.sum(self.semantic_bias > 0, axis=1) <= min_per_row)
+                ):
+                continue
+            
+            break
+        
+
+        # How accurate is the final bias?
+        n_match = np.sum((self.bias == 1) & (self.semantic_bias == 1)) - n_identity
+        self.real_bias_accuracy = n_match/(np.sum(self.semantic_bias == 1) - n_identity)
+
+
     def compute_bias(self, start_categories, successor_categories):
         """
         Compute bias on successor matrix learning based on feature
@@ -235,11 +323,36 @@ class Successor_Features:
         self.semantic_bias = start_categories@successor_categories.T
         if self.conjunctive_starts and self.conjunctive_successors:
             self.semantic_bias = self.semantic_bias/self.n_per
+
+        # Get indices for new rows and columns to update
+        rows_to_update = np.arange(np.shape(self.bias)[0], np.shape(self.semantic_bias)[0])
+        cols_to_update = np.arange(np.shape(self.bias)[1], np.shape(self.semantic_bias)[1])
+        
+        # Set new region of bias equal to the semantic bias
+        if np.shape(self.bias)[1] > 0:
+            prev_bias = self.bias.copy()
+            self.bias = self.semantic_bias.copy()
+            self.bias[:len(prev_bias), :len(prev_bias)] = prev_bias
+        else:
+            self.bias = self.semantic_bias.copy()
+
+        # Distort bias 
+        self.distort_bias(rows_to_update, cols_to_update)
         
         # Apply bias degree
-        self.semantic_bias *= self.segmentation
-        self.semantic_bias += (1 - self.segmentation)
-        self.bias = self.semantic_bias
+        if self.segmentation < 0: # incidental weight
+            self.bias = 1 - self.bias
+        abs_segmentation = np.abs(self.segmentation)
+        self.bias *= abs_segmentation
+        self.bias += (1 - abs_segmentation)
+
+        # Apply bias degree
+        #if self.segmentation < 0: # incidental weight
+        #    self.semantic_bias = 1 - self.semantic_bias
+        #abs_segmentation = np.abs(self.segmentation)
+        #self.semantic_bias *= abs_segmentation
+        #self.semantic_bias += (1 - abs_segmentation)
+        #self.bias = self.semantic_bias
 
         # Add rows to bias
         #bias_new = np.ones(np.shape(self.semantic_bias))
