@@ -25,6 +25,7 @@ subj_ids = sorted([int(search('\d+', f)[0]) for f in fnames])
 
 # Make results directory if it does not exist
 for subj in subj_ids:
+    makedirs(f'{RESULTS_PATH}/fit_agents/{subj}', exist_ok=True)
     makedirs(f'{RESULTS_PATH}/fit_agent_configs/{subj}', exist_ok=True)
 
 # Load existing results
@@ -139,9 +140,15 @@ if __name__ == '__main__':
 
             # Export agent config to pickle
             dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
-            fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
+            fname = f'{subj}_{this_agent_config["model_label"]}_config.pkl'
             with open(f'{dpath}/{fname}', 'wb') as f:
                 pickle.dump(this_agent_config, f)
+
+            # Export agent object to pickle
+            dpath = f'{RESULTS_PATH}/fit_agents/{subj}'
+            fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
+            with open(f'{dpath}/{fname}', 'wb') as f:
+                pickle.dump(this_result.agent, f)
 
 
 

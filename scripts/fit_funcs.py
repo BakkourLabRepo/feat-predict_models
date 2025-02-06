@@ -208,7 +208,8 @@ def likfun(
         data,
         agent_config,
         env_config,
-        params_to_fit
+        params_to_fit,
+        running_agent
     ):
     """
     Calculate the negative log likelihood (nLL) of the model.
@@ -225,6 +226,9 @@ def likfun(
         Dictionary containing the environment configuration.
     params_to_fit : list
         A list of the parameter names for params.
+    running_agent : dict
+        A dictionary containing the agent object. Used to track the
+        agent with the best fit.
 
     Returns
     -------
@@ -258,6 +262,9 @@ def likfun(
 
     # Calculate negative log likelihood
     nLL = probs_to_nll(probs)
+
+    # Track agent for best fit
+    running_agent['agent'] = agent
 
     return nLL
 
@@ -325,6 +332,7 @@ def fit_model(
             self.fun = np.inf
             self.success = False
             self.x = [np.nan]*len(params_to_fit)
+            self.agent = None
 
     best_result = BestResult(params_to_fit)
     
@@ -347,10 +355,17 @@ def fit_model(
                 x0.append(np.random.uniform(0, 1))
 
         # Fit model
+        running_agent = {'agent': None}
         result = minimize(
             likfun,
             x0,
-            args = (data, agent_config, env_config, params_to_fit),
+            args = (
+                data,
+                agent_config,
+                env_config,
+                params_to_fit,
+                running_agent
+                ),
             method = 'L-BFGS-B',
             bounds = bounds
         )
@@ -358,6 +373,7 @@ def fit_model(
         # Update best result
         if result.fun < best_result.fun:
             best_result = result
+            best_result.agent = running_agent['agent']
         elif result.success:
             unchanged_count += 1
 
