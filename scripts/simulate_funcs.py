@@ -589,14 +589,6 @@ def run_experiment(
 
     np.random.seed(seed)
 
-    # Create the directories to save data to
-    if output_path:
-        for model_config in model_configs:
-            model_label = model_config['model_label']
-            makedirs(f'{output_path}/{model_label}/training', exist_ok=True)
-            makedirs(f'{output_path}/{model_label}/test', exist_ok=True)
-            makedirs(f'{output_path}/{model_label}/representations', exist_ok=True)
-
     # Load all agent configurations
     if agent_configs_path:
         agent_configs = []
@@ -618,6 +610,12 @@ def run_experiment(
     for agent_config in agent_configs:
         subj = agent_config['id']
         model_label = agent_config['model_label']
+
+        # Create the directories to save data to
+        if output_path:
+            makedirs(f'{output_path}/{model_label}/training', exist_ok=True)
+            makedirs(f'{output_path}/{model_label}/test', exist_ok=True)
+            makedirs(f'{output_path}/{model_label}/representations', exist_ok=True)
 
         # Load training trials
         if training_trial_info_path:

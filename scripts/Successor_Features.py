@@ -325,11 +325,17 @@ class Successor_Features:
             self.semantic_bias = self.semantic_bias/self.n_per
 
         # Get indices for new rows and columns to update
-        rows_to_update = np.arange(np.shape(self.bias)[0], np.shape(self.semantic_bias)[0])
-        cols_to_update = np.arange(np.shape(self.bias)[1], np.shape(self.semantic_bias)[1])
+        rows_to_update = np.arange(
+            np.shape(self.bias)[0],
+            np.shape(self.semantic_bias)[0]
+            )
+        cols_to_update = np.arange(
+            np.shape(self.bias)[1],
+            np.shape(self.semantic_bias)[1]
+            )
         
         # Set new region of bias equal to the semantic bias
-        if np.shape(self.bias)[1] > 0:
+        if (np.shape(self.bias)[1] > 0) and (self.bias_accuracy != 1):
             prev_bias = self.bias.copy()
             self.bias = self.semantic_bias.copy()
             self.bias[:len(prev_bias), :len(prev_bias)] = prev_bias
@@ -337,10 +343,11 @@ class Successor_Features:
             self.bias = self.semantic_bias.copy()
 
         # Distort bias 
-        self.distort_bias(rows_to_update, cols_to_update)
+        if self.bias_accuracy != 1:
+            self.distort_bias(rows_to_update, cols_to_update)
         
         # Apply bias degree
-        if self.segmentation < 0: # incidental weight
+        if self.segmentation < 0: # opposite to semantic structure
             self.bias = 1 - self.bias
         abs_segmentation = np.abs(self.segmentation)
         self.bias *= abs_segmentation

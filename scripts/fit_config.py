@@ -7,7 +7,7 @@ DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/project
 
 # Results path and file name
 RESULTS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/results'
-RESULTS_FNAME = 'model_fits_new_check'
+RESULTS_FNAME = 'model_fits'
 RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/users/euan/feat-predict/results/human/exp_2'
 RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results'
 
@@ -16,7 +16,7 @@ N_STARTS = 100 # Max number of random starts
 MAX_UNCHANGED = 5 # Max number of random starts without improvement
 
 # Overwrite existing results
-OVERWRITE = False
+OVERWRITE = True
 
 # Number of cores to use
 NUM_CORES = 4
@@ -34,7 +34,6 @@ MODEL_CONFIGS = [
         'beta_test': 'beta',
         'gamma': 1.,
         'segmentation': None,
-        #'bias_learning_rate': 1,
         'conjunctive_starts': False,
         'conjunctive_successors': False,
         'conjunctive_composition': False,
@@ -54,7 +53,6 @@ MODEL_CONFIGS = [
         'beta_test': 'beta',
         'gamma': 1.,
         'segmentation': 0,
-        #'bias_learning_rate': 1,
         'conjunctive_starts': True,
         'conjunctive_successors': True,
         'conjunctive_composition': True,
@@ -74,7 +72,6 @@ MODEL_CONFIGS = [
         'beta_test': 'beta',
         'gamma': 1.,
         'segmentation': 0,
-        #'bias_learning_rate': 1,
         'conjunctive_starts': True,
         'conjunctive_successors': True,
         'conjunctive_composition': False,
