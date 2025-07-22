@@ -32,14 +32,9 @@ class Successor_Features:
     segmentation : float
         Controls the degree of bias to learn within-features, bounded 
         [-1, 1]
-    bias_learning_rate : float
-
-    
     bias_accuracy : float
         How accurate semantic bias matrix is to category overlap.
         Bounded [0, 1]
-
-
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
@@ -184,38 +179,6 @@ class Successor_Features:
         """
         self.M = np.hstack((self.M, np.zeros((len(self.M), 1))))
 
-    def update_dynamic_bias(self):
-        """
-        Update dynamic bias derived from successor matrix M
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        None
-        """
-        
-        # Compute "dynamic" bias from successor matrix M
-        #if np.max(self.M) == 0:
-        #    self.dynamic_bias = np.ones(np.shape(self.semantic_bias))
-        #else:
-        #    self.dynamic_bias = self.M/np.max(self.M)
-        
-        # Weight dynamic bias and static initial bias
-        #self.bias = self.initial_bias_weight*self.semantic_bias
-        #self.bias += (1 - self.initial_bias_weight)*self.dynamic_bias
-
-        # Re-normalize
-        #self.bias = self.bias/np.max(self.bias)
-
-        # Update bias
-        self.bias += self.bias_learning_rate*(self.semantic_bias - self.bias)
-
-        # Apply degree of bias
-        #self.bias = self.bias*self.segmentation + (1 - self.segmentation)
-
     def distort_bias(
         self,
         rows_to_update,
@@ -356,25 +319,6 @@ class Successor_Features:
         abs_segmentation = np.abs(self.segmentation)
         self.bias *= abs_segmentation
         self.bias += (1 - abs_segmentation)
-
-        # Apply bias degree
-        #if self.segmentation < 0: # incidental weight
-        #    self.semantic_bias = 1 - self.semantic_bias
-        #abs_segmentation = np.abs(self.segmentation)
-        #self.semantic_bias *= abs_segmentation
-        #self.semantic_bias += (1 - abs_segmentation)
-        #self.bias = self.semantic_bias
-
-        # Add rows to bias
-        #bias_new = np.ones(np.shape(self.semantic_bias))
-        #bias_shape = np.shape(self.bias)
-        #bias_new[:bias_shape[0], :bias_shape[1]] = self.bias
-        #self.bias = bias_new
-
-
-        # Incoprorate "dynamic" bias derived from successor matrix M
-        #self.update_dynamic_bias()
-
 
         # Set terminal bias (make instances encode for self)        
         if self.conjunctive_starts == self.conjunctive_successors:
@@ -616,17 +560,8 @@ class Successor_Features:
 
         else:
 
-            
-            #weight = np.sum(self.M, axis=1).reshape(-1, 1)
-            #norm = self.M/np.max(self.M, axis=1).reshape(-1, 1)
-            #norm = norm**self.inference_inhibition
-            #norm = norm/np.sum(norm, axis=1).reshape(-1, 1)
-            #M_inference = norm*weight
-            #M_inference = self.M/np.sum(self.M, axis=1).reshape(-1, 1)
-
             # Evaluate states based on task
             self.V = self.M@self.w
-            #self.V = M_inference@self.w
             
             # Evaluate actions based on state evaluation
             action_values = []
@@ -955,5 +890,3 @@ class Successor_Features:
         delta = features + self.gamma*bias@self.M - self.M
         self.M += alpha*s_weight*delta
 
-        # Update dynamic bias derived from M
-        #self.update_dynamic_bias()
