@@ -127,6 +127,11 @@ def train_agent(agent, env, data):
         options_comb = data.loc[t, 'options_comb']
         composition = data.loc[t, 'composition']
 
+        if t >= 1:
+            if data.loc[t, 'target_comb'] != data.loc[t - 1, 'target_comb']:
+                agent.segmentation = agent.segmentation_2
+                agent.alpha = agent.alpha_2
+
         # Set target as task
         agent.set_task(target)
 

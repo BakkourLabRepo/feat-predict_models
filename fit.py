@@ -25,8 +25,9 @@ subj_ids = sorted([int(search('\d+', f)[0]) for f in fnames])
 
 # Make results directory if it does not exist
 for subj in subj_ids:
-    makedirs(f'{RESULTS_PATH}/fit_agents/{subj}', exist_ok=True)
     makedirs(f'{RESULTS_PATH}/fit_agent_configs/{subj}', exist_ok=True)
+    makedirs(f'{RESULTS_PATH}/fit_agents/{subj}', exist_ok=True)
+    makedirs(f'{RESULTS_PATH}/fit_agent_representations/{subj}', exist_ok=True)
 
 # Load existing results
 try:
@@ -51,10 +52,11 @@ except:
         'nll',
         'aic',
         'alpha',
+        'alpha_2',
         'beta',
         'beta_test',
         'segmentation',
-        'bias_learning_rate',
+        'segmentation_2',
         'conjunctive_starts',
         'conjunctive_successors',
         'conjunctive_composition',
@@ -149,6 +151,24 @@ if __name__ == '__main__':
             fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
             with open(f'{dpath}/{fname}', 'wb') as f:
                 pickle.dump(this_result.agent, f)
+
+            # Save agent representations
+            # Get agent representations
+            representations = {
+                **this_agent_config,
+                'S': this_result.agent.S,
+                'F': this_result.agent.F,
+                'F_raw': this_result.agent.F_raw,
+                'M': this_result.agent.M,
+                'bias': this_result.agent.bias,
+                'bias_terminal': this_result.agent.bias_terminal,
+                'recency': this_result.agent.recency,
+                'frequency': this_result.agent.frequency
+            }
+            dpath = f'{RESULTS_PATH}/fit_agent_representations/{subj}'
+            fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
+            with open(f'{dpath}/{fname}', 'wb') as f:
+                pickle.dump(representations, f)
 
 
 

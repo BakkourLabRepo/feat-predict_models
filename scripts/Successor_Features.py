@@ -69,11 +69,13 @@ class Successor_Features:
         id = 0,
         model_label = 'Successor_Features',
         alpha = 1.,
+        alpha_2 = 1.,
         alpha_decay = 0,
         beta = np.inf,
         beta_test = np.inf,
         gamma = 1.,
         segmentation = 0,
+        segmentation_2 = 0,
         bias_accuracy = 1.,
         inference_inhibition = 0,
         conjunctive_starts = False,
@@ -87,11 +89,13 @@ class Successor_Features:
         self.id = id
         self.model_label = model_label
         self.alpha = alpha
+        self.alpha_2 = alpha_2
         self.alpha_decay = alpha_decay
         self.beta = beta
         self.beta_test = beta_test
         self.gamma = gamma
         self.segmentation = segmentation
+        self.segmentation_2 = segmentation_2
         self.bias_accuracy = bias_accuracy
         self.inference_inhibition = inference_inhibition
         self.conjunctive_starts = conjunctive_starts
@@ -618,6 +622,7 @@ class Successor_Features:
             #norm = norm**self.inference_inhibition
             #norm = norm/np.sum(norm, axis=1).reshape(-1, 1)
             #M_inference = norm*weight
+            #M_inference = self.M/np.sum(self.M, axis=1).reshape(-1, 1)
 
             # Evaluate states based on task
             self.V = self.M@self.w
