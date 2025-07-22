@@ -1,11 +1,15 @@
 import numpy as np
 
+PROJECT_PATH = ''
+
+AGENT_CONFIGS_PATH = False
+
 experiment_config = {
 
     'depth-1_dim-1': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-1_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -14,7 +18,7 @@ experiment_config = {
         'n_training_target_repeats': 90*3, 
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -99,7 +103,7 @@ experiment_config = {
     'depth-1_dim-2': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-1_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -108,7 +112,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -219,7 +223,7 @@ experiment_config = {
     'depth-2_dim-1': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-2_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -228,7 +232,7 @@ experiment_config = {
         'n_training_target_repeats': 90*3, 
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -316,7 +320,7 @@ experiment_config = {
     'depth-2_dim-2': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-2_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -325,7 +329,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -439,7 +443,7 @@ experiment_config = {
     'depth-2_dim-4': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-2_dim-4',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-4',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -448,7 +452,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -562,7 +566,7 @@ experiment_config = {
     'depth-3_dim-1': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-3_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -571,7 +575,7 @@ experiment_config = {
         'n_training_target_repeats': 90*3, 
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -661,7 +665,7 @@ experiment_config = {
     'depth-3_dim-2': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-3_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -670,7 +674,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -785,7 +789,7 @@ experiment_config = {
     'depth-3_dim-4': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-3_dim-4',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-4',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -794,7 +798,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -910,7 +914,7 @@ experiment_config = {
     'depth-4_dim-1': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-4_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -919,7 +923,7 @@ experiment_config = {
         'n_training_target_repeats': 90*3, 
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -1011,7 +1015,7 @@ experiment_config = {
     'depth-4_dim-2': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-4_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1020,7 +1024,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -1138,7 +1142,7 @@ experiment_config = {
     'depth-4_dim-4': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-1/data/depth-4_dim-4',
+        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-4',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1147,7 +1151,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,

@@ -1,11 +1,15 @@
 import numpy as np
 
+PROJECT_PATH = ''
+
+AGENT_CONFIGS_PATH = False
+
 experiment_config = {
     
     'depth-1_dim-2': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-3/data',
+        'output_path': f'{PROJECT_PATH}/exp-3/data',
 
         # Random seed for reproducibility
         'seed': 5423,
@@ -14,7 +18,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': False,
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,

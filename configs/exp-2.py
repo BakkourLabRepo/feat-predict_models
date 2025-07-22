@@ -1,12 +1,16 @@
 import numpy as np
 
+PROJECT_PATH = ''
+
+AGENT_CONFIGS_PATH = ''
+
 experiment_config = {
 
    
     'depth-1_dim-2_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-1_dim-2_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-2_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -15,7 +19,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -86,7 +90,7 @@ experiment_config = {
     'depth-1_dim-2_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-1_dim-2_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-2_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -95,7 +99,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -166,7 +170,7 @@ experiment_config = {
     'depth-1_dim-4_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-1_dim-4_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-4_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -175,7 +179,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -245,7 +249,7 @@ experiment_config = {
     'depth-1_dim-4_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-1_dim-4_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-4_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -254,7 +258,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -325,7 +329,7 @@ experiment_config = {
     'depth-2_dim-2_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-2_dim-2_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-2_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -334,7 +338,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -407,7 +411,7 @@ experiment_config = {
     'depth-2_dim-2_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-2_dim-2_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-2_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -416,7 +420,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -489,7 +493,7 @@ experiment_config = {
     'depth-2_dim-4_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-2_dim-4_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-4_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -498,7 +502,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -571,7 +575,7 @@ experiment_config = {
     'depth-2_dim-4_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-2_dim-4_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-4_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -580,7 +584,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -653,7 +657,7 @@ experiment_config = {
     'depth-3_dim-2_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-3_dim-2_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-2_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -662,7 +666,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -737,7 +741,7 @@ experiment_config = {
     'depth-3_dim-2_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-3_dim-2_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-2_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -746,7 +750,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -821,7 +825,7 @@ experiment_config = {
     'depth-3_dim-4_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-3_dim-4_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-4_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -830,7 +834,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -905,7 +909,7 @@ experiment_config = {
     'depth-3_dim-4_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-3_dim-4_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-4_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -914,7 +918,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -989,7 +993,7 @@ experiment_config = {
     'depth-4_dim-2_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-4_dim-2_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-2_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -998,7 +1002,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -1075,7 +1079,7 @@ experiment_config = {
     'depth-4_dim-2_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-4_dim-2_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-2_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1084,7 +1088,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -1161,7 +1165,7 @@ experiment_config = {
     'depth-4_dim-4_ntrain-1080': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-4_dim-4_ntrain-1080',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-4_ntrain-1080',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1170,7 +1174,7 @@ experiment_config = {
         'n_training_target_repeats': 90,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
@@ -1247,7 +1251,7 @@ experiment_config = {
     'depth-4_dim-4_ntrain-72': {
 
         # Output directory
-        'output_path': '/Users/euanprentis/Documents/feat_predict_simulations/exp-2/data/depth-4_dim-4_ntrain-72',
+        'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-4_ntrain-72',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1256,7 +1260,7 @@ experiment_config = {
         'n_training_target_repeats': 6,
 
         # Simulate based on existing agent configurations
-        'agent_configs_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results/fit_agent_configs',
+        'agent_configs_path': AGENT_CONFIGS_PATH,
 
         # Load existing trial information
         'training_trial_info_path': False,
