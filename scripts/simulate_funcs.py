@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from os import makedirs, listdir
 import pickle
-from scripts.Successor_Features import Successor_Features
+from scripts.SuccessorFeatures import SuccessorFeatures
 from scripts.Env import Env
 
 def check_state_match(state_1, state_2):
@@ -53,8 +53,8 @@ def train_agent(agent, env, targets, options, fixed_training=True):
 
     Arguments
     ---------
-    agent : Successor_Features
-        Instance of the Successor_Features agent.
+    agent : SuccessorFeatures
+        Instance of the SuccessorFeatures agent.
     env : Env
         Instance of the environment.
     targets : numpy.ndarray
@@ -143,8 +143,8 @@ def test_agent(agent, env, targets, options):
 
     Arguments
     ---------
-    agent : Successor_Features
-        Instance of the Successor_Features agent.
+    agent : SuccessorFeatures
+        Instance of the SuccessorFeatures agent.
     env : Env
         Instance of the environment.
     targets : numpy.ndarray
@@ -234,7 +234,7 @@ def simulate_agent(
 
     # Initialize environment and agent
     env = Env(**env_config)
-    agent = Successor_Features(env, **agent_config)
+    agent = SuccessorFeatures(env, **agent_config)
 
     # Generate test target orders
     #test_targets = generate_test_targets(env)

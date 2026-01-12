@@ -1,6 +1,6 @@
 import numpy as np
 
-class Successor_Features:
+class SuccessorFeatures:
     """
     Successor Features model
 

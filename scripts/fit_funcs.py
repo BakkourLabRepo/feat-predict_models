@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from scripts.Successor_Features import Successor_Features
+from scripts.SuccessorFeatures import SuccessorFeatures
 from scripts.Env import Env
 
 def probs_to_nll(probs):
@@ -106,7 +106,7 @@ def train_agent(agent, env, data):
 
     Arguments
     ---------
-    agent : Successor_Features
+    agent : SuccessorFeatures
         The agent to train.
     env : Env
         The environment to train the agent in.
@@ -172,7 +172,7 @@ def test_agent(agent, env, data):
 
     Arguments
     ---------
-    agent : Successor_Features
+    agent : SuccessorFeatures
         The agent to train.
     env : Env
         The environment to train the agent in.
@@ -251,7 +251,7 @@ def likfun(
 
     # Initialize environment and agent
     env = Env(**env_config)
-    agent = Successor_Features(env, **this_agent_config)
+    agent = SuccessorFeatures(env, **this_agent_config)
 
     # Get action probabilities
     training_probs = train_agent(agent, env, data['training'])
