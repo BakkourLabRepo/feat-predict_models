@@ -29,9 +29,8 @@ class SuccessorFeatures:
     gamma : float
         Discount parameter. A higher is less future discounting ("looks"
         further into the future)
-    segmentation : float
-        Controls the degree of bias to learn within-features, bounded 
-        [-1, 1]
+    bias_magnitude : float
+        Magnitude of bias on successor matrix learning 
     bias_accuracy : float
         How accurate semantic bias matrix is to category overlap.
         Bounded [0, 1]
@@ -64,13 +63,10 @@ class SuccessorFeatures:
         id = 0,
         model_label = 'Successor_Features',
         alpha = 1.,
-        alpha_2 = 1.,
         alpha_decay = 0,
         beta = np.inf,
-        beta_test = np.inf,
         gamma = 1.,
-        segmentation = 0,
-        segmentation_2 = 0,
+        bias_magnitude = 0,
         bias_accuracy = 1.,
         inference_inhibition = 0,
         conjunctive_starts = False,
@@ -84,13 +80,10 @@ class SuccessorFeatures:
         self.id = id
         self.model_label = model_label
         self.alpha = alpha
-        self.alpha_2 = alpha_2
         self.alpha_decay = alpha_decay
         self.beta = beta
-        self.beta_test = beta_test
         self.gamma = gamma
-        self.segmentation = segmentation
-        self.segmentation_2 = segmentation_2
+        self.bias_magnitude = bias_magnitude
         self.bias_accuracy = bias_accuracy
         self.inference_inhibition = inference_inhibition
         self.conjunctive_starts = conjunctive_starts
@@ -313,10 +306,10 @@ class SuccessorFeatures:
         if self.bias_accuracy != 1:
             self.distort_bias(rows_to_update, cols_to_update)
         
-        # Apply bias degree
-        if self.segmentation < 0: # opposite to semantic structure
+        # Apply bias magnitude
+        if self.bias_magnitude < 0: # opposite to semantic structure
             self.bias = 1 - self.bias
-        abs_segmentation = np.abs(self.segmentation)
+        abs_segmentation = np.abs(self.bias_magnitude)
         self.bias *= abs_segmentation
         self.bias += (1 - abs_segmentation)
 
@@ -847,7 +840,7 @@ class SuccessorFeatures:
             frequency = self.frequency
         else:
             frequency = self.F_frequency
-        alpha = self.alpha*frequency**-self.alpha_decay
+        alpha = self.alpha*(frequency**-self.alpha_decay)
         return alpha
 
     def update_M(self, state, state_new):
