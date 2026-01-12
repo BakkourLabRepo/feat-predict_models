@@ -2,26 +2,37 @@
 import numpy as np
 from itertools import permutations
 
-### Environment class ##########################################################
-
 class Env:
-
     """
-    Task environment. Tracks and updates state and feature values.
-    :param tmat: feature transition matrix (same for all features)
-    :param n_feats: number of feature categories
-    :param n_fixed: number of fixed features that occur in every state
-    :param n_per: number of features per state
-    :param start_insts: array of start instance IDs
-    :param r: possible absolute reward values for each instance (column is
-        instance, row is possible values instance can have)
-    :param pr: probability of possible value for each instance in r
-    rel_cross_feature_inst_freq : relative frequence of states that
-    have matching instance values across features during transition
-    training
-    p_ttrain_probes : probability that the target feature
-    combination during transition training shares only one feature
-    with the action states
+    Environment class for multi-feature state space
+
+    Attributes
+    ----------
+    tmat : numpy.Array
+        Transition matrix for feature instances
+    n_feats : int
+        Number of features in the environment
+    n_fixed : int
+        Number of fixed features in each state
+    n_per : int
+        Number of features per state
+    start_insts : list
+        List of starting feature instances
+    r : numpy.Array
+        Reward matrix for feature instances
+    feat_tmat : numpy.Array
+        Transition matrix for features
+    pr : list
+        List of probabilities for each reward matrix
+    probabilistic : bool
+        If True, rewards are probabilistic. If False, rewards are
+        deterministic.
+    rel_cross_feature_inst_freq : int
+        Relative frequency of instances that are the same across
+        features when sampling states during transition training
+    continuous_features : bool
+        If True, features are continuous.
+        If False, features are discrete.
     """
 
     def __init__(
@@ -32,12 +43,16 @@ class Env:
         n_per,
         start_insts,
         r,
-        pr=[1],
-        probabilistic=False,
-        rel_cross_feature_inst_freq=1,
+        feat_tmat = [],
+        pr = [1],
+        probabilistic = False,
+        rel_cross_feature_inst_freq = 1,
         continuous_features = False
     ):
         self.tmat = tmat
+        if len(feat_tmat) == 0:
+            feat_tmat = np.eye(self.n_feats)
+        self.feat_tmat = feat_tmat
         self.n_feats = n_feats
         self.n_fixed = n_fixed
         self.n_per = n_per
@@ -55,16 +70,29 @@ class Env:
 
     def sample_cat_combination(self):
         """
-        Sample a category combination based on possible states
+        Sample a category combination
+
+        Returns
+        -------
+        comb_sample : list
+            Sampled category combination
         """
-        return list(self.states.keys())[np.random.choice(len(self.states.keys()))]
+        combs = list(self.states.keys())
+        comb_sample = combs[np.random.choice(len(combs))]
+        return comb_sample
 
     def sample_features(self, comb=[], terminal=False):
         """
-        Sample features for composition
-        :param comb: if set, sample from a specific category combination
-        :param terminal: if True, sample terminal states. If False, sample start
-            states
+        Sample features for action selection
+
+        Arguments
+        ---------
+        comb : list
+            List indicating which categories are present (1) or
+            absent (0)
+        terminal : bool
+            If True, sample terminal instances. If False, sample start
+            instances.
         """
 
         # Sample category combination if not provided
@@ -72,272 +100,47 @@ class Env:
             comb = self.sample_cat_combination()
 
         # Get terminal or start instances
-        insts = np.copy([self.start_insts, self.terminal_insts][terminal])
+        insts = np.copy(
+            [self.start_insts, self.terminal_insts][terminal]
+            )
 
         # Number of instances and categories
         n_insts = len(insts)
         n_cats = np.sum(comb)
 
-        # Construct action matrix with unique row for each instance x category
+        # Action matrix with unique row for each instance x category
         comb = np.array(comb)
-        comb = np.repeat(np.eye(len(comb), dtype=int)[comb.astype(bool)], n_insts, axis=0).reshape(n_cats, n_insts, -1)
+        comb = np.eye(len(comb), dtype=int)[comb.astype(bool)]
+        comb = np.repeat(comb, n_insts, axis=0)
+        comb = comb.reshape(n_cats, n_insts, -1)
         self.a = comb*insts.reshape(-1, 1)
 
-    def sample_from_array(self, arr, n=1, replace=False, p=None):
+
+    def get_successor(
+            self,
+            s,
+            most_likely = False,
+            invert = False,
+            use_feat_tmat = True
+            ):
         """
-        Randomly sample from n-d array
-        :param arr: array to sample from
-        :param n: number of samples (default is 1)
-        :param replace: if True, sample with replacement
-        :param p: probabilities assocaited with each element in arr
-        """
-        return arr[np.random.choice(len(arr), n, replace=replace, p=p)]
-    
-    def sample_row_except(self, arr, exception):
-        """
-        Sample any row from an array but a given exception row
-        
+        Get successor state for a given state
+
         Arguments
         ---------
-        arr : numpy.Array
-            Array to sample from
-        exception : numpy.Array
-            Sub-array to ignore
-            
-        Returns
-        -------
-        sample : numpy.Array
-            Sampled sub-array
+        s : numpy.Array
+            State to get successor for
+        most_likely : bool
+            If True, use most likely transitions. If False, sample
+            transitions probabilistically.
+        invert : bool
+            If True, get predecessor state. If False, get successor
+            state.
+        use_feat_tmat : bool
+            If True, use feature transition matrix to select feature
+            to update. If False, update features in order.
         """
 
-        # Create an array of indices excluding the target row
-        idx = np.arange(len(arr))
-        idx = np.delete(idx, np.where(np.all(arr == exception, axis=1)))
-
-        # Randomly choose an index from the remaining indices
-        idx = np.random.choice(idx)
-
-        # Sample row
-        sample = arr[idx]
-
-        return sample
-
-    def sample_actions(self, comb=[], terminal=False, n_actions=2,
-                       transitions=False, feature_overlap=0, probe=False):
-        """
-        Sample actions from the state space. Also sample target for transition training
-        :param comb: if set, sample from a specific category combination
-        :param terminal: if True, sample terminal states. If False, sample start
-            states
-        :param n_actions: number of actions to sample (if features == False)
-        :param transitions: if True, sample for transition training. Actions will have
-            different successors. if False, sample for reward-based choices. Actions
-            will have different (successor) values
-        :param feature_overlap: if -1, must be no overlap between features of
-            action states. if 1, must be overlap between feature of action
-            states. If 0, no constraint is set.
-        :param probe: if True, run transition training probe trial
-        """
-
-        # Sample category combination if not provided
-        self.comb = comb
-        if len(self.comb) == 0:
-            self.comb = self.sample_cat_combination()
-        
-        # Target feature combination is usually same as for actions
-        self.target_comb = self.comb
-
-        # Sample probabilities differ for transition training
-        if transitions:
-
-            # Sample for probe trial
-            if probe:
-
-                # sample target that has only 1 matching feature with
-                # the current transition training combination
-                combs = np.array(list(self.states.keys()))
-                comb_overlap = (
-                    (self.comb == combs) &
-                    (self.comb != 0)
-                )
-                freq_comb_overlap = np.sum(comb_overlap, axis=1)
-                idx = freq_comb_overlap == 1
-                self.target_comb = self.sample_from_array(combs[idx], 1)[0]
-
-                # Re-define action feature combination so that actions
-                # do no have overlapping features with the target
-                comb_overlap = (
-                    (self.target_comb == combs) &
-                    (self.target_comb != 0)
-                )
-                freq_comb_overlap = np.sum(comb_overlap, axis=1)
-                idx = freq_comb_overlap == 0
-                self.comb = self.sample_from_array(combs[idx], 1)[0]                
-
-            # Action sample probabilities
-            p_sample = self.states[tuple(self.comb)]['p_sample']
- 
-            # Get target state set
-            target_set = self.states[tuple(self.target_comb)]['likely_successor']
-
-         # Get state sets
-        pos = ['start', 'terminal'][terminal]
-        action_set = self.states[tuple(self.comb)][pos]
-
-        if not transitions:
-            # Action sample probabilities
-            p_sample = np.ones(len(action_set))
-            p_sample = p_sample/np.sum(p_sample)
-
-        # Loop until valid action combination sampled
-        while True:
-
-            # Sample for matched target
-            if feature_overlap:
-
-                # Sample first action
-                self.a = self.sample_from_array(action_set, 1, p=p_sample)
-
-                # Sample additional actions
-                for _ in range(n_actions - 1):
-
-                    # Index for completely non-overlapping states
-                    if feature_overlap == -1:
-                        idx = np.all(
-                            (action_set != self.a[0]) | (np.array(self.comb) == 0),
-                            axis=1
-                        )
-
-                    # Index for at least partially overlapping states
-                    if feature_overlap == 1:
-                        idx = np.any(
-                            (action_set == self.a[0]) & (np.array(self.comb) != 0),
-                            axis=1
-                        )
-
-                    # Sample from subset of possible states
-                    p_sample_action = p_sample*idx
-                    p_sample_action = p_sample_action/np.sum(p_sample_action)
-                    self.a = np.append(
-                        self.a,
-                        self.sample_from_array(action_set, 1, p=p_sample),
-                        axis=0
-                    )
-
-            # Sample for non-matched target
-            else:
-                self.a = self.sample_from_array(action_set, n_actions, p=p_sample)
-
-            # Sample target if transition training
-            if transitions:
-                if self.sample_target(
-                    feature_overlap = feature_overlap,
-                    s_set = target_set,
-                    action_set = action_set
-                ):
-                    continue # continue loop if invalid target sampled
-            else: # blank target
-                self.target = np.array([[0]*self.n_feats])
-
-            # Check outcomes are different
-            self.a = self.a.reshape(1, n_actions, -1)
-            if self.check_unequal_outcomes(transitions=transitions):
-                break
-
-    
-    def sample_target(
-            self,
-            feature_overlap = 0,
-            s_set = None,
-            action_set = None
-        ):
-        """
-        Sample a target. Returns True when an invalid target is sampled
-        :param feature_overlap: if -1, target is a direct successor of an action
-            state. if 0, target does not have to be a direct successor
-        :param s_set: set of states to sample from. if feature_overlap == False,
-            this must be set
-        """
-
-        # Sampling when evaluating just one action item
-        if len(self.a) == 1:
-            
-            # Coin flip if target is a direct successor or not 
-            if np.random.rand() < .5: # direct
-                start_item = self.a[0]
-            else: # non-direct
-                start_item = self.sample_row_except(action_set, self.a[0])
-
-            # Target is successor of sampled item
-            self.target = self.get_successor(start_item, most_likely=True)
-            self.target = np.array([self.target])
-
-        elif feature_overlap == -1:
-
-            # Target is the most likley direct successor of one action state
-            start_item = self.sample_from_array(self.a)[0]
-            self.target = np.array([self.get_successor(start_item, most_likely=True)])
-
-            # Check no target features overlap with action state features
-            if np.any((self.target == self.a) & (self.target != 0)):
-                return True
-
-        else:
-
-            # Find likely successors with no features in the action states
-            poss_targets = np.array([np.all((s != self.a) | (s == 0)) for s in s_set])
-            p_target = poss_targets/np.sum(poss_targets)
-
-            # Target is a random sample from these successors
-            self.target = self.sample_from_array(s_set, n=1, p=p_target)
-
-        return False
-    
-    def convert_actions_for_target(self):
-        # Convert actions to equivalent states for target comb 
-        target_actions = []
-        for act in self.a[0]:
-            action_states = self.states[tuple(self.comb)]['start']
-            idx = np.all(action_states == act, axis=1)
-            target_act = self.states[tuple(self.target_comb)]['start'][idx]
-            target_actions.append(target_act[0])
-        target_actions = np.array(target_actions)
-        return target_actions
-
-    def check_unequal_outcomes(self, transitions=False):
-        """
-        If actions lead to the same goal outcome, return False. Otherwise,
-            return True.
-        :param transitions: if 1, base on reward values. If 2, base on successors'
-            overlap with the target
-        """
-
-        # If only one action, no need to check
-        if len(self.a[0]) == 1:
-            return True
-
-        # Based on likely successor's overlap with target
-        if transitions:
-            target_actions = self.convert_actions_for_target()
-            a_vals = [np.sum(self.get_successor(act, most_likely=True) == self.target)
-                      for act in target_actions]
-
-        # Based on likely reward values
-        else:
-            a_vals = np.array([self.get_reward(self.get_successor(act, most_likely=True), most_likely=True) for act in self.a[0]])
-
-        if len(np.unique(a_vals)) > 1:
-            return True
-        return False
-
-    def get_successor(self, s, most_likely=False, invert=False):
-        """
-        Get successor to state
-        :param s: state to get successor for
-        :param most_likely: if True, get the most likely successor. if False,
-            get successor based on raw transition matrix
-        :param invert: if True, get the predecessor instead of the successor
-        """
         if most_likely:
             tmat = self.lik_tmat
         else:
@@ -348,17 +151,44 @@ class Env:
             terminal_insts = self.start_insts
         else:
             terminal_insts = self.terminal_insts
-        s_new = np.copy(s)
-        if not np.any(np.isin(s, terminal_insts)):
+
+        # Terminal states are absorbing
+        if np.any(np.isin(s, terminal_insts)):  
+            s_new = np.copy(s)
+
+        # Use transition matrices to update non-terminal states
+        else:          
+            s_new = np.zeros(len(s), dtype=int)
             for feat in range(len(s)):
                 if s[feat] != 0:
-                    s_new[feat] = np.random.choice(np.arange(len(tmat)) + 1, p=tmat[s[feat] - 1])
+                    inst = s[feat] - 1
+                    if use_feat_tmat:
+                        feat_new = np.random.choice(
+                            np.arange(len(self.feat_tmat)),
+                            p = self.feat_tmat[feat]
+                            )
+                    else:
+                        feat_new = feat
+                    s_new[feat_new] = np.random.choice(
+                        np.arange(len(tmat)) + 1,
+                        p = tmat[inst]
+                        )
+        
         return s_new
     
     def get_start_state(self, s):
         """
-        Get the start state for a given state
-        :param s: state to get start state for
+        Get start state that precedes a given state
+
+        Arguments
+        ---------
+        s : numpy.Array
+            State to get predecessor for
+        
+        Returns
+        -------
+        start_state : numpy.Array
+            Start state that precedes given state
         """
         pred = np.copy(s)
         while not np.any(np.isin(pred, self.start_insts)):
@@ -386,13 +216,27 @@ class Env:
     def get_reward(self, s, most_likely=False):
         """
         Get reward for given state
-        :param s: state to get reward for
+        
+        Arguments
+        ---------
+        s : numpy.Array
+            State to get reward for
+        most_likely : bool
+            If True, use most likely rewards. If False, sample
+            rewards probabilistically.
+        
+        Returns
+        -------
+        reward : float
+            Reward for given state
         """
         if most_likely:
             feat_rewards = [self.lik_r[f] for f in (s[s > 0] - 1)]
         else:
-            feat_rewards = [self.r[np.random.choice(len(self.pr), p=self.pr), f]
-                            for f in (s[s > 0] - 1)]
+            feat_rewards = [
+                self.r[np.random.choice(len(self.pr), p=self.pr), f]
+                for f in (s[s > 0] - 1)
+                ]
             
         if self.probabilistic:
             p_reward = np.mean(feat_rewards)
@@ -403,6 +247,7 @@ class Env:
                     [0, 1], 1,p=[1 - p_reward, p_reward])[0]
         else:
             reward = np.sum(feat_rewards)
+            
         return reward
 
     def check_absorbing(self):
@@ -421,16 +266,30 @@ class Env:
 
         # Most likely transitions
         self.lik_tmat = np.zeros(np.shape(self.tmat))
-        self.lik_tmat[np.arange(len(self.tmat)), np.argmax(self.tmat, axis=1)] = 1
+        self.lik_tmat[
+            np.arange(len(self.tmat)),
+            np.argmax(self.tmat, axis=1)
+            ] = 1
 
         # Most likely rewards
         self.lik_r = self.r[np.argmax(self.pr)]
 
     def assign_insts_to_cats(self, cat_comb, inst_combs):
         """
-        Assign feature instances to category combination
-        :param cat_comb: array of feature category combinations
-        :param inst_combs: array of feature instance combinations
+        Assign instance combinations to category combinations
+
+        Arguments
+        ---------
+        cat_comb : numpy.Array
+            Array indicating which categories are present (1) or
+            absent (0)
+        inst_combs : numpy.Array
+            Array of instance combinations to assign to categories
+
+        Returns
+        -------
+        states : numpy.Array
+            Array of states with instances assigned to categories
         """
         states = np.tile(cat_comb, (len(inst_combs), 1))
         states[states.astype(bool)] = inst_combs.flatten()
@@ -438,8 +297,7 @@ class Env:
 
     def gen_start_states(self):
         """
-        Generate dictionary of start states indexed by feature
-        combinations
+        Generate all possible start states
         """
 
         # Number of non-fixed features present
@@ -448,7 +306,10 @@ class Env:
         # Get non-fixed feature combinations
         n_absent = self.n_feats - self.n_fixed - n_present
         f_present = [1]*n_present + [0]*n_absent
-        self.combs = np.unique(np.array(list(permutations(f_present))), axis=0)
+        self.combs = np.unique(
+            np.array(list(permutations(f_present))),
+            axis = 0
+            )
 
         # Add fixed states
         f_fixed = np.ones((len(self.combs), self.n_fixed))
@@ -459,8 +320,10 @@ class Env:
         start_combs = np.array(start_combs).T.reshape(-1, self.n_per)
         terminal_combs = np.meshgrid(*[self.terminal_insts]*self.n_per)
         terminal_combs = np.array(terminal_combs).T.reshape(-1, self.n_per)
-        successor_combs = [self.get_successor(s, most_likely=True)
-                           for s in start_combs]
+        successor_combs = [
+            self.get_successor(s, most_likely=True, use_feat_tmat=False)
+            for s in start_combs
+            ]
         successor_combs = np.array(successor_combs)
 
         # Create a dictionary of all start states for each combination
@@ -469,12 +332,17 @@ class Env:
 
             # Create states
             self.states[tuple(comb)] = {
-                'start': self.assign_insts_to_cats(comb, start_combs),
-                'terminal': self.assign_insts_to_cats(comb, terminal_combs),
-                'likely_successor': self.assign_insts_to_cats(comb, successor_combs)
+                'start': self.assign_insts_to_cats(
+                    comb, start_combs
+                    ),
+                'terminal': self.assign_insts_to_cats(
+                    comb, terminal_combs
+                    ),
+                'likely_successor': self.assign_insts_to_cats(
+                    comb, successor_combs
+                    )
                 }
             
-
             # Get probability of sampling states (during transition
             # training) based on relative frequency of states with
             # matching instance levels across-features
@@ -488,7 +356,8 @@ class Env:
             matching_inst_levels = np.array(matching_inst_levels)
 
             # Convert frequencies into probabilities
-            freq = 1 + matching_inst_levels*(self.rel_cross_feature_inst_freq - 1)
+            freq = matching_inst_levels*(self.rel_cross_feature_inst_freq - 1)
+            freq = freq + 1
             self.states[tuple(comb)]['p_sample'] = freq/np.sum(freq)
 
 
