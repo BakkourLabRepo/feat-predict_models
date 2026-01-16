@@ -26,69 +26,73 @@ experiment_config = {
         'match_trials_to_agents': False,
 
         # Number of agents per basic agent config
-        # Only need to set if LOAD_AGENT_CONFIGS = False
         'n_agents': 1000,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
 
         # Configurations for models to simulate
-        # Only need to set if LOAD_AGENT_CONFIGS = False
         'model_configs': [
 
             # Feature -> Feature model
-            {
-                'id': None,
-                'model_label': 'ff',
-                'alpha': None, 
-                'alpha_decay': 0, 
-                'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': None,
-                'conjunctive_starts': False,
-                'conjunctive_successors': False,
-                'conjunctive_composition': False,
-                'memory_sampler': False,
-                'sampler_feature_weight': 1,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': 1
-            },
+            ('SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1.,
+                    'bias_magnitude': None,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
 
             # State -> State model
-            {
-                'id': None,
-                'model_label': 'ss',
-                'alpha': None, 
-                'alpha_decay': 0, 
-                'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': 0,
-                'conjunctive_starts': True,
-                'conjunctive_successors': True,
-                'conjunctive_composition': True,
-                'memory_sampler': False,
-                'sampler_feature_weight': 1,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': 1
-            },
+            ('SuccessorFeatures', 
+                {
+                    'id': None,
+                    'model_label': 'ss',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1.,
+                    'bias_magnitude': 0,
+                    'conjunctive_starts': True,
+                    'conjunctive_successors': True,
+                    'conjunctive_composition': True,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            )
 
             # State -> State Sampler model
-            {
-                'id': None,
-                'model_label': 'ss-sampler',
-                'alpha': None, 
-                'alpha_decay': 0, 
-                'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': 0,
-                'conjunctive_starts': True,
-                'conjunctive_successors': True,
-                'conjunctive_composition': False,
-                'memory_sampler': True,
-                'sampler_feature_weight': None,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': None
-            }
+            ('SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ss-sampler',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1.,
+                    'bias_magnitude': 0,
+                    'conjunctive_starts': True,
+                    'conjunctive_successors': True,
+                    'conjunctive_composition': False,
+                    'memory_sampler': True,
+                    'sampler_feature_weight': None,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': None
+                }
+            )
 
 
         ],

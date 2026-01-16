@@ -3,6 +3,7 @@ import pandas as pd
 from os import makedirs, listdir
 import pickle
 from scripts.SuccessorFeatures import SuccessorFeatures
+from scripts.MBRL import MBRL
 from scripts.Env import Env
 
 def check_state_match(state_1, state_2):
@@ -205,6 +206,7 @@ def test_agent(agent, env, targets, options):
     return test_data
 
 def simulate_agent(
+        model,
         agent_config,
         env_config,
         training_trial_info,
@@ -215,6 +217,8 @@ def simulate_agent(
 
     Arguments
     ---------
+    model : str
+        The type of agent to simulate ('MBRL' or 'SuccessorFeatures').
     agent_config : dict
         Agent configuration
     env_config : dict
@@ -232,9 +236,14 @@ def simulate_agent(
         Simulated test data.
     """
 
-    # Initialize environment and agent
+    # Initialize environment 
     env = Env(**env_config)
-    agent = SuccessorFeatures(env, **agent_config)
+
+    # Initialize agent
+    if model == 'MBRL':
+        agent = MBRL(env, **agent_config)
+    elif model == 'SuccessorFeatures':
+        agent = SuccessorFeatures(env, **agent_config)
 
     # Generate test target orders
     #test_targets = generate_test_targets(env)
@@ -508,6 +517,7 @@ def generate_agent_configs(n_agents, model_configs):
     agent_configs = []
     subj = 0
     for model_config in model_configs:
+        model, model_config = model_config
         for _ in range(n_agents):
             subj += 1
             agent_config = model_config.copy()
@@ -516,7 +526,7 @@ def generate_agent_configs(n_agents, model_configs):
             # Sample parameters if they are not set
             for key in agent_config.keys():
                 if agent_config[key] is None:
-                    if key in ['beta', 'beta_test']:
+                    if key == 'beta':
                         agent_config[key] = 1/np.random.uniform(0, 1) - 1
                     elif key in ['sampler_specificity', 'inference_inhibition']:
                         agent_config[key] = 1/np.random.uniform(0, 1)
@@ -528,7 +538,7 @@ def generate_agent_configs(n_agents, model_configs):
                 if agent_config[key] in agent_config.keys():
                     agent_config[key] = agent_config[agent_config[key]]
                     
-            agent_configs.append(agent_config)
+            agent_configs.append((model, agent_config))
 
     return agent_configs    
 
@@ -607,7 +617,7 @@ def run_experiment(
         test_trial_info_set = load_trial_info(test_trial_info_path)
 
     # Simulate all agents
-    for agent_config in agent_configs:
+    for model, agent_config in agent_configs:
         subj = agent_config['id']
         model_label = agent_config['model_label']
 
@@ -657,6 +667,7 @@ def run_experiment(
         # Simulate agent
         print(f'Simulating - Agent: {subj}, Model: {model_label}')
         training_data, test_data, representations = simulate_agent(
+            model,
             agent_config,
             env_config,
             training_trial_info,
