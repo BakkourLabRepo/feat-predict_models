@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from scripts.SuccessorFeatures import SuccessorFeatures
-from scripts.Env import Env
+from src.SuccessorFeatures import SuccessorFeatures
+from src.Env import Env
 
 def probs_to_nll(probs):
     """

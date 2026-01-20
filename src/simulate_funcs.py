@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 from os import makedirs, listdir
 import pickle
-from scripts.SuccessorFeatures import SuccessorFeatures
-from scripts.MBRL import MBRL
-from scripts.Env import Env
+from src.SuccessorFeatures import SuccessorFeatures
+from src.MBRL import MBRL
+from src.Env import Env
 
 def check_state_match(state_1, state_2):
     """

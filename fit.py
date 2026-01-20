@@ -3,8 +3,8 @@ from os import listdir, makedirs
 from re import search
 import concurrent.futures
 import pickle
-from scripts.fit_funcs import fit_model_parallel
-from scripts.fit_config import (
+from src.fit_funcs import fit_model_parallel
+from src.fit_config import (
     DATA_PATH,
     RESULTS_PATH,
     RESULTS_FNAME,

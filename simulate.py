@@ -1,6 +1,6 @@
 import argparse
 import importlib
-from scripts.simulate_funcs import run_experiment
+from src.simulate_funcs import run_experiment
 
 def import_config(config_fname):
     """
