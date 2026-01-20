@@ -51,7 +51,7 @@ class Env:
     ):
         self.tmat = tmat
         if len(feat_tmat) == 0:
-            feat_tmat = np.eye(self.n_feats)
+            feat_tmat = np.eye(n_feats)
         self.feat_tmat = feat_tmat
         self.n_feats = n_feats
         self.n_fixed = n_fixed

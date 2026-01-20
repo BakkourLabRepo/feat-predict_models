@@ -250,11 +250,11 @@ def simulate_agent(
     
     # Simulate agent
     training_data = train_agent(agent, env, **training_trial_info)
-    agent.beta = agent.beta_test
     test_data = test_agent(agent, env, **test_trial_info)
 
     # Get agent representations
     representations = {
+        'model': model,
         'agent_info': agent_config,
         'S': agent.S,
         'F': agent.F,
@@ -623,10 +623,19 @@ def run_experiment(
 
         # Create the directories to save data to
         if output_path:
-            makedirs(f'{output_path}/{model_label}/training', exist_ok=True)
-            makedirs(f'{output_path}/{model_label}/test', exist_ok=True)
-            makedirs(f'{output_path}/{model_label}/representations', exist_ok=True)
-
+            makedirs(
+                f'{output_path}/{model}/{model_label}/training',
+                exist_ok = True
+                )
+            makedirs(
+                f'{output_path}/{model}/{model_label}/test',
+                exist_ok = True
+                )
+            makedirs(
+                f'{output_path}/{model}/{model_label}/representations',
+                exist_ok = True
+                )
+            
         # Load training trials
         if training_trial_info_path:
             training_trial_info = select_trial_info(
@@ -665,7 +674,7 @@ def run_experiment(
         training_trial_info['fixed_training'] = fixed_training
         
         # Simulate agent
-        print(f'Simulating - Agent: {subj}, Model: {model_label}')
+        print(f'Simulating - Agent: {subj}, Model: {model} {model_label}')
         training_data, test_data, representations = simulate_agent(
             model,
             agent_config,
@@ -691,20 +700,22 @@ def run_experiment(
         test_df = pd.DataFrame(test_data, columns=data_colnames)
 
         # Add agent information to data
+        training_df.insert(0, 'model', model)
+        test_df.insert(0, 'model', model)
         for key in [*agent_config][::-1]:
             training_df.insert(0, key, agent_config[key])
             test_df.insert(0, key, agent_config[key])
 
         # Save data 
         if output_path:
-            model_path = f'{output_path}/{model_label}'
+            model_path = f'{output_path}/{model}/{model_label}'
             training_df.to_csv(
                 f'{model_path}/training/training_{subj}.csv',
-                index=False
+                index = False
             )
             test_df.to_csv(
                 f'{model_path}/test/test_{subj}.csv',
-                index=False
+                index = False
             )
             with open(
                 f'{model_path}/representations/representations_{subj}.pkl',
