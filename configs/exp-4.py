@@ -9,7 +9,7 @@ experiment_config = {
     'depth-1_dim-1': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-1_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -37,7 +37,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -104,7 +104,7 @@ experiment_config = {
     'depth-1_dim-2': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-1_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -132,7 +132,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -152,7 +152,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
@@ -226,7 +226,7 @@ experiment_config = {
     'depth-2_dim-1': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-2_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -254,7 +254,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -324,7 +324,7 @@ experiment_config = {
     'depth-2_dim-2': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-2_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -352,7 +352,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -372,7 +372,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
@@ -449,7 +449,7 @@ experiment_config = {
     'depth-2_dim-4': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-4',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-2_dim-4',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -477,7 +477,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -497,7 +497,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
@@ -574,7 +574,7 @@ experiment_config = {
     'depth-3_dim-1': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-3_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -602,7 +602,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -674,7 +674,7 @@ experiment_config = {
     'depth-3_dim-2': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-3_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -702,7 +702,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -722,7 +722,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
@@ -800,7 +800,7 @@ experiment_config = {
     'depth-3_dim-4': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-4',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-3_dim-4',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -828,7 +828,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -848,7 +848,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
@@ -927,7 +927,7 @@ experiment_config = {
     'depth-4_dim-1': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-1',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-4_dim-1',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -955,7 +955,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -1029,7 +1029,7 @@ experiment_config = {
     'depth-4_dim-2': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-2',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-4_dim-2',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1057,7 +1057,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -1077,7 +1077,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
@@ -1158,7 +1158,7 @@ experiment_config = {
     'depth-4_dim-4': {
 
         # Output directory
-        'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-4',
+        'output_path': f'{PROJECT_PATH}/exp-4/data/depth-4_dim-4',
 
         # Random seed for reproducibility
         'seed': 243423,
@@ -1186,7 +1186,7 @@ experiment_config = {
         'model_configs': [
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff',
@@ -1206,7 +1206,7 @@ experiment_config = {
             ),
 
             (
-                'SuccessorFeatures',
+                'MBRL',
                 {
                     'id': None,
                     'model_label': 'ff-biased',
