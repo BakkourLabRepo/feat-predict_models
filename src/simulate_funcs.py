@@ -261,7 +261,6 @@ def simulate_agent(
         'F_raw': agent.F_raw,
         'M': agent.M,
         'bias': agent.bias,
-        'bias_terminal': agent.bias_terminal,
         'recency': agent.recency,
         'frequency': agent.frequency
     }
@@ -528,7 +527,7 @@ def generate_agent_configs(n_agents, model_configs):
                 if agent_config[key] is None:
                     if key == 'beta':
                         agent_config[key] = 1/np.random.uniform(0, 1) - 1
-                    elif key in ['sampler_specificity', 'inference_inhibition']:
+                    elif key in ['sampler_specificity']:
                         agent_config[key] = 1/np.random.uniform(0, 1)
                     else:
                         agent_config[key] = np.random.uniform(0, 1)

@@ -58,7 +58,6 @@ class BaseModel:
         gamma = 1.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
-        inference_inhibition = 0,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -76,7 +75,6 @@ class BaseModel:
         self.gamma = gamma
         self.bias_magnitude = bias_magnitude
         self.bias_accuracy = bias_accuracy
-        self.inference_inhibition = inference_inhibition
         self.conjunctive_starts = conjunctive_starts
         self.conjunctive_successors = conjunctive_successors
         self.conjunctive_composition = conjunctive_composition
@@ -258,7 +256,10 @@ class BaseModel:
         n_ones = np.sum(self.semantic_bias == 1) - n_identity
 
         # How many values are already flipped
-        n_flipped = np.sum((self.semantic_bias[non_update_region] == 1) & np.logical_not(self.bias[non_update_region] == 1))
+        n_flipped = np.sum(
+            (self.semantic_bias[non_update_region] == 1) &
+            np.logical_not(self.bias[non_update_region] == 1)
+            )
 
         # How many still need to be flipped (in the update region)
         n_to_flip_ones = int(n_ones*(1 - self.bias_accuracy)) - n_flipped
@@ -362,19 +363,6 @@ class BaseModel:
         abs_segmentation = np.abs(self.bias_magnitude)
         self.bias *= abs_segmentation
         self.bias += (1 - abs_segmentation)
-
-        # Set terminal bias (make instances encode for self)        
-        if self.conjunctive_starts == self.conjunctive_successors:
-            self.bias_terminal = np.eye(len(self.bias))
-        else:
-            if self.conjunctive_successors:
-                starts, successors = self.F_raw, self.S
-            else:
-                starts, successors = self.S, self.F_raw
-            self.bias_terminal = np.array([
-                np.any((start == successors) & (start != 0), axis=1)
-                for start in starts
-            ], dtype=float)
 
     def update_memory(self, state):
         """

@@ -63,7 +63,6 @@ class MBRL(BaseModel):
         gamma = 1.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
-        inference_inhibition = 0,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -87,7 +86,6 @@ class MBRL(BaseModel):
             gamma,
             bias_magnitude,
             bias_accuracy,
-            inference_inhibition,
             conjunctive_starts,
             conjunctive_successors,
             conjunctive_composition,
@@ -97,49 +95,68 @@ class MBRL(BaseModel):
             sampler_specificity
         )
 
-    def compute_V(self):
+    def compute_V(self, max_itr=1000, tol=1e-1):
         """
-        Computed estimated value function based on successor matrix, M
-        and current task, w
+        Computed estimated value function with value iteration
+
+        Arguments
+        ---------
+        max_itr : int
+            Maximum number of iterations
+        tol : float
+            Tolerance for convergence
         """
+
+        # N observations yet
         if len(self.S) == 0:
             self.V = []
-        else:
-            self.V = self.M@self.w
+            return
+        
+        # Value iteration
+        M_biased = self.bias*self.M
+        self.V = np.zeros(len(self.w))
+        for _ in range(max_itr):
+
+            # Perform Bellman update
+            V_new = self.w + self.gamma*M_biased@self.V
+
+            # Check for convergence
+            if np.max(np.abs(V_new - self.V)) < tol:
+                break
+
+            self.V = V_new
+
 
     def update_M(self, state, state_new):
         """
-        Update successor matrix (M)
+        Update one-step transition matrix (M)
 
         Arguments
         ---------
         state : numpy.Array
             One-dimensional current state array
-        state : numpy.Array
+        state_new : numpy.Array
             One-dimensional successor state array
         """
 
-        # Bias matrix differs for terminal/absorbing states
+        # Do not update on terminal transitions to improve stability
+        # when gamma = 1 and the environment is episodic and
+        # terminating
         terminal = np.all(state == state_new)
         if terminal:
-            bias = self.bias_terminal
-        else:
-            bias = self.bias
+            return
 
         # Get weights for rows of M for the present and successor states
-        s_weight, s_new_weight = self.get_M_update_weights(state, state_new)
+        s_weight = self.get_M_update_weights(state, state_new)[0]
 
-        # Weight and normalize bias matrix based on the successor weight
-        bias = self.weight_bias_matrix(s_new_weight, bias)
-
-        # Get feature representation in M for present state 
-        features = self.get_feature_vector(state)
+        # Get feature representation in M for next state 
+        features_new = self.get_feature_vector(state_new)
 
         # Decay learning rate by state/feature visitation frequency
         # Can account for inflated values in the successor matrix
         alpha = self.decay_alpha()
 
         # Perform update
-        delta = features + self.gamma*bias@self.M - self.M
+        delta = features_new - self.M
         self.M += alpha*s_weight*delta
 
