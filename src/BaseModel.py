@@ -447,6 +447,7 @@ class BaseModel:
                 successor_categories = self.F_raw
             self.compute_bias(start_categories, successor_categories)
 
+
     def sample_memory(
             self,
             state,
@@ -773,30 +774,6 @@ class BaseModel:
             s_new_weight = state_new
         s_weight = s_weight.reshape(-1, 1)
         return s_weight, s_new_weight
-    
-    def get_feature_vector(self, state):
-        """
-        Get feature vector for successor matrix update
-
-        Arguments
-        ---------
-        state : numpy.Array
-            One-dimensional state array
-        
-        Returns
-        -------
-        features : numpy.Array
-            Feature vector for state
-        """
-        if self.conjunctive_starts == self.conjunctive_successors:
-            features = np.eye(len(self.M))
-        elif self.conjunctive_successors:
-            features = self.get_state_index(state)
-        elif not self.continuous_features:
-            features = self.get_discrete_feature_index(state)
-        else:
-            features = state
-        return features
     
     def weight_bias_matrix(self, weight, bias):
         """

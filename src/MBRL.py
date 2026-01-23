@@ -95,7 +95,7 @@ class MBRL(BaseModel):
             sampler_specificity
         )
 
-    def compute_V(self, max_itr=1000, tol=1e-1):
+    def compute_V(self, max_itr=1000, tol=1e-4):
         """
         Computed estimated value function with value iteration
 
@@ -111,10 +111,10 @@ class MBRL(BaseModel):
         if len(self.S) == 0:
             self.V = []
             return
-        
+               
         # Value iteration
         M_biased = self.bias*self.M
-        self.V = np.zeros(len(self.w))
+        self.V = np.zeros(len(self.M))
         for _ in range(max_itr):
 
             # Perform Bellman update
@@ -126,6 +126,26 @@ class MBRL(BaseModel):
 
             self.V = V_new
 
+    def get_feature_vector(self, state):
+        """
+        Get feature vector for transition matrix update
+
+        Arguments
+        ---------
+        state : numpy.Array
+            One-dimensional state array
+        
+        Returns
+        -------
+        features : numpy.Array
+            Feature vector for state
+        """
+        if self.conjunctive_successors:
+            features = self.get_state_index(state)
+        else:
+            features = self.get_discrete_feature_index(state)
+        features = features.astype(float)
+        return features
 
     def update_M(self, state, state_new):
         """
