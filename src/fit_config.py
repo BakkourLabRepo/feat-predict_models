@@ -95,6 +95,7 @@ ENV_CONFIG = {
         [0,0,0,1],
         [0,0,0,1]
     ]),
+    'max_steps': 1,
     'n_feats': 4,
     'n_fixed': 0,
     'n_per': 2,

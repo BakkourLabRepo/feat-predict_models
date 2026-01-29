@@ -100,7 +100,38 @@ def transform_state_array(state_array, feature_reorder=[]):
         converted_state_arrat.append(state)
     return converted_state_arrat
 
-def train_agent(agent, env, data):
+def get_options_step(env, target, n_step_inference):
+    """
+    Get the step at which to sample options based on the target step
+    and the number of steps to infer composition from.
+
+    Arguments
+    ---------
+    env : Env
+        Instance of the environment.
+    target : numpy.ndarray
+        The target state.
+    n_step_inference : int or None
+        Number of steps to infer composition from. If None, will use
+        env.max_steps.
+    
+    Returns
+    -------
+    options_step : int
+        The step at which to sample options.
+    """
+
+    # Get options step based on target step
+    target_step = env.check_step(target)
+    options_step = target_step - n_step_inference
+
+    # Can't have step before initial step
+    if options_step < 0:
+        options_step = 0
+
+    return options_step
+
+def train_agent(agent, env, data, n_step_inference=None):
     """
     Trains the agent on the training phase.
 
@@ -112,12 +143,19 @@ def train_agent(agent, env, data):
         The environment to train the agent in.
     data : pandas.DataFrame
         Training data.
+    n_step_inference : int or None
+        Number of steps to infer composition from. If None, will use
+        env.max_steps.
 
     Returns
     -------
     probs : numpy.ndarray
         Array of choice probabilities.
     """
+
+    # If n_step_inference not specified, use max steps - 1
+    if n_step_inference is None:
+        n_step_inference = env.max_steps
 
     probs = []
     for t in range(len(data)):
@@ -135,11 +173,11 @@ def train_agent(agent, env, data):
         # Set target as task
         agent.set_task(target)
 
+        # Get options step based on target step
+        options_step = get_options_step(env, target, n_step_inference)
+
         # Generate feature set
-        env.sample_features(
-            comb = options_comb,
-            terminal = False
-        )
+        env.sample_features(comb=options_comb, step=options_step)
 
         # Get composition
         p = agent.compose_from_set(env.a, set_composition=composition)[1]
@@ -148,7 +186,9 @@ def train_agent(agent, env, data):
         agent.update_memory(env.s)
 
         # Step environment
+        step = 0
         while True:
+            step += 1
             env.step()
 
             # Update agent memory for new state
@@ -161,12 +201,23 @@ def train_agent(agent, env, data):
             # Terminate when absorbing state is met
             if env.check_absorbing():
                 break
+
             env.update_current_state() 
+
+            # Terminate if max steps reached
+            if step >= env.max_steps:
+
+                # For terminal state, include absorbing transition
+                if env.check_terminal(env.s):
+                    step -= 1
+
+                else: 
+                    break 
 
     probs = np.array(probs)
     return probs
 
-def test_agent(agent, env, data):
+def test_agent(agent, env, data, n_step_inference=None):
     """
     Test the agent on the test phase.
 
@@ -178,12 +229,19 @@ def test_agent(agent, env, data):
         The environment to train the agent in.
     data : pandas.DataFrame
         Test data.
+    n_step_inference : int or None
+        Number of steps to infer composition from. If None, will use
 
     Returns
     -------
     probs : numpy.ndarray
         Array of choice probabilities.
     """
+
+    # If n_step_inference not specified, use max steps - 1
+    if n_step_inference is None:
+        n_step_inference = env.max_steps
+
     probs = []
     for t in range(len(data)):
 
@@ -194,12 +252,12 @@ def test_agent(agent, env, data):
 
         # Set target as task
         agent.set_task(target)
+        
+        # Get options step based on target step
+        options_step = get_options_step(env, target, n_step_inference)
 
         # Generate feature set
-        env.sample_features(
-            options_comb,
-            terminal = False
-        )
+        env.sample_features(comb=options_comb, step=options_step)
 
         # Get composition
         p = agent.compose_from_set(env.a, set_composition=composition)[1]

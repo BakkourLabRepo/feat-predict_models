@@ -2,6 +2,26 @@
 import numpy as np
 from itertools import permutations
 
+def get_instance_combinations(instances, n_per):
+    """
+    Get all possible instance combinations
+
+    Arguments
+    ---------
+    instances : list
+        List of feature instances
+    n_per : int
+        Number of features per state
+    
+    Returns
+    -------
+    combs : numpy.Array
+        Array of all possible instance combinations
+    """
+    combs = np.meshgrid(*[instances]*n_per)
+    combs = np.array(combs).T.reshape(-1, n_per)
+    return combs
+
 class Env:
     """
     Environment class for multi-feature state space
@@ -22,6 +42,8 @@ class Env:
         Reward matrix for feature instances
     feat_tmat : numpy.Array
         Transition matrix for features
+    max_steps : int
+        Maximum number of steps per episode
     pr : list
         List of probabilities for each reward matrix
     probabilistic : bool
@@ -43,6 +65,7 @@ class Env:
         n_per,
         start_insts,
         r,
+        max_steps = None,
         feat_tmat = [],
         pr = [1],
         probabilistic = False,
@@ -56,9 +79,15 @@ class Env:
         self.n_feats = n_feats
         self.n_fixed = n_fixed
         self.n_per = n_per
-        self.start_insts = start_insts
-        self.terminal_insts = np.where(np.diag(tmat) == 1)[0] + 1
+        self.insts = np.vstack((
+            start_insts, # start instances
+            np.where(np.diag(tmat) == 1)[0] + 1 # terminal instances
+            ))
         self.r = r
+        if max_steps is None:
+            self.max_steps = len(tmat)
+        else:
+            self.max_steps = max_steps
         self.pr = pr
         self.probabilistic = probabilistic
         self.rel_cross_feature_inst_freq = rel_cross_feature_inst_freq
@@ -81,7 +110,7 @@ class Env:
         comb_sample = combs[np.random.choice(len(combs))]
         return comb_sample
 
-    def sample_features(self, comb=[], terminal=False):
+    def sample_features(self, comb=[], step=0):
         """
         Sample features for action selection
 
@@ -90,19 +119,16 @@ class Env:
         comb : list
             List indicating which categories are present (1) or
             absent (0)
-        terminal : bool
-            If True, sample terminal instances. If False, sample start
-            instances.
+        step : int
+            Step index for instances. Use -1 for terminal instances
         """
 
         # Sample category combination if not provided
         if len(comb) == 0:
             comb = self.sample_cat_combination()
 
-        # Get terminal or start instances
-        insts = np.copy(
-            [self.start_insts, self.terminal_insts][terminal]
-            )
+        # Select instances at the specified step
+        insts = np.copy(self.insts[step])
 
         # Number of instances and categories
         n_insts = len(insts)
@@ -114,7 +140,6 @@ class Env:
         comb = np.repeat(comb, n_insts, axis=0)
         comb = comb.reshape(n_cats, n_insts, -1)
         self.a = comb*insts.reshape(-1, 1)
-
 
     def get_successor(
             self,
@@ -142,16 +167,16 @@ class Env:
         """
 
         if most_likely:
-            tmat = self.lik_tmat
+            tmat = np.copy(self.lik_tmat)
         else:
-            tmat = self.tmat
+            tmat = np.copy(self.tmat)
         if invert:
             tmat = tmat.T
             np.fill_diagonal(tmat, 0) # avoid absorbing states
-            terminal_insts = self.start_insts
+            terminal_insts = self.insts[0]
         else:
-            terminal_insts = self.terminal_insts
-
+            terminal_insts = self.insts[-1]
+        
         # Terminal states are absorbing
         if np.any(np.isin(s, terminal_insts)):  
             s_new = np.copy(s)
@@ -176,7 +201,7 @@ class Env:
         
         return s_new
     
-    def get_start_state(self, s):
+    def get_start_state(self, s, step=0):
         """
         Get start state that precedes a given state
 
@@ -184,6 +209,8 @@ class Env:
         ---------
         s : numpy.Array
             State to get predecessor for
+        step : int
+            Step index for start instances
         
         Returns
         -------
@@ -191,11 +218,10 @@ class Env:
             Start state that precedes given state
         """
         pred = np.copy(s)
-        while not np.any(np.isin(pred, self.start_insts)):
+        while not np.any(np.isin(pred, self.insts[step])):
             pred = self.get_successor(pred, most_likely=True, invert=True)
         return pred
         
-
     def step(self):
         """
         Step the environment
@@ -316,49 +342,27 @@ class Env:
         self.combs = np.hstack((f_fixed, self.combs)).astype(int)
 
         # Get start and terminal instance combinations
-        start_combs = np.meshgrid(*[self.start_insts]*self.n_per)
-        start_combs = np.array(start_combs).T.reshape(-1, self.n_per)
-        terminal_combs = np.meshgrid(*[self.terminal_insts]*self.n_per)
-        terminal_combs = np.array(terminal_combs).T.reshape(-1, self.n_per)
+        start_combs = np.array([
+            get_instance_combinations(start_insts, self.n_per)
+            for start_insts in self.insts[:-1]
+            ])
+        terminal_combs = get_instance_combinations(self.insts[-1], self.n_per)
         successor_combs = [
             self.get_successor(s, most_likely=True, use_feat_tmat=False)
-            for s in start_combs
+            for s in start_combs[0]
             ]
         successor_combs = np.array(successor_combs)
 
         # Create a dictionary of all start states for each combination
         self.states = {}
         for comb in self.combs:
-
-            # Create states
-            self.states[tuple(comb)] = {
-                'start': self.assign_insts_to_cats(
-                    comb, start_combs
-                    ),
-                'terminal': self.assign_insts_to_cats(
-                    comb, terminal_combs
-                    ),
-                'likely_successor': self.assign_insts_to_cats(
-                    comb, successor_combs
-                    )
-                }
-            
-            # Get probability of sampling states (during transition
-            # training) based on relative frequency of states with
-            # matching instance levels across-features
-
-            # Get states with matching instance levels
-            matching_inst_levels = []
-            for s in self.states[tuple(comb)]['start']:
-                inst_levels = np.unique(s)
-                inst_levels = inst_levels[inst_levels != 0]
-                matching_inst_levels.append(len(inst_levels) == 1)
-            matching_inst_levels = np.array(matching_inst_levels)
-
-            # Convert frequencies into probabilities
-            freq = matching_inst_levels*(self.rel_cross_feature_inst_freq - 1)
-            freq = freq + 1
-            self.states[tuple(comb)]['p_sample'] = freq/np.sum(freq)
+            self.states[tuple(comb)] = [
+                    self.assign_insts_to_cats(comb, step_start_combs)
+                    for step_start_combs in start_combs
+                ]
+            self.states[tuple(comb)] += [
+                self.assign_insts_to_cats(comb, terminal_combs)
+                ]
 
 
     def check_features(self):
@@ -401,5 +405,24 @@ class Env:
         is_terminal : bool
             Returns True if state is terminal. False otherwise.
         """
-        is_terminal = np.any(np.isin(self.terminal_insts, state))
+        is_terminal = np.any(np.isin(self.insts[-1], state))
         return is_terminal
+    
+    def check_step(self, state):
+        """
+        Check step index of a state
+
+        Arguments
+        ---------
+        state : numpy.Array
+            Array representing a state
+        
+        Returns
+        -------
+        step : int
+            Step index of the state
+        """
+        for step in range(len(self.insts)):
+            if np.any(np.isin(self.insts[step], state)):
+                return step
+        return step

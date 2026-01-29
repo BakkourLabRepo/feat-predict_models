@@ -48,7 +48,45 @@ def get_reward(target, successor):
     )
     return reward
 
-def train_agent(agent, env, targets, options, fixed_training=True):
+def get_options_step(env, target, n_step_inference):
+    """
+    Get the step at which to sample options based on the target step
+    and the number of steps to infer composition from.
+
+    Arguments
+    ---------
+    env : Env
+        Instance of the environment.
+    target : numpy.ndarray
+        The target state.
+    n_step_inference : int or None
+        Number of steps to infer composition from. If None, will use
+        env.max_steps.
+    
+    Returns
+    -------
+    options_step : int
+        The step at which to sample options.
+    """
+
+    # Get options step based on target step
+    target_step = env.check_step(target)
+    options_step = target_step - n_step_inference
+
+    # Can't have step before initial step
+    if options_step < 0:
+        options_step = 0
+
+    return options_step
+
+def train_agent(
+        agent,
+        env,
+        targets,
+        options,
+        n_step_inference = None,
+        fixed_training = True
+        ):
     """
     Run agent on the training phase.
 
@@ -62,6 +100,9 @@ def train_agent(agent, env, targets, options, fixed_training=True):
         The list of training targets.
     options : numpy.ndarray
         The list of training options.
+    n_step_inference : int or None
+        Number of steps to infer composition from. If None, will use
+        env.max_steps.
     fixed_training : bool
         If True, the agent will always compose the target's predecessor.
 
@@ -70,8 +111,16 @@ def train_agent(agent, env, targets, options, fixed_training=True):
     -------
     training_data : numpy.ndarray
         Simulated training data.
+    V_history : numpy.ndarray
+        History of the agent's value function over training.
     """
+
+    # If n_step_inference not specified, use max steps - 1
+    if n_step_inference is None:
+        n_step_inference = env.max_steps
+
     training_data = []
+    V_history = []
     for t in range(len(targets)):
         target = targets[t]
         options_comb = options[t]
@@ -80,11 +129,11 @@ def train_agent(agent, env, targets, options, fixed_training=True):
         agent.set_task(target)
         target_comb = (target > 0).astype(int)
 
+        # Get options step based on target step
+        options_step = get_options_step(env, target, n_step_inference)
+        
         # Generate feature set
-        env.sample_features(
-            comb = options_comb,
-            terminal = False
-        )
+        env.sample_features(comb=options_comb, step=options_step)
 
         # Set composition as predecessor of target
         if fixed_training:
@@ -101,7 +150,9 @@ def train_agent(agent, env, targets, options, fixed_training=True):
         agent.update_memory(env.s)
 
         # Step environment
+        step = 0
         while True:
+            step += 1
             env.step()
 
             # Update agent memory for new state
@@ -114,7 +165,18 @@ def train_agent(agent, env, targets, options, fixed_training=True):
             # Terminate when absorbing state is met
             if env.check_absorbing():
                 break
-            env.update_current_state() 
+            
+            env.update_current_state()
+            
+            # Terminate if max steps reached
+            if step >= env.max_steps:
+
+                # For terminal state, include absorbing transition
+                if env.check_terminal(env.s):
+                    step -= 1
+
+                else: 
+                    break 
 
         # Get reward and whether composition was correct or not
         reward = get_reward(target, env.s_new)
@@ -127,17 +189,21 @@ def train_agent(agent, env, targets, options, fixed_training=True):
             options_comb,
             target,
             env.a,
+            n_step_inference,
             composition,
             env.s_new,
             p,
             reward,
             correct
         ])
+        V_history.append(agent.V)
+
+
     training_data = np.array(training_data, dtype=object)
 
-    return training_data
+    return training_data, V_history
 
-def test_agent(agent, env, targets, options):
+def test_agent(agent, env, targets, options, n_step_inference=None):
     """
     Run agent on the test phase. Trials will be all unique combinations
     of test_combs_set and test_targets.
@@ -152,13 +218,24 @@ def test_agent(agent, env, targets, options):
         The list of test targets.
     options : numpy.ndarray
         The list of test options.
+    n_step_inference : int or None
+        Number of steps to infer composition from. If None, will use
+        env.max_steps.
 
     Returns
     -------
     test_data : numpy.ndarray
         Simulated test data.
+    V_history : numpy.ndarray
+        History of the agent's value function over testing.
     """
+
+    # If n_step_inference not specified, use max steps - 1
+    if n_step_inference is None:
+        n_step_inference = env.max_steps
+        
     test_data = []
+    V_history = []
     for t in range(len(targets)):
         target = targets[t]
         options_comb = options[t]
@@ -167,11 +244,11 @@ def test_agent(agent, env, targets, options):
         agent.set_task(target)
         target_comb = (target > 0).astype(int)
 
+        # Get options step based on target step
+        options_step = get_options_step(env, target, n_step_inference)
+
         # Generate feature set
-        env.sample_features(
-            options_comb,
-            terminal = False
-        )
+        env.sample_features(comb=options_comb, step=options_step)
 
         # Get composition
         composition, p = agent.compose_from_set(env.a)
@@ -195,15 +272,18 @@ def test_agent(agent, env, targets, options):
             options_comb,
             target,
             env.a,
+            n_step_inference,
             composition,
             env.s_new,
             p,
             reward,
             correct
         ])
+        V_history.append(agent.V)
+
     test_data = np.array(test_data, dtype=object)
 
-    return test_data
+    return test_data, V_history
 
 def simulate_agent(
         model,
@@ -232,8 +312,14 @@ def simulate_agent(
     -------
     training_data : numpy.ndarray
         Simulated training data.
+    training_V_history : numpy.ndarray
+        History of the agent's value function over training.
     test_data : numpy.ndarray
         Simulated test data.
+    test_V_history : numpy.ndarray
+        History of the agent's value function over testing.
+    representations : dict
+        Agent representations after simulation.
     """
 
     # Initialize environment 
@@ -249,8 +335,12 @@ def simulate_agent(
     #test_targets = generate_test_targets(env)
     
     # Simulate agent
-    training_data = train_agent(agent, env, **training_trial_info)
-    test_data = test_agent(agent, env, **test_trial_info)
+    training_data, training_V_history = train_agent(
+        agent, env, **training_trial_info
+        )
+    test_data, test_V_history = test_agent(
+        agent, env, **test_trial_info
+        )
 
     # Get agent representations
     representations = {
@@ -265,7 +355,13 @@ def simulate_agent(
         'frequency': agent.frequency
     }
     
-    return training_data, test_data, representations
+    return (
+        training_data,
+        training_V_history,
+        test_data,
+        test_V_history,
+        representations
+    )
 
 def generate_training_trial_info(
         training_targets_set,
@@ -287,6 +383,8 @@ def generate_training_trial_info(
     trial_info : dict
         Training trial targets and options.
     """
+
+    # Get all targets
     targets = []
     for target_set in training_targets_set:
         block_targets = np.repeat(
@@ -298,13 +396,16 @@ def generate_training_trial_info(
         targets.append(block_targets)
     targets = np.array(targets)
     targets = targets.reshape(-1, len(targets[0][0]))
+
+    
     trial_info = {
         'targets': targets,
         'options': (targets != 0).astype(int)
     }
+
     return trial_info
     
-def generate_test_targets(env):
+def generate_test_targets(env, step=-1):
     """
     Generate test targets.
 
@@ -312,6 +413,9 @@ def generate_test_targets(env):
     ---------
     env : Env
         An instance of the agent's environment.
+    step : int
+        The step of the state to retrieve targets from. The default
+        (-1) retrieves the terminal states.
 
     Returns
     -------
@@ -320,7 +424,7 @@ def generate_test_targets(env):
     """
     targets = []
     for feature_comb in env.states.keys():
-        targets.append(env.states[feature_comb]['terminal'])
+        targets.append(env.states[feature_comb][step])
     targets = np.array(targets).reshape(-1, env.n_feats)
     return targets
 
@@ -631,6 +735,14 @@ def run_experiment(
                 exist_ok = True
                 )
             makedirs(
+                f'{output_path}/{model}/{model_label}/training-V-history',
+                exist_ok = True
+                )
+            makedirs(
+                f'{output_path}/{model}/{model_label}/test-V-history',
+                exist_ok = True
+                )
+            makedirs(
                 f'{output_path}/{model}/{model_label}/representations',
                 exist_ok = True
                 )
@@ -674,7 +786,13 @@ def run_experiment(
         
         # Simulate agent
         print(f'Simulating - Agent: {subj}, Model: {model} {model_label}')
-        training_data, test_data, representations = simulate_agent(
+        (
+            training_data,
+            training_V_history,
+            test_data,
+            test_V_history,
+            representations
+        ) = simulate_agent(
             model,
             agent_config,
             env_config,
@@ -689,6 +807,7 @@ def run_experiment(
             'options_comb',
             'target',
             'options',
+            'n_step_inference',
             'composition',
             'successor',
             'p',
@@ -704,6 +823,10 @@ def run_experiment(
         for key in [*agent_config][::-1]:
             training_df.insert(0, key, agent_config[key])
             test_df.insert(0, key, agent_config[key])
+
+        # Set max decimal places for floats
+        training_df = training_df.round(4)
+        test_df = test_df.round(4)
 
         # Save data 
         if output_path:
@@ -721,3 +844,13 @@ def run_experiment(
                 'wb'
             ) as file:
                 pickle.dump(representations, file)
+            with open(
+                f'{model_path}/training-V-history/training-V-history_{subj}.pkl',
+                'wb'
+            ) as file:
+                pickle.dump(training_V_history, file)
+            with open(
+                f'{model_path}/test-V-history/test-V-history_{subj}.pkl',
+                'wb'
+            ) as file:
+                pickle.dump(test_V_history, file)
