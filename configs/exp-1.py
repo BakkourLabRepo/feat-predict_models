@@ -314,6 +314,16 @@ experiment_config = {
 
         ]),
 
+        # Test feature combinations in the composition set
+        'test_combs_set': np.array([
+            [1,1,1,1,0,0,0,0],
+            [1,1,0,0,1,1,0,0],
+            [1,1,0,0,0,0,1,1],
+            [0,0,1,1,1,1,0,0],
+            [0,0,1,1,0,0,1,1],
+            [0,0,0,0,1,1,1,1],
+        ]),
+
         # Environment config
         'env_config': {
             'tmat': np.array([
