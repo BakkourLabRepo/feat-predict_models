@@ -206,9 +206,9 @@ experiment_config = {
             'n_per': 2,
             'start_insts': np.array([
                 [5, 6],
-                [4, 5],
-                [3, 4],
-                [2, 1]
+                [4, 7],
+                [3, 8],
+                [2, 9]
                 ]),
             'r': np.array([[-1,0,0,0,0,0,0,0,0,1]]),
             'continuous_features': False
