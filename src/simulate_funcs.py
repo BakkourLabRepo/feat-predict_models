@@ -131,6 +131,9 @@ def train_agent(
 
         # Get options step based on target step
         options_step = get_options_step(env, target, n_step_inference)
+
+        # Distance of step from terminal
+        steps_from_terminal = len(env.insts) - options_step - 1
         
         # Generate feature set
         env.sample_features(comb=options_comb, step=options_step)
@@ -189,7 +192,7 @@ def train_agent(
             options_comb,
             target,
             env.a,
-            n_step_inference,
+            steps_from_terminal,
             composition,
             env.s_new,
             p,
@@ -247,6 +250,9 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
         # Get options step based on target step
         options_step = get_options_step(env, target, n_step_inference)
 
+        # Distance of step from terminal
+        steps_from_terminal = len(env.insts) - options_step - 1
+
         # Generate feature set
         env.sample_features(comb=options_comb, step=options_step)
 
@@ -272,7 +278,7 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
             options_comb,
             target,
             env.a,
-            n_step_inference,
+            steps_from_terminal,
             composition,
             env.s_new,
             p,
@@ -807,7 +813,7 @@ def run_experiment(
             'options_comb',
             'target',
             'options',
-            'n_step_inference',
+            'steps_from_terminal',
             'composition',
             'successor',
             'p',
