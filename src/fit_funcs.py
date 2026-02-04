@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from src.SuccessorFeatures import SuccessorFeatures
 from src.Env import Env
 
 def probs_to_nll(probs):
@@ -165,11 +164,6 @@ def train_agent(agent, env, data, n_step_inference=None):
         options_comb = data.loc[t, 'options_comb']
         composition = data.loc[t, 'composition']
 
-        if t >= 1:
-            if data.loc[t, 'target_comb'] != data.loc[t - 1, 'target_comb']:
-                agent.segmentation = agent.segmentation_2
-                agent.alpha = agent.alpha_2
-
         # Set target as task
         agent.set_task(target)
 
@@ -269,6 +263,7 @@ def test_agent(agent, env, data, n_step_inference=None):
 def likfun(
         params,
         data,
+        Model,
         agent_config,
         env_config,
         params_to_fit,
@@ -283,6 +278,8 @@ def likfun(
         Parameter values for this fitting iteration.
     data : dict
         Dictionary containing training and test data.
+    Model : class
+        The model class to instantiate.
     agent_config : dict
         Dictionary containing the agent configuration.
     env_config : dict
@@ -309,11 +306,10 @@ def likfun(
 
     # Initialize environment and agent
     env = Env(**env_config)
-    agent = SuccessorFeatures(env, **this_agent_config)
+    agent = Model(env, **this_agent_config)
 
     # Get action probabilities
     training_probs = train_agent(agent, env, data['training'])
-    agent.beta = agent.beta_test
     test_probs = test_agent(agent, env, data['test'])
     probs = np.concatenate([training_probs, test_probs])
 
@@ -334,6 +330,7 @@ def likfun(
 
 def fit_model(
         data,
+        Model,
         agent_config,
         env_config,
         parameter_bounds = None,
@@ -348,6 +345,8 @@ def fit_model(
     ---------
     data : dict
         Dictionary containing training and test data.
+    Model : class
+        The model class to instantiate.
     agent_config : dict
         Dictionary containing the agent configuration.
     env_config : dict
@@ -424,6 +423,7 @@ def fit_model(
             x0,
             args = (
                 data,
+                Model,
                 agent_config,
                 env_config,
                 params_to_fit,
@@ -473,6 +473,7 @@ def fit_model_parallel(args):
     args : dict
         A dictionary containing the following keys:
         - 'subj' (str): Subject ID.
+        - 'Model' (class): The model class to instantiate.
         - 'model_config' (dict): Model configuration.
         - 'data_path' (str): Path to the data.
         - 'env_config' (dict): Environment configuration.
@@ -523,6 +524,7 @@ def fit_model_parallel(args):
     # Fit this model
     result, fit_agent_config, null_result = fit_model(
         agent_data,
+        args['Model'],
         args['model_config'],
         args['env_config'],
         parameter_bounds = args['parameter_bounds'],

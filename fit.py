@@ -4,6 +4,8 @@ from re import search
 import concurrent.futures
 import pickle
 from src.fit_funcs import fit_model_parallel
+from src.SuccessorFeatures import SuccessorFeatures
+from src.MBRL import MBRL
 from src.fit_config import (
     DATA_PATH,
     RESULTS_PATH,
@@ -68,7 +70,12 @@ except:
 fitting_args = []
 ids_for_null = subj_ids.copy()
 for subj in subj_ids:
-    for model_config in MODEL_CONFIGS:
+    for model, model_config in MODEL_CONFIGS:
+
+        if model == 'MBRL':
+            Model = MBRL
+        else:
+            Model = SuccessorFeatures
 
         # Skip if already fit
         model_label = model_config['model_label']
@@ -79,6 +86,7 @@ for subj in subj_ids:
         else:
             fitting_args.append({
                 'subj': subj,
+                'Model': Model,
                 'model_config': model_config,
                 'data_path': DATA_PATH,
                 'env_config': ENV_CONFIG,
@@ -158,7 +166,6 @@ if __name__ == '__main__':
                 'F_raw': this_result.agent.F_raw,
                 'M': this_result.agent.M,
                 'bias': this_result.agent.bias,
-                'bias_terminal': this_result.agent.bias_terminal,
                 'recency': this_result.agent.recency,
                 'frequency': this_result.agent.frequency
             }

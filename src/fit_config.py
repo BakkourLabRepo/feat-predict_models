@@ -1,10 +1,10 @@
 import numpy as np
 
 # Choice data path
-DATA_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp-3/data/ff'
+DATA_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/data'
 
 # Results path and file name
-RESULTS_PATH = '/Users/euanprentis/Documents/feat_predict_simulations/exp-3/results'
+RESULTS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results'
 RESULTS_FNAME = 'model_fits'
 
 # Optimizer settings
@@ -20,59 +20,131 @@ NUM_CORES = 4
 # Configurations for models to fit
 MODEL_CONFIGS = [
 
-    # Feature -> Feature model
-    {
-        'id': None,
-        'model_label': 'ff',
-        'alpha': None, 
-        'alpha_decay': 0, 
-        'beta': None,
-        'gamma': 1.,
-        'bias_magnitude': None,
-        'conjunctive_starts': False,
-        'conjunctive_successors': False,
-        'conjunctive_composition': False,
-        'memory_sampler': False,
-        'sampler_feature_weight': 1,
-        'sampler_recency_weight': 0,
-        'sampler_specificity': 1
-    },
+    # Feature -> Feature Successor Feature model
+    (
+        'SuccessorFeatures',
+        {
+            'id': None,
+            'model_label': 'sf-ff',
+            'alpha': None, 
+            'alpha_decay': 0, 
+            'beta': None,
+            'gamma': 1.,
+            'bias_magnitude': None,
+            'conjunctive_starts': False,
+            'conjunctive_successors': False,
+            'conjunctive_composition': False,
+            'memory_sampler': False,
+            'sampler_feature_weight': 1,
+            'sampler_recency_weight': 0,
+            'sampler_specificity': 1
+        }
+    ),
 
-    # State -> State model
-    {
-        'id': None,
-        'model_label': 'ss',
-        'alpha': None, 
-        'alpha_decay': 0, 
-        'beta': None,
-        'gamma': 1.,
-        'bias_magnitude': 0,
-        'conjunctive_starts': True,
-        'conjunctive_successors': True,
-        'conjunctive_composition': True,
-        'memory_sampler': False,
-        'sampler_feature_weight': 1,
-        'sampler_recency_weight': 0,
-        'sampler_specificity': 1
-    },
+    # State -> State model Successor Features model
+    (
+        'SuccessorFeatures',
+        {
+            'id': None,
+            'model_label': 'sf-ss',
+            'alpha': None, 
+            'alpha_decay': 0, 
+            'beta': None,
+            'gamma': 1.,
+            'bias_magnitude': 0,
+            'conjunctive_starts': True,
+            'conjunctive_successors': True,
+            'conjunctive_composition': True,
+            'memory_sampler': False,
+            'sampler_feature_weight': 1,
+            'sampler_recency_weight': 0,
+            'sampler_specificity': 1
+        }
+    ),
 
-    # State -> State Sampler model
-    {
-        'id': None,
-        'model_label': 'ss-sampler',
-        'alpha': None, 
-        'alpha_decay': 0, 
-        'beta': None,
-        'gamma': 1.,
-        'bias_magnitude': 0,
-        'conjunctive_starts': True,
-        'conjunctive_successors': True,
-        'conjunctive_composition': False,
-        'memory_sampler': True,
-        'sampler_feature_weight': None,
-        'sampler_recency_weight': 0,
-        'sampler_specificity': None
-    }
+    # State -> State Sampler Successor Features model
+    (
+        'SuccessorFeatures',
+        {
+            'id': None,
+            'model_label': 'sf-ss-sampler',
+            'alpha': None, 
+            'alpha_decay': 0, 
+            'beta': None,
+            'gamma': 1.,
+            'bias_magnitude': 0,
+            'conjunctive_starts': True,
+            'conjunctive_successors': True,
+            'conjunctive_composition': False,
+            'memory_sampler': True,
+            'sampler_feature_weight': None,
+            'sampler_recency_weight': 0,
+            'sampler_specificity': None
+        }
+    ),
+
+    # Feature -> Feature MBRL model
+    (
+        'MBRL',
+        {
+            'id': None,
+            'model_label': 'mb-ff',
+            'alpha': None, 
+            'alpha_decay': 0, 
+            'beta': None,
+            'gamma': 1.,
+            'bias_magnitude': None,
+            'conjunctive_starts': False,
+            'conjunctive_successors': False,
+            'conjunctive_composition': False,
+            'memory_sampler': False,
+            'sampler_feature_weight': 1,
+            'sampler_recency_weight': 0,
+            'sampler_specificity': 1
+        }
+    ),
+
+    # State -> State model MBRL model
+    (
+        'MBRL',
+        {
+            'id': None,
+            'model_label': 'mb-ss',
+            'alpha': None, 
+            'alpha_decay': 0, 
+            'beta': None,
+            'gamma': 1.,
+            'bias_magnitude': 0,
+            'conjunctive_starts': True,
+            'conjunctive_successors': True,
+            'conjunctive_composition': True,
+            'memory_sampler': False,
+            'sampler_feature_weight': 1,
+            'sampler_recency_weight': 0,
+            'sampler_specificity': 1
+        }
+    ),
+
+    # State -> State Sampler MBRL model
+    (
+        'MBRL',
+        {
+            'id': None,
+            'model_label': 'mb-ss-sampler',
+            'alpha': None, 
+            'alpha_decay': 0, 
+            'beta': None,
+            'gamma': 1.,
+            'bias_magnitude': 0,
+            'conjunctive_starts': True,
+            'conjunctive_successors': True,
+            'conjunctive_composition': False,
+            'memory_sampler': True,
+            'sampler_feature_weight': None,
+            'sampler_recency_weight': 0,
+            'sampler_specificity': None
+        }
+    )
 
 ]
 
