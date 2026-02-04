@@ -261,11 +261,25 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
 
         # Step environment to get absorbing state, do not update agent
         env.s = composition
+        step = 0
         while True:
+            step += 1
             env.step()
+
+            # Terminate when absorbing state is met
             if env.check_absorbing():
                 break
             env.update_current_state() 
+
+            # Terminate if max steps reached
+            if step >= env.max_steps:
+
+                # For terminal state, include absorbing transition
+                if env.check_terminal(env.s):
+                    step -= 1
+
+                else: 
+                    break 
 
         # Get reward and whether composition was correct or not
         reward = get_reward(target, env.s_new)
