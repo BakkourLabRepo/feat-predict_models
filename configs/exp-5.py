@@ -16,7 +16,7 @@ experiment_config = {
         'seed': 243423,
 
         # Number of training trials
-        'n_training_target_repeats': 90,
+        'n_training_target_repeats': 20,
 
         # Simulate based on existing agent configurations
         'agent_configs_path': AGENT_CONFIGS_PATH,
@@ -185,6 +185,8 @@ experiment_config = {
             [0,0,1,1],
         ]),
 
+        # At which steps to generate test targets
+        'test_target_steps': [1, 2, 3, 4],
 
         # Environment config
         'env_config': {

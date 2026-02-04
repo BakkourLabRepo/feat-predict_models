@@ -411,7 +411,7 @@ def generate_training_trial_info(
 
     return trial_info
     
-def generate_test_targets(env, step=-1):
+def generate_test_targets(env, steps=[-1]):
     """
     Generate test targets.
 
@@ -419,9 +419,9 @@ def generate_test_targets(env, step=-1):
     ---------
     env : Env
         An instance of the agent's environment.
-    step : int
-        The step of the state to retrieve targets from. The default
-        (-1) retrieves the terminal states.
+    steps : list
+        The steps of the state to retrieve targets from. The default
+        ([-1]) retrieves the terminal states.
 
     Returns
     -------
@@ -430,13 +430,15 @@ def generate_test_targets(env, step=-1):
     """
     targets = []
     for feature_comb in env.states.keys():
-        targets.append(env.states[feature_comb][step])
+        for step in steps:
+            targets.append(env.states[feature_comb][step])
     targets = np.array(targets).reshape(-1, env.n_feats)
     return targets
 
 def generate_test_trial_info(
     env,
-    test_combs_set
+    test_combs_set,
+    test_target_steps = [-1]
 ):
     """
     Generate test targets and options.
@@ -447,13 +449,16 @@ def generate_test_trial_info(
         An instance of the agent's environment.
     test_combs_set : numpy.ndarray
         Set of test options.
+    test_target_steps : list
+        At which steps to generate test targets. Default is [-1], which
+        generates targets from the terminal states.
 
     Returns
     -------
     trial_info : dict
         Test trial targets and options.
     """
-    targets = generate_test_targets(env)
+    targets = generate_test_targets(env, steps=test_target_steps)
     options = np.repeat(test_combs_set, len(targets), axis=0)
     targets = np.tile(targets, (len(test_combs_set), 1))
     trial_info = {
@@ -657,6 +662,7 @@ def run_experiment(
         training_targets_set = None,
         n_training_target_repeats = None,
         test_combs_set = None,
+        test_target_steps = [-1],
         fixed_training = False,
         agent_configs_path = False,
         training_trial_info_path = False,
@@ -681,6 +687,8 @@ def run_experiment(
         The number of times each target set should be repeated.
     test_combs_set : numpy.ndarray
         Set of test options.
+    test_target_steps : list
+        At which steps to generate test targets.
     fixed_training : bool
         If True, the agent will always compose the target's predecessor.
     agent_configs_path : str
@@ -784,7 +792,8 @@ def run_experiment(
         else:
             test_trial_info = generate_test_trial_info(
                 Env(**env_config),
-                test_combs_set
+                test_combs_set,
+                test_target_steps
             )
 
         # Set whether to fix training choices or not
