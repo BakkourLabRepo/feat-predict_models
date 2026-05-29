@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
+from scipy.sparse.csgraph import shortest_path
 from src.Env import Env
 
 def probs_to_nll(probs):
@@ -54,7 +55,64 @@ def drop_missed_trials(data):
         The cleaned data.
     """
     data = data.dropna(subset=['successor'])
+    data = data[data['successor'] != '[]']
     data = data.reset_index(drop=True)
+    return data
+
+def get_step(start_state, shortest_paths):
+    """
+    Get the step of a given state based on the shortest paths in the
+    environment. The max step is the longest shortest path based on 
+    the instance transition matrix.
+
+    Arguments
+    ---------
+    start_state : str
+        The starting state.
+    shortest_paths : ndarray
+        The shortest paths in the environment.
+
+    Returns
+    -------
+    step : int
+        The step of the given state.
+    """
+    start_state = convert_state_str(start_state)
+    example_inst = start_state[start_state != 0][0] - 1
+    max_step = int(np.max(shortest_paths))
+    step = int(max_step - np.max(shortest_paths[example_inst]) + 1)
+    return step
+
+def add_step_info(data, tmat):
+    """
+    Add step information to the data based on the shortest paths in 
+    the environment. The max step is the longest shortest path based on
+    the instance transition matrix.
+
+    Arguments
+    ---------
+    data : pandas.DataFrame
+        The data to add step information to.
+    tmat : ndarray
+        The instance transition matrix of the environment.
+    
+    Returns
+    -------
+    data : pandas.DataFrame
+        The update data frame with step information added.
+    """
+    
+
+    # Compute shortest paths to identify inference step
+    shortest_paths = shortest_path(tmat, directed=True)
+    shortest_paths[shortest_paths == np.inf] = 0
+
+    # Add step information to data
+    data['step'] = data['correct_composition'].apply(
+        get_step,
+        args = (shortest_paths,)
+        )
+    
     return data
 
 def convert_state_str(state_str):
@@ -71,66 +129,53 @@ def convert_state_str(state_str):
     state_arr : numpy.ndarray
         The numpy array representation of the state
     """
+    state_str = state_str.replace(',', ' ')
     state_str = state_str[1:-1].split(' ')
     state_arr = np.array(state_str, dtype=int)
     return state_arr
 
-def transform_state_array(state_array, feature_reorder=[]):
+def recode_state_array(
+        state_arr,
+        start_step_arr = None,
+        n_steps_arr = None,
+        feature_reorder = []
+        ):
     """
-    Applies convert_state_str to a list of state strings.
+    Recode an array of states based on the feature transition strucutre
 
     Arguments
     ---------
-    state_array : list
-        A list of state strings.
+    state_arr : numpy.ndarray
+        The array of states to recode.
+    start_step_arr : numpy.ndarray or None
+        An array containing the starting step for each state. 
+    n_steps_arr : numpy.ndarray or None
+        An array containing the number of steps inferences are made
+        over from that state.
     feature_reorder : list
-        A list of indices to reorder the features.
+        A list of indices to reorder features based on at each step.
 
     Returns
     -------
-    converted_state_arrat : list
-        A list of converted state values.
+    recoded_state_arr : numpy.ndarray
+        The recoded array of states.
     """
-    converted_state_arrat = []
-    for state_str in state_array:
-        state = convert_state_str(state_str)
-        if len(feature_reorder) > 0:
-            state = state[feature_reorder]
-        converted_state_arrat.append(state)
-    return converted_state_arrat
+    if len(feature_reorder) == 0:
+        return state_arr
+    start_step = 1
+    n_steps = 1
+    recoded_state_arr = np.copy(state_arr)
+    for i, state in enumerate(state_arr):
+        if start_step_arr is not None:
+            start_step = start_step_arr[i]
+            n_steps = n_steps_arr[i]
+        recoded_state = np.copy(state)
+        for step in range(start_step, start_step + n_steps):
+            recoded_state = recoded_state[feature_reorder[step - 1]]
+        recoded_state_arr[i] = recoded_state
+    return recoded_state_arr
 
-def get_options_step(env, target, n_step_inference):
-    """
-    Get the step at which to sample options based on the target step
-    and the number of steps to infer composition from.
-
-    Arguments
-    ---------
-    env : Env
-        Instance of the environment.
-    target : numpy.ndarray
-        The target state.
-    n_step_inference : int or None
-        Number of steps to infer composition from. If None, will use
-        env.max_steps.
-    
-    Returns
-    -------
-    options_step : int
-        The step at which to sample options.
-    """
-
-    # Get options step based on target step
-    target_step = env.check_step(target)
-    options_step = target_step - n_step_inference
-
-    # Can't have step before initial step
-    if options_step < 0:
-        options_step = 0
-
-    return options_step
-
-def train_agent(agent, env, data, n_step_inference=None):
+def train_agent(agent, env, data):
     """
     Trains the agent on the training phase.
 
@@ -142,19 +187,12 @@ def train_agent(agent, env, data, n_step_inference=None):
         The environment to train the agent in.
     data : pandas.DataFrame
         Training data.
-    n_step_inference : int or None
-        Number of steps to infer composition from. If None, will use
-        env.max_steps.
 
     Returns
     -------
     probs : numpy.ndarray
         Array of choice probabilities.
     """
-
-    # If n_step_inference not specified, use max steps - 1
-    if n_step_inference is None:
-        n_step_inference = env.max_steps
 
     probs = []
     for t in range(len(data)):
@@ -163,15 +201,13 @@ def train_agent(agent, env, data, n_step_inference=None):
         target = data.loc[t, 'target']
         options_comb = data.loc[t, 'options_comb']
         composition = data.loc[t, 'composition']
+        step = data.loc[t, 'step'] - 1
 
         # Set target as task
         agent.set_task(target)
 
-        # Get options step based on target step
-        options_step = get_options_step(env, target, n_step_inference)
-
         # Generate feature set
-        env.sample_features(comb=options_comb, step=options_step)
+        env.sample_features(comb=options_comb, step=step)
 
         # Get composition
         p = agent.compose_from_set(env.a, set_composition=composition)[1]
@@ -211,7 +247,7 @@ def train_agent(agent, env, data, n_step_inference=None):
     probs = np.array(probs)
     return probs
 
-def test_agent(agent, env, data, n_step_inference=None):
+def test_agent(agent, env, data):
     """
     Test the agent on the test phase.
 
@@ -223,18 +259,12 @@ def test_agent(agent, env, data, n_step_inference=None):
         The environment to train the agent in.
     data : pandas.DataFrame
         Test data.
-    n_step_inference : int or None
-        Number of steps to infer composition from. If None, will use
 
     Returns
     -------
     probs : numpy.ndarray
         Array of choice probabilities.
     """
-
-    # If n_step_inference not specified, use max steps - 1
-    if n_step_inference is None:
-        n_step_inference = env.max_steps
 
     probs = []
     for t in range(len(data)):
@@ -243,15 +273,13 @@ def test_agent(agent, env, data, n_step_inference=None):
         target = data.loc[t, 'target']
         options_comb = data.loc[t, 'options_comb']
         composition = data.loc[t, 'composition']
+        step = data.loc[t, 'step'] - 1
 
         # Set target as task
         agent.set_task(target)
-        
-        # Get options step based on target step
-        options_step = get_options_step(env, target, n_step_inference)
 
         # Generate feature set
-        env.sample_features(comb=options_comb, step=options_step)
+        env.sample_features(comb=options_comb, step=step)
 
         # Get composition
         p = agent.compose_from_set(env.a, set_composition=composition)[1]
@@ -497,12 +525,34 @@ def fit_model_parallel(args):
     print(f'Fitting - Subject: {subj}, Model: {model_label}')
 
     # Load data
-    agent_data = {
-        'training': pd.read_csv(f'{data_path}/training/training_{subj}.csv'),
-        'test': pd.read_csv(f'{data_path}/test/test_{subj}.csv')
-    }
+    try:
+        agent_data = {
+            'training': pd.read_csv(f'{data_path}/training/training_{subj}.csv'),
+            'test': pd.read_csv(f'{data_path}/test/test_{subj}.csv')
+        }
+    except:
+        agent_data = {
+            'training': pd.read_csv(f'{data_path}/training/sub-{subj}_task-training.csv'),
+            'test': pd.read_csv(f'{data_path}/test/sub-{subj}_task-test.csv')
+        }
     agent_data['training'] = drop_missed_trials(agent_data['training'])
     agent_data['test'] = drop_missed_trials(agent_data['test'])
+
+    # Add inference step columns
+    agent_data['training'] = add_step_info(
+        agent_data['training'],
+        args['env_config']['tmat']
+        )
+    agent_data['test'] = add_step_info(
+        agent_data['test'],
+        args['env_config']['tmat']
+        )
+    if 'n_steps' not in agent_data['training'].columns:
+        agent_data['training']['n_steps'] = 1
+        agent_data['training']['step'] = 1
+    if 'n_steps' not in agent_data['test'].columns:
+        agent_data['test']['n_steps'] = 1
+        agent_data['test']['step'] = 1
     
     # Convert state strings to arrays
     for phase in agent_data.keys():
@@ -510,15 +560,26 @@ def fit_model_parallel(args):
 
             # Check whether to re-order features for between condition
             this_feature_order = []
-            if 'between_cond' in agent_data['training'].columns:
-                condition = agent_data['training']['between_cond'].iloc[0]
-                if (state_type == 'target') and (condition == 1):
-                    this_feature_order = args['feature_reorder']
+            if 'condition' in agent_data[phase].columns:
+                condition = agent_data[phase]['condition'].iloc[0]
+                if state_type == 'target':
+                    this_feature_order = args['feature_reorder'][condition]
+            elif 'between_cond' in agent_data[phase].columns:
+                condition = agent_data[phase]['between_cond'].iloc[0]
+                if state_type == 'target':
+                    this_feature_order = args['feature_reorder'][condition]
+
+            # Transform from strings to array
+            agent_data[phase][state_type] = agent_data[phase][state_type].apply(
+                convert_state_str
+            )
             
-            # Perfom re-ordering
-            agent_data[phase][state_type] = transform_state_array(
-                agent_data[phase][state_type],
-                feature_reorder = this_feature_order
+            # Perfom re-ordering 
+            agent_data[phase][state_type] = recode_state_array(
+                agent_data[phase][state_type].values,
+                start_step_arr = agent_data[phase]['step'].values,
+                n_steps_arr = agent_data[phase]['n_steps'].values,
+                feature_reorder = this_feature_order,
             )
 
     # Fit this model

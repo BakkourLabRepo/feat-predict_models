@@ -153,7 +153,7 @@ PARAMETER_BOUNDS = {
     'alpha': (.0001, .9999),
     'alpha_decay': (0, np.inf), 
     'beta': (.0001, np.inf),
-    'bias_magnitude': (-.9999, .9999),
+    'bias_magnitude': (0, .9999),
     'sampler_feature_weight': (0, 1),
     'sampler_recency_weight': (0, 1),
     'sampler_specificity': (1, np.inf)
@@ -162,22 +162,92 @@ PARAMETER_BOUNDS = {
 # Environment config
 ENV_CONFIG = {
     'tmat': np.array([
-        [1,0,0,0],
-        [1,0,0,0],
-        [0,0,0,1],
-        [0,0,0,1]
+        [1,0,0,0,0,0],
+        [1,0,0,0,0,0],
+        [0,1,0,0,0,0],
+        [0,0,0,0,1,0],
+        [0,0,0,0,0,1],
+        [0,0,0,0,0,1]
     ]),
     'max_steps': 1,
     'n_feats': 4,
     'n_fixed': 0,
     'n_per': 2,
-    'start_insts': np.array([2, 3]),
-    'r': np.array([[-1, 0, 0, 1]]),
+    'start_insts': np.array([[3, 4], [2, 5]]),
+    'r': np.array([[-1, 0, 0, 0, 0, 1]]),
     'continuous_features': False
 }
 
-# How features reorder for the between-feature transitions condition
-FEATURE_REORDER = np.array([2,3,0,1])
+# How features reorder at each step in each condition
+FEATURE_REORDER = np.array([
+
+        # Condition 1 (1I) - semantic congruent
+        [
+
+            # Step 1
+            [0,1,2,3],
+
+            # Step 2
+            [0,1,2,3]
+
+        ],
+
+        # Condition 2 (1II) - semantic incongruent
+
+        [
+            # Step 1
+            [3,2,1,0],
+
+            # Step 2
+            [2,3,0,1]
+
+        ],
+
+        # Condition 3 (2I) - semantic incongruent
+        [
+
+            # Step 1
+            [2,3,0,1],
+
+            # Step 2
+            [3,2,1,0]
+
+        ],
+
+        # Condition 4 (3II) - semantic congruent
+        [
+
+            # Step 1
+            [0,1,2,3],
+
+            # Step 2
+            [0,1,2,3]
+
+        ],
+
+        # Condition 5 (2II) - semantic congruent
+        [
+
+            # Step 1
+            [0,1,2,3],
+
+            # Step 2
+            [0,1,2,3]
+
+        ],
+
+        # Condition 6 (3II) - semantic incongruent
+        [
+            # Step 1
+            [2,3,0,1],
+
+            # Step 2
+            [3,2,1,0]
+
+        ]
+        
+    ])
+
 
 
 
