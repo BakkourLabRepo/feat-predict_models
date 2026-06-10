@@ -3,14 +3,14 @@ import numpy as np
 experiment_config = {
 
     # Choice data path
-    'data_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_1/data',
+    'data_path': '/Users/euanprentis/Documents/feat-predict-mri/exp-1/beh',
 
     # Results path and file name
-    'results_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_1/results',
+    'results_path': '/Users/euanprentis/Documents/feat-predict-mri/exp-1/derivatives/beh',
     'results_fname': 'model_fits',
 
-    # Whether data is in BIDS format
-    'bids': False,
+    # Whether data is in BIDS format (for MRI experiment)
+    'bids': True,
 
     # Optimizer settings
     'n_starts': 100, # Max number of random starts
@@ -184,11 +184,23 @@ experiment_config = {
     # How features reorder at each step in each condition
     'feature_reorder': np.array([
 
-        # Semantic congruent (only 1 step)
+        # Condition 1 (1I) - semantic congruent
         [[0,1,2,3]],
 
-        # Semantic incongruent (only 1 step)
-        [[2,3,0,1]]
+        # Condition 2 (1II) - semantic incongruent
+        [[3,2,1,0]],
+
+        # Condition 3 (2I) - semantic incongruent
+        [[2,3,0,1]],
+
+        # Condition 4 (3II) - semantic congruent
+        [[0,1,2,3]],
+
+        # Condition 5 (2II) - semantic congruent
+        [[0,1,2,3]],
+
+        # Condition 6 (3II) - semantic incongruent
+        [[2,3,0,1]],
 
     ])
 }

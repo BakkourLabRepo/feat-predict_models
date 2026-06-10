@@ -1,3 +1,4 @@
+from os import listdir
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
@@ -504,6 +505,7 @@ def fit_model_parallel(args):
         - 'Model' (class): The model class to instantiate.
         - 'model_config' (dict): Model configuration.
         - 'data_path' (str): Path to the data.
+        - 'bids' (bool): Whether the data is in BIDS format.
         - 'env_config' (dict): Environment configuration.
         - 'parameter_bounds' (dict): Model parameters bounds.
         - 'n_starts' (int): The random starts for optimization.
@@ -525,15 +527,26 @@ def fit_model_parallel(args):
     print(f'Fitting - Subject: {subj}, Model: {model_label}')
 
     # Load data
-    try:
-        agent_data = {
-            'training': pd.read_csv(f'{data_path}/training/training_{subj}.csv'),
-            'test': pd.read_csv(f'{data_path}/test/test_{subj}.csv')
-        }
-    except:
-        agent_data = {
-            'training': pd.read_csv(f'{data_path}/training/sub-{subj}_task-training.csv'),
-            'test': pd.read_csv(f'{data_path}/test/sub-{subj}_task-test.csv')
+    if args['bids']:
+        agent_data = {'training': [], 'test': []}
+        for phase in ['training', 'test']:
+            for fname in listdir(f'{data_path}/sub-{subj}'):
+                if (phase in fname) and (fname.endswith('.csv')):
+                    agent_data[phase].append(
+                        pd.read_csv(f'{data_path}/sub-{subj}/{fname}')
+                    )
+                    
+            agent_data[phase] = pd.concat(agent_data[phase], ignore_index=True)
+    else:
+        try:
+            agent_data = {
+                'training': pd.read_csv(f'{data_path}/training/training_{subj}.csv'),
+                'test': pd.read_csv(f'{data_path}/test/test_{subj}.csv')
+            }
+        except:
+            agent_data = {
+                'training': pd.read_csv(f'{data_path}/training/sub-{subj}_task-training.csv'),
+                'test': pd.read_csv(f'{data_path}/test/sub-{subj}_task-test.csv')
         }
     agent_data['training'] = drop_missed_trials(agent_data['training'])
     agent_data['test'] = drop_missed_trials(agent_data['test'])
