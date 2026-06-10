@@ -12,6 +12,9 @@ experiment_config = {
     # Whether data is in BIDS format (for MRI experiment)
     'bids': True,
 
+    # Participant IDs to exclude
+    'ids_to_exclude': [118, 130],
+
     # Optimizer settings
     'n_starts': 100, # Max number of random starts
     'max_unchanged': 5, # Max number of random starts without improvement

@@ -33,6 +33,7 @@ def main():
     RESULTS_PATH = analysis_config['results_path']
     RESULTS_FNAME = analysis_config['results_fname']
     BIDS = analysis_config['bids']
+    IDS_TO_EXCLUDE = analysis_config['ids_to_exclude']
     N_STARTS = analysis_config['n_starts']
     MAX_UNCHANGED = analysis_config['max_unchanged']
     OVERWRITE = analysis_config['overwrite']
@@ -53,6 +54,7 @@ def main():
     else:
         fnames = listdir(f'{DATA_PATH}/training')
         subj_ids = sorted([int(search('\d+', f)[0]) for f in fnames])
+    subj_ids = [subj for subj in subj_ids if subj not in IDS_TO_EXCLUDE]
 
     # Make results directory if it does not exist
     for subj in subj_ids:
@@ -141,7 +143,11 @@ def main():
             # Save results as they are produced
             for future in concurrent.futures.as_completed(futures):
                 
-                this_result, this_agent_config, null_result = future.result()
+                try:
+                    this_result, this_agent_config, null_result = future.result()
+                except Exception as e:
+                    print(f'Error in fitting procedure for subject {futures[future]["subj"]} and model {futures[future]["model_config"]["model_label"]}: {e}')
+                    continue
                 
                 # Save results
                 subj = this_agent_config['id']
