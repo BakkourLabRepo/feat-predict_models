@@ -27,6 +27,9 @@ class SuccessorFeatures(BaseModel):
     lmbd : float
         Decay parameter. Higher values decay feature predictions
         to 0.
+    l1 : float
+        L1 regularization parameter. Higher values enforce sparse
+        representation.
     bias_magnitude : float
         Magnitude of bias on successor matrix learning 
     bias_accuracy : float
@@ -65,6 +68,7 @@ class SuccessorFeatures(BaseModel):
         beta = np.inf,
         gamma = 1.,
         lmbd = 0.,
+        l1 = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
         conjunctive_starts = False,
@@ -88,6 +92,8 @@ class SuccessorFeatures(BaseModel):
             alpha_decay,
             beta,
             gamma,
+            lmbd,
+            l1,
             bias_magnitude,
             bias_accuracy,
             conjunctive_starts,
@@ -174,3 +180,8 @@ class SuccessorFeatures(BaseModel):
         # Perform update
         delta = features + gamma*bias@self.M - self.M
         self.M = (1 - self.lmbd*s_weight)*self.M + alpha*s_weight*delta
+
+        # Apply L1 regularization to enforce sparse representation
+        M_abs = np.abs(self.M) - self.l1
+        M_zeros = np.zeros_like(self.M)
+        self.M = np.sign(self.M)*np.max(np.array([M_abs, M_zeros]), axis=0)

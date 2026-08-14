@@ -24,9 +24,6 @@ class MBRL(BaseModel):
         values produces more deterministic choice.
     gamma : float
         Discount parameter. Higher "looks" further into the future
-    lmbd : float
-        Decay parameter. Higher values decay feature predictions
-        to 0.
     bias_magnitude : float
         Magnitude of bias on successor matrix learning 
     bias_accuracy : float
@@ -181,5 +178,5 @@ class MBRL(BaseModel):
 
         # Perform update
         delta = features_new - self.M
-        self.M = (1 - self.lmbd*s_weight)*self.M + alpha*s_weight*delta
+        self.M += alpha*s_weight*delta
 

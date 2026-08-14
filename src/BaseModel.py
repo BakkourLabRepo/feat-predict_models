@@ -23,6 +23,9 @@ class BaseModel:
     lmbd : float
         Decay parameter. Higher values decay feature predictions
         to 0.
+    l1 : float
+        L1 regularization parameter. Higher values enforce sparse
+        representation.
     bias_magnitude : float
         Magnitude of bias on successor matrix learning 
     bias_accuracy : float
@@ -60,6 +63,7 @@ class BaseModel:
         beta = np.inf,
         gamma = 1.,
         lmbd = 0.,
+        l1 = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
         conjunctive_starts = False,
@@ -78,6 +82,7 @@ class BaseModel:
         self.beta = beta
         self.gamma = gamma
         self.lmbd = lmbd
+        self.l1 = l1
         self.bias_magnitude = bias_magnitude
         self.bias_accuracy = bias_accuracy
         self.conjunctive_starts = conjunctive_starts
