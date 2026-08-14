@@ -35,6 +35,9 @@ class SuccessorFeatures(BaseModel):
     bias_accuracy : float
         How accurate semantic bias matrix is to category overlap.
         Bounded [0, 1]
+    inference_power : float
+        Degree to which the successor matrix is reweighted according
+        to a power function during value function computation.
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
@@ -71,6 +74,7 @@ class SuccessorFeatures(BaseModel):
         lmbd_l1 = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
+        inference_power = 1.0,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -96,6 +100,7 @@ class SuccessorFeatures(BaseModel):
             lmbd_l1,
             bias_magnitude,
             bias_accuracy,
+            inference_power,
             conjunctive_starts,
             conjunctive_successors,
             conjunctive_composition,
@@ -116,8 +121,22 @@ class SuccessorFeatures(BaseModel):
             self.V = []
             return
         
+        # Use the successor matrix directly
+        if self.inference_power == 1:
+            M = self.M
+
+        # Compute value function within power-based reweighting of the
+        # rows of the successor matrix
+        else:
+            M_rowsum = np.sum(np.abs(self.M), axis=1)
+            M_inference = np.sign(self.M)*(self.M**self.inference_power)
+            M_inference = M_inference/np.sum(M_inference, axis=1, keepdims=True)
+            M_inference = M_rowsum.reshape(-1, 1)*M_inference
+            M = M_inference
+
         # Compute value function
-        self.V = self.M@self.w
+        self.V = M@self.w
+
 
     def get_feature_vector(self, state):
         """

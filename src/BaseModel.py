@@ -31,6 +31,9 @@ class BaseModel:
     bias_accuracy : float
         How accurate semantic bias matrix is to category overlap.
         Bounded [0, 1]
+    inference_power : float
+        Degree to which the successor matrix is reweighted according  
+        to a power function during value function computation.
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
@@ -66,6 +69,7 @@ class BaseModel:
         lmbd_l1 = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
+        inference_power = 1.0,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -85,6 +89,7 @@ class BaseModel:
         self.lmbd_l1 = lmbd_l1
         self.bias_magnitude = bias_magnitude
         self.bias_accuracy = bias_accuracy
+        self.inference_power = inference_power
         self.conjunctive_starts = conjunctive_starts
         self.conjunctive_successors = conjunctive_successors
         self.conjunctive_composition = conjunctive_composition
@@ -667,7 +672,7 @@ class BaseModel:
         elif np.isinf(self.beta):
             p = self.p_argmax(action_values)
         else:
-            p = self.softmax(action_values)
+            p = self.softmax(action_values, beta=self.beta)
 
         # Sample action
         action = np.random.choice(len(p), p=p)
