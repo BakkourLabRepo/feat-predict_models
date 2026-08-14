@@ -23,7 +23,7 @@ class BaseModel:
     lmbd : float
         Decay parameter. Higher values decay feature predictions
         to 0.
-    l1 : float
+    lmbd_l1 : float
         L1 regularization parameter. Higher values enforce sparse
         representation.
     bias_magnitude : float
@@ -63,7 +63,7 @@ class BaseModel:
         beta = np.inf,
         gamma = 1.,
         lmbd = 0.,
-        l1 = 0.,
+        lmbd_l1 = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
         conjunctive_starts = False,
@@ -82,7 +82,7 @@ class BaseModel:
         self.beta = beta
         self.gamma = gamma
         self.lmbd = lmbd
-        self.l1 = l1
+        self.lmbd_l1 = lmbd_l1
         self.bias_magnitude = bias_magnitude
         self.bias_accuracy = bias_accuracy
         self.conjunctive_starts = conjunctive_starts
@@ -594,7 +594,7 @@ class BaseModel:
         p = np.eye(len(values))[np.argmax(values)]
         return p
 
-    def softmax(self, values):
+    def softmax(self, values, beta=1.0):
         """
         Get probabilities of actions based on a softmax function with
         an inverse temperature parameter to control how deterministic
@@ -610,7 +610,7 @@ class BaseModel:
         p : float
             Probabilities of each action in actions
         """
-        terms = np.exp(values*self.beta)
+        terms = np.exp(values*beta)
 
         # Account for infinite terms
         inf_terms = np.array([np.isinf(term) for term in terms])

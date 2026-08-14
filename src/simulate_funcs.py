@@ -654,7 +654,7 @@ def generate_agent_configs(n_agents, model_configs):
             # Sample parameters if they are not set
             for key in agent_config.keys():
                 if agent_config[key] is None:
-                    if key in ['beta', 'l1']:
+                    if key in ['beta', 'lmbd_l1']:
                         agent_config[key] = 1/np.random.uniform(0, 1) - 1
                     elif key in ['sampler_specificity']:
                         agent_config[key] = 1/np.random.uniform(0, 1)
