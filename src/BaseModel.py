@@ -20,6 +20,9 @@ class BaseModel:
         values produces more deterministic choice.
     gamma : float
         Discount parameter. Higher "looks" further into the future
+    lmbd : float
+        Decay parameter. Higher values decay feature predictions
+        to 0.
     bias_magnitude : float
         Magnitude of bias on successor matrix learning 
     bias_accuracy : float
@@ -56,6 +59,7 @@ class BaseModel:
         alpha_decay = 0,
         beta = np.inf,
         gamma = 1.,
+        lmbd = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
         conjunctive_starts = False,
@@ -73,6 +77,7 @@ class BaseModel:
         self.alpha_decay = alpha_decay
         self.beta = beta
         self.gamma = gamma
+        self.lmbd = lmbd
         self.bias_magnitude = bias_magnitude
         self.bias_accuracy = bias_accuracy
         self.conjunctive_starts = conjunctive_starts
