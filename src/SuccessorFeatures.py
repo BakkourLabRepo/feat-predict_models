@@ -198,7 +198,7 @@ class SuccessorFeatures(BaseModel):
 
         # Perform update
         delta = features + gamma*bias@self.M - self.M
-        self.M = (1 - self.lmbd*s_weight)*self.M + alpha*s_weight*delta
+        self.M = (1 - self.lmbd*alpha*s_weight)*self.M + alpha*s_weight*delta
 
         # Apply L1 regularization with soft-thresholding to enforce
         # sparse representation
