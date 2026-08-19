@@ -854,8 +854,8 @@ def run_experiment(
             test_df.insert(0, key, agent_config[key])
 
         # Set max decimal places for floats
-        training_df = training_df.round(4)
-        test_df = test_df.round(4)
+        training_df = training_df.round(8)
+        test_df = test_df.round(8)
 
         # Save data 
         if output_path:
