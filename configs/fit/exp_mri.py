@@ -35,17 +35,45 @@ experiment_config = {
                 'id': None,
                 'model_label': 'sf-ff',
                 'alpha': None, 
-                'alpha_decay': 0, 
                 'beta': None,
-                'gamma': 1.,
                 'bias_magnitude': None,
-                'conjunctive_starts': False,
-                'conjunctive_successors': False,
-                'conjunctive_composition': False,
-                'memory_sampler': False,
-                'sampler_feature_weight': 1,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': 1
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model (w/ decay)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-decay',
+                'alpha': None, 
+                'beta': None,
+                'lmbd': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model (w/ regularization)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-l1reg',
+                'alpha': None, 
+                'beta': None,
+                'lmbd_l1': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model
+        # (w/ non-linear value estimation)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-nonlin',
+                'alpha': None, 
+                'beta': None,
+                'inference_power': None,
             }
         ),
 
@@ -56,17 +84,10 @@ experiment_config = {
                 'id': None,
                 'model_label': 'sf-ss',
                 'alpha': None, 
-                'alpha_decay': 0, 
                 'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': 0,
                 'conjunctive_starts': True,
                 'conjunctive_successors': True,
                 'conjunctive_composition': True,
-                'memory_sampler': False,
-                'sampler_feature_weight': 1,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': 1
             }
         ),
 
@@ -77,13 +98,9 @@ experiment_config = {
                 'id': None,
                 'model_label': 'sf-ss-sampler',
                 'alpha': None, 
-                'alpha_decay': 0, 
                 'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': 0,
                 'conjunctive_starts': True,
                 'conjunctive_successors': True,
-                'conjunctive_composition': False,
                 'memory_sampler': True,
                 'sampler_feature_weight': None,
                 'sampler_recency_weight': 0,
@@ -98,17 +115,8 @@ experiment_config = {
                 'id': None,
                 'model_label': 'mb-ff',
                 'alpha': None, 
-                'alpha_decay': 0, 
                 'beta': None,
-                'gamma': 1.,
                 'bias_magnitude': None,
-                'conjunctive_starts': False,
-                'conjunctive_successors': False,
-                'conjunctive_composition': False,
-                'memory_sampler': False,
-                'sampler_feature_weight': 1,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': 1
             }
         ),
 
@@ -119,17 +127,10 @@ experiment_config = {
                 'id': None,
                 'model_label': 'mb-ss',
                 'alpha': None, 
-                'alpha_decay': 0, 
                 'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': 0,
                 'conjunctive_starts': True,
                 'conjunctive_successors': True,
                 'conjunctive_composition': True,
-                'memory_sampler': False,
-                'sampler_feature_weight': 1,
-                'sampler_recency_weight': 0,
-                'sampler_specificity': 1
             }
         ),
 
@@ -140,13 +141,9 @@ experiment_config = {
                 'id': None,
                 'model_label': 'mb-ss-sampler',
                 'alpha': None, 
-                'alpha_decay': 0, 
                 'beta': None,
-                'gamma': 1.,
-                'bias_magnitude': 0,
                 'conjunctive_starts': True,
                 'conjunctive_successors': True,
-                'conjunctive_composition': False,
                 'memory_sampler': True,
                 'sampler_feature_weight': None,
                 'sampler_recency_weight': 0,
@@ -158,10 +155,13 @@ experiment_config = {
 
     # Parameter bounds
     'parameter_bounds': {
-        'alpha': (.0001, .9999),
+        'alpha': (0, 1),
         'alpha_decay': (0, np.inf), 
         'beta': (.0001, np.inf),
-        'bias_magnitude': (0, .9999),
+        'lmbd': (0, 1),
+        'lmbd_l1': (0, np.inf),
+        'bias_magnitude': (0, 1),
+        'inference_power': (0, np.inf),
         'sampler_feature_weight': (0, 1),
         'sampler_recency_weight': (0, 1),
         'sampler_specificity': (1, np.inf)
