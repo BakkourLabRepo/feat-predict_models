@@ -42,19 +42,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -64,19 +53,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -161,19 +139,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -183,19 +150,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -286,19 +242,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -308,19 +253,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -411,19 +345,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -433,19 +356,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -533,19 +445,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -555,19 +456,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -662,19 +552,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -684,19 +563,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -791,19 +659,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -813,19 +670,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -915,19 +761,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -937,19 +772,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1045,19 +869,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1067,19 +880,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1176,19 +978,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1198,19 +989,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1302,19 +1082,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1324,19 +1093,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1435,19 +1193,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
                     'lmbd_l1': None,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1457,19 +1204,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'lmbd': 0,
-                    'lmbd_l1': 0,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
