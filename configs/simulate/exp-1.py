@@ -11,9 +11,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-1',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90*3, 
 
@@ -42,17 +39,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -106,9 +93,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-2',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -137,17 +121,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -157,17 +131,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -227,9 +192,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-1_dim-4',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -258,17 +220,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -278,17 +230,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -348,9 +291,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-1',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90*3, 
 
@@ -379,17 +319,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -446,9 +376,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-2',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -477,17 +404,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -497,17 +414,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             )
 
@@ -571,9 +479,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-2_dim-4',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -602,17 +507,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -622,17 +517,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             )
 
@@ -696,9 +582,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-1',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90*3, 
 
@@ -727,17 +610,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -796,9 +669,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-2',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -827,17 +697,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -847,17 +707,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             )
 
@@ -922,9 +773,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-3_dim-4',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -953,17 +801,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -973,17 +811,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             )
 
@@ -1049,9 +878,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-1',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90*3, 
 
@@ -1080,17 +906,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1151,9 +967,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-2',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -1182,17 +995,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1202,17 +1005,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             )
 
@@ -1280,9 +1074,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-1/data/depth-4_dim-4',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -1311,17 +1102,7 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
-                    'bias_magnitude': 0,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             ),
 
@@ -1331,17 +1112,8 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
-                    'gamma': 1,
                     'bias_magnitude': 1,
-                    'conjunctive_starts': False,
-                    'conjunctive_successors': False,
-                    'conjunctive_composition': False,
-                    'memory_sampler': False,
-                    'sampler_feature_weight': 1,
-                    'sampler_recency_weight': 0,
-                    'sampler_specificity': 1
                 }
             )
 
