@@ -27,7 +27,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -49,6 +49,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -125,7 +148,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -147,6 +170,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -229,7 +275,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor
         'fixed_training': False,
@@ -251,6 +297,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -333,7 +402,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -355,6 +424,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -434,7 +526,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -456,6 +548,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -542,7 +657,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -564,6 +679,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -650,7 +788,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -672,6 +810,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -753,7 +914,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -775,6 +936,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -862,7 +1046,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -884,6 +1068,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -972,7 +1179,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -994,6 +1201,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -1077,7 +1307,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -1099,6 +1329,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
@@ -1189,7 +1442,7 @@ experiment_config = {
 
         # Number of agents per basic agent config
         # Only need to set if AGENT_CONFIGS_PATH is not False
-        'n_agents': 250,
+        'n_agents': 500,
 
         # Force training compositions to be of the target's predecessor 
         'fixed_training': False,
@@ -1211,6 +1464,29 @@ experiment_config = {
                     'lmbd_l1': 0,
                     'inference_power': None,
                     'bias_magnitude': 0,
+                    'conjunctive_starts': False,
+                    'conjunctive_successors': False,
+                    'conjunctive_composition': False,
+                    'memory_sampler': False,
+                    'sampler_feature_weight': 1,
+                    'sampler_recency_weight': 0,
+                    'sampler_specificity': 1
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-biased',
+                    'alpha': None, 
+                    'alpha_decay': 0, 
+                    'beta': None,
+                    'gamma': 1,
+                    'lmbd': 0,
+                    'lmbd_l1': 0,
+                    'inference_power': 1,
+                    'bias_magnitude': 1,
                     'conjunctive_starts': False,
                     'conjunctive_successors': False,
                     'conjunctive_composition': False,
