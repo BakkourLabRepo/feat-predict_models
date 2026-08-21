@@ -310,7 +310,8 @@ def simulate_agent(
         agent_config,
         env_config,
         training_trial_info,
-        test_trial_info
+        test_trial_info,
+        seed = None
     ):
     """
     Simulates the agent in the given environment using the provided configurations.
@@ -327,6 +328,8 @@ def simulate_agent(
         Training trial targets and options
     test_trial_info : dict
         Test trial targets and options
+    seed : int or None
+        Random seed for reproducibility. Default is None.
 
     Returns
     -------
@@ -341,6 +344,8 @@ def simulate_agent(
     representations : dict
         Agent representations after simulation.
     """
+
+    np.random.seed(seed)
 
     # Initialize environment 
     env = Env(**env_config)
@@ -643,11 +648,9 @@ def generate_agent_configs(n_agents, model_configs):
         A list of agent configurations with sampled parameters.
     """
     agent_configs = []
-    subj = 0
     for model_config in model_configs:
         model, model_config = model_config
-        for _ in range(n_agents):
-            subj += 1
+        for subj in range(1, n_agents + 1):
             agent_config = model_config.copy()
             agent_config['id'] = subj
 
@@ -687,8 +690,7 @@ def run_experiment(
         test_trial_info_path = False,
         match_trials_to_agents = False,
         model_configs = None,
-        output_path = False,
-        seed = None
+        output_path = False
     ):
     """
     Simulate agents.
@@ -724,15 +726,11 @@ def run_experiment(
         A list of basic model configurations.
     output_path : str
         The path to save the data. If left as False, will not save data.
-    seed : int
-        Random seed for reproducibility.
 
     Returns
     -------
     None
     """
-
-    np.random.seed(seed)
 
     # Load all agent configurations
     if agent_configs_path:
@@ -830,7 +828,8 @@ def run_experiment(
             agent_config,
             env_config,
             training_trial_info,
-            test_trial_info
+            test_trial_info,
+            seed = subj
         )
 
         # Convert data to dataframe
