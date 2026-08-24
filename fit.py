@@ -1,4 +1,5 @@
 import argparse
+import traceback
 from os import listdir, makedirs
 from re import search
 import concurrent.futures
@@ -146,7 +147,8 @@ def main():
                 try:
                     this_result, this_agent_config, null_result = future.result()
                 except Exception as e:
-                    print(f'Error in fitting procedure for subject {futures[future]["subj"]} and model {futures[future]["model_config"]["model_label"]}: {e}')
+                    print(f'Error in fitting procedure for subject {futures[future]["subj"]} and model {futures[future]["model_config"]["model_label"]}:')
+                    traceback.print_exc()
                     continue
                 
                 # Save results
