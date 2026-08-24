@@ -12,9 +12,6 @@ class BaseModel:
         Agent ID
     alpha : float
         Learning rate, bounded [0, 1]
-    alpha_decay : float
-        Degree to which learning rate decays based on state visitation
-        frequency, bounded [0, inf)
     beta : float
         Inverse temperature parameter in the softmax function. A higher
         values produces more deterministic choice.
@@ -62,7 +59,6 @@ class BaseModel:
         env = None,
         id = 0,
         alpha = 1.,
-        alpha_decay = 0,
         beta = np.inf,
         gamma = 1.,
         lmbd = 0.,
@@ -82,7 +78,6 @@ class BaseModel:
         # Initialize agent parameters
         self.id = id
         self.alpha = alpha
-        self.alpha_decay = alpha_decay
         self.beta = beta
         self.gamma = gamma
         self.lmbd = lmbd
@@ -811,19 +806,3 @@ class BaseModel:
         norm[norm == 0] = 1
         bias = bias/norm
         return bias
-    
-    def decay_alpha(self):
-        """
-        Decay learning rate based on state visitation frequency
-
-        Returns
-        -------
-        alpha : float
-            Decayed learning rate
-        """
-        if self.conjunctive_starts:
-            frequency = self.frequency
-        else:
-            frequency = self.F_frequency
-        alpha = self.alpha*(frequency**-self.alpha_decay)
-        return alpha

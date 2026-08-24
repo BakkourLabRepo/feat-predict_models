@@ -16,19 +16,26 @@ class MBRL(BaseModel):
         the model.
     alpha : float
         Learning rate, bounded [0, 1]
-    alpha_decay : float
-        Degree to which learning rate decays based on state visitation
-        frequency, bounded [0, inf)
     beta : float
         Inverse temperature parameter in the softmax function. A higher
         values produces more deterministic choice.
     gamma : float
         Discount parameter. Higher "looks" further into the future
+    lmbd : float
+        Decay parameter. Higher values decay feature predictions
+        to 0 (unused in MBRL).
+    lmbd_l1 : float
+        L1 regularization parameter. Higher values enforce sparse
+        representation (unused in MBRL).
     bias_magnitude : float
         Magnitude of bias on successor matrix learning 
     bias_accuracy : float
         How accurate semantic bias matrix is to category overlap.
         Bounded [0, 1]
+    inference_power : float
+        Degree to which the successor matrix is reweighted according
+        to a power function during value function computation. 
+        (unused in MBRL)
     conjunctive_starts : bool
         If True, use discrete one-hot encoding of start states.
         If False, use feature-based encoding of start states.
@@ -58,11 +65,13 @@ class MBRL(BaseModel):
         id = 0,
         model_label = 'MBRL',
         alpha = 1.,
-        alpha_decay = 0,
         beta = np.inf,
         gamma = 1.,
+        lmbd = 0.,
+        lmbd_l1 = 0.,
         bias_magnitude = 0,
         bias_accuracy = 1.,
+        inference_power = 1.,
         conjunctive_starts = False,
         conjunctive_successors = False,
         conjunctive_composition = False,
@@ -81,11 +90,13 @@ class MBRL(BaseModel):
             env,
             id,
             alpha,
-            alpha_decay,
             beta,
             gamma,
+            lmbd,
+            lmbd_l1,
             bias_magnitude,
             bias_accuracy,
+            inference_power,
             conjunctive_starts,
             conjunctive_successors,
             conjunctive_composition,
@@ -172,11 +183,7 @@ class MBRL(BaseModel):
         # Get feature representation in M for next state 
         features_new = self.get_feature_vector(state_new)
 
-        # Decay learning rate by state/feature visitation frequency
-        # Can account for inflated values in the successor matrix
-        alpha = self.decay_alpha()
-
         # Perform update
         delta = features_new - self.M
-        self.M += alpha*s_weight*delta
+        self.M += self.alpha*s_weight*delta
 

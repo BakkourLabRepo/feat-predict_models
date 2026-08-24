@@ -16,9 +16,6 @@ class SuccessorFeatures(BaseModel):
         the model.
     alpha : float
         Learning rate, bounded [0, 1]
-    alpha_decay : float
-        Degree to which learning rate decays based on state visitation
-        frequency, bounded [0, inf)
     beta : float
         Inverse temperature parameter in the softmax function. A higher
         values produces more deterministic choice.
@@ -67,7 +64,6 @@ class SuccessorFeatures(BaseModel):
         id = 0,
         model_label = 'SuccessorFeatures',
         alpha = 1.,
-        alpha_decay = 0,
         beta = np.inf,
         gamma = 1.,
         lmbd = 0.,
@@ -93,7 +89,6 @@ class SuccessorFeatures(BaseModel):
             env,
             id,
             alpha,
-            alpha_decay,
             beta,
             gamma,
             lmbd,
@@ -192,17 +187,14 @@ class SuccessorFeatures(BaseModel):
         # Get feature representation in M for present state 
         features = self.get_feature_vector(state)
 
-        # Decay learning rate by state/feature visitation frequency
-        # Can account for inflated values in the successor matrix
-        alpha = self.decay_alpha()
-
         # Perform update
         delta = features + gamma*bias@self.M - self.M
-        self.M = (1 - self.lmbd*alpha*s_weight)*self.M + alpha*s_weight*delta
+        self.M = (1 - self.lmbd*self.alpha*s_weight)*self.M
+        self.M += self.alpha*s_weight*delta
 
         # Apply L1 regularization with soft-thresholding to enforce
         # sparse representation
-        threshold = alpha*s_weight*self.lmbd_l1
+        threshold = self.alpha*s_weight*self.lmbd_l1
         M_thresh = np.abs(self.M) - threshold
         M_zeros = np.zeros_like(self.M)
         self.M = np.sign(self.M)*np.max([M_thresh, M_zeros], axis=0)
