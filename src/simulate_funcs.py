@@ -654,6 +654,8 @@ def generate_agent_configs(n_agents, model_configs):
             agent_config = model_config.copy()
             agent_config['id'] = subj
 
+            np.random.seed(subj)
+
             # Sample parameters if they are not set
             for key in agent_config.keys():
                 if agent_config[key] is None:
