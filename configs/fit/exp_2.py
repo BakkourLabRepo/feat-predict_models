@@ -36,6 +36,17 @@ experiment_config = {
                 'model_label': 'sf-ff',
                 'alpha': None, 
                 'beta': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model (w/ bias)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias',
+                'alpha': None, 
+                'beta': None,
                 'bias_magnitude': None,
             }
         ),
@@ -77,6 +88,47 @@ experiment_config = {
             }
         ),
 
+        # Feature -> Feature Successor Feature model (w/ bias & decay)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias-decay',
+                'alpha': None, 
+                'beta': None,
+                'lmbd': None,
+                'bias_magnitude': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model
+        # (w/ bias & regularization)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias-l1reg',
+                'alpha': None, 
+                'beta': None,
+                'lmbd_l1': None,
+                'bias_magnitude': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model
+        # (w/ bias & non-linear value estimation)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias-nonlin',
+                'alpha': None, 
+                'beta': None,
+                'bias_magnitude': None,
+                'inference_power': None,
+            }
+        ),
+
         # State -> State model Successor Features model
         (
             'SuccessorFeatures',
@@ -114,6 +166,17 @@ experiment_config = {
             {
                 'id': None,
                 'model_label': 'mb-ff',
+                'alpha': None, 
+                'beta': None,
+            }
+        ),
+
+        # Feature -> Feature MBRL model (w/ bias)
+        (
+            'MBRL',
+            {
+                'id': None,
+                'model_label': 'mb-ff-bias',
                 'alpha': None, 
                 'beta': None,
                 'bias_magnitude': None,
