@@ -155,7 +155,7 @@ experiment_config = {
 
     # Parameter bounds
     'parameter_bounds': {
-        'alpha': (0.0001, 1),
+        'alpha': (0, 1),
         'alpha_decay': (0, np.inf), 
         'beta': (.0001, np.inf),
         'lmbd': (0, 1),

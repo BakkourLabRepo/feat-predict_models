@@ -125,7 +125,11 @@ class SuccessorFeatures(BaseModel):
         else:
             M_rowsum = np.sum(np.abs(self.M), axis=1)
             M_inference = np.sign(self.M)*(self.M**self.inference_power)
-            M_inference = M_inference/np.sum(M_inference, axis=1, keepdims=True)
+            sum_denom = np.sum(M_inference, axis=1, keepdims=True)
+            zero_rows = (sum_denom == 0).flatten()
+            sum_denom[zero_rows] = 1
+            M_inference[zero_rows] = self.M[zero_rows]
+            M_inference = M_inference/sum_denom
             M_inference = M_rowsum.reshape(-1, 1)*M_inference
             M = M_inference
 
