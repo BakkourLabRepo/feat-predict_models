@@ -36,6 +36,17 @@ experiment_config = {
                 'model_label': 'sf-ff',
                 'alpha': None, 
                 'beta': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model (w/ bias)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias',
+                'alpha': None, 
+                'beta': None,
                 'bias_magnitude': None,
             }
         ),
@@ -73,6 +84,47 @@ experiment_config = {
                 'model_label': 'sf-ff-nonlin',
                 'alpha': None, 
                 'beta': None,
+                'inference_power': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model (w/ bias & decay)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias-decay',
+                'alpha': None, 
+                'beta': None,
+                'lmbd': None,
+                'bias_magnitude': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model
+        # (w/ bias & regularization)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias-l1reg',
+                'alpha': None, 
+                'beta': None,
+                'lmbd_l1': None,
+                'bias_magnitude': None,
+            }
+        ),
+
+        # Feature -> Feature Successor Feature model
+        # (w/ bias & non-linear value estimation)
+        (
+            'SuccessorFeatures',
+            {
+                'id': None,
+                'model_label': 'sf-ff-bias-nonlin',
+                'alpha': None, 
+                'beta': None,
+                'bias_magnitude': None,
                 'inference_power': None,
             }
         ),
@@ -116,6 +168,17 @@ experiment_config = {
                 'model_label': 'mb-ff',
                 'alpha': None, 
                 'beta': None,
+            }
+        ),
+
+        # Feature -> Feature MBRL model (w/ bias)
+        (
+            'MBRL',
+            {
+                'id': None,
+                'model_label': 'mb-ff-bias',
+                'alpha': None, 
+                'beta': None,
                 'bias_magnitude': None,
             }
         ),
@@ -155,7 +218,7 @@ experiment_config = {
 
     # Parameter bounds
     'parameter_bounds': {
-        'alpha': (0.0001, 1),
+        'alpha': (0, 1),
         'alpha_decay': (0, np.inf), 
         'beta': (.0001, np.inf),
         'lmbd': (0, 1),
