@@ -627,7 +627,17 @@ def load_configs(agent_configs_path):
     for f in listdir(agent_configs_path):
         if f.endswith('.pkl'):
             with open(f'{agent_configs_path}/{f}', 'rb') as file:
-                agent_configs.append(pickle.load(file))
+                agent_config = pickle.load(file)
+
+                # Deal with missing model string specification
+                if type(agent_config) is dict:
+                    if 'mb' in agent_config['model_label']:
+                        agent_config = ('MBRL', agent_config)
+                    else:
+                        agent_config = ('SuccessorFeatures', agent_config)
+
+                        
+                agent_configs.append(agent_config)
     return agent_configs
 
 def generate_agent_configs(n_agents, model_configs):
@@ -887,4 +897,3 @@ def run_experiment(
             #     f'{model_path}/test-V-history/test-V-history_{subj}.pkl',
             #     'wb'
             # ) as file:
-            #     pickle.dump(test_V_history, file)
