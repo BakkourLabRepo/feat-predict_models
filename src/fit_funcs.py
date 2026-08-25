@@ -4,6 +4,8 @@ import pandas as pd
 from scipy.optimize import minimize
 from scipy.sparse.csgraph import shortest_path
 from src.Env import Env
+from src.SuccessorFeatures import SuccessorFeatures
+from src.MBRL import MBRL
 
 def probs_to_nll(probs):
     """
@@ -502,7 +504,7 @@ def fit_model_parallel(args):
     args : dict
         A dictionary containing the following keys:
         - 'subj' (str): Subject ID.
-        - 'Model' (class): The model class to instantiate.
+        - 'model' (str): String for the model class to instantiate.
         - 'model_config' (dict): Model configuration.
         - 'data_path' (str): Path to the data.
         - 'bids' (bool): Whether the data is in BIDS format.
@@ -522,6 +524,7 @@ def fit_model_parallel(args):
     """
 
     subj = args['subj']
+    model = args['model']
     model_label = args['model_config']['model_label']
     data_path = args['data_path']
     print(f'Fitting - Subject: {subj}, Model: {model_label}')
@@ -595,10 +598,16 @@ def fit_model_parallel(args):
                 feature_reorder = this_feature_order,
             )
 
+    # Select model class
+    if model == 'MBRL':
+        Model = MBRL
+    else:
+        Model = SuccessorFeatures
+    
     # Fit this model
     result, fit_agent_config, null_result = fit_model(
         agent_data,
-        args['Model'],
+        Model,
         args['model_config'],
         args['env_config'],
         parameter_bounds = args['parameter_bounds'],
@@ -607,4 +616,4 @@ def fit_model_parallel(args):
         max_unchanged = args['max_unchanged']
     )
 
-    return result, fit_agent_config, null_result
+    return result, (model, fit_agent_config), null_result

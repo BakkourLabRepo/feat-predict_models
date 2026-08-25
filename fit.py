@@ -6,8 +6,6 @@ import concurrent.futures
 import pickle
 import pandas as pd
 from src.fit_funcs import fit_model_parallel
-from src.SuccessorFeatures import SuccessorFeatures
-from src.MBRL import MBRL
 from src.utils import import_config
 
 def main():
@@ -39,7 +37,7 @@ def main():
     MAX_UNCHANGED = analysis_config['max_unchanged']
     OVERWRITE = analysis_config['overwrite']
     NUM_CORES = analysis_config['num_cores']
-    MODEL_CONFIGS = analysis_config['model_configs']
+    model_CONFIGS = analysis_config['model_configs']
     PARAMETER_BOUNDS = analysis_config['parameter_bounds']
     ENV_CONFIG = analysis_config['env_config']
     FEATURE_REORDER = analysis_config['feature_reorder']
@@ -102,12 +100,7 @@ def main():
     fitting_args = []
     ids_for_null = subj_ids.copy()
     for subj in subj_ids:
-        for model, model_config in MODEL_CONFIGS:
-
-            if model == 'MBRL':
-                Model = MBRL
-            else:
-                Model = SuccessorFeatures
+        for model, model_config in model_CONFIGS:
 
             # Skip if already fit
             model_label = model_config['model_label']
@@ -118,7 +111,7 @@ def main():
             else:
                 fitting_args.append({
                     'subj': subj,
-                    'Model': Model,
+                    'model': model,
                     'model_config': model_config,
                     'data_path': DATA_PATH,
                     'bids': BIDS,
@@ -152,7 +145,7 @@ def main():
                     continue
                 
                 # Save results
-                subj = this_agent_config['id']
+                subj = this_agent_config[1]['id']
 
                 # Fotmat model fits
                 results = pd.concat([results, pd.DataFrame([{
@@ -161,7 +154,7 @@ def main():
                     'n_starts': this_result.n_starts,
                     'nll': this_result.fun,
                     'aic': this_result.aic,
-                    **this_agent_config
+                    **this_agent_config[1]
                 }])], ignore_index=True)
 
                 # Save null result if it does not exist yet
@@ -174,7 +167,7 @@ def main():
                         'nll': null_result['nll'],
                         'aic': null_result['aic'],
                     }])
-                    for k in this_agent_config.keys():
+                    for k in this_agent_config[1].keys():
                         if k not in null_result.keys():
                             null_result[k] = -1
                     results = pd.concat([results, null_result], ignore_index=True)
@@ -186,20 +179,20 @@ def main():
 
                 # Export agent config to pickle
                 dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
-                fname = f'{subj}_{this_agent_config["model_label"]}_config.pkl'
+                fname = f'{subj}_{this_agent_config[1]["model_label"]}_config.pkl'
                 with open(f'{dpath}/{fname}', 'wb') as f:
                     pickle.dump(this_agent_config, f)
 
                 # Export agent object to pickle
                 dpath = f'{RESULTS_PATH}/fit_agents/{subj}'
-                fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
+                fname = f'{subj}_{this_agent_config[1]["model_label"]}.pkl'
                 with open(f'{dpath}/{fname}', 'wb') as f:
                     pickle.dump(this_result.agent, f)
 
                 # Save agent representations
                 # Get agent representations
                 representations = {
-                    **this_agent_config,
+                    **this_agent_config[1],
                     'S': this_result.agent.S,
                     'F': this_result.agent.F,
                     'F_raw': this_result.agent.F_raw,
@@ -209,7 +202,7 @@ def main():
                     'frequency': this_result.agent.frequency
                 }
                 dpath = f'{RESULTS_PATH}/fit_agent_representations/{subj}'
-                fname = f'{subj}_{this_agent_config["model_label"]}.pkl'
+                fname = f'{subj}_{this_agent_config[1]["model_label"]}.pkl'
                 with open(f'{dpath}/{fname}', 'wb') as f:
                     pickle.dump(representations, f)
 
