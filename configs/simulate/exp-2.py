@@ -1,8 +1,8 @@
 import numpy as np
 
-PROJECT_PATH = ''
+PROJECT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations'
 
-AGENT_CONFIGS_PATH = ''
+AGENT_CONFIGS_PATH = '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_1/results/fit_agent_configs'
 
 experiment_config = {
 
@@ -11,9 +11,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-2_ntrain-1080',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 90,
@@ -92,9 +89,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-2_ntrain-72',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -172,9 +166,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-4_ntrain-1080',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -250,9 +241,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-1_dim-4_ntrain-72',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 6,
@@ -330,9 +318,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-2_ntrain-1080',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 90,
@@ -413,9 +398,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-2_ntrain-72',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -494,9 +476,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-4_ntrain-1080',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 90,
@@ -577,9 +556,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-2_dim-4_ntrain-72',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -658,9 +634,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-2_ntrain-1080',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 90,
@@ -743,9 +716,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-2_ntrain-72',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -826,9 +796,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-4_ntrain-1080',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 90,
@@ -911,9 +878,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-3_dim-4_ntrain-72',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -994,9 +958,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-2_ntrain-1080',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 90,
@@ -1081,9 +1042,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-2_ntrain-72',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -1167,9 +1125,6 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-4_ntrain-1080',
 
-        # Random seed for reproducibility
-        'seed': 243423,
-
         # Number of training trials
         'n_training_target_repeats': 90,
 
@@ -1252,9 +1207,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-2/data/depth-4_dim-4_ntrain-72',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 6,

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from os import makedirs, listdir
 import pickle
+from scipy.sparse.csgraph import shortest_path
 from src.SuccessorFeatures import SuccessorFeatures
 from src.MBRL import MBRL
 from src.Env import Env
@@ -100,7 +101,7 @@ def train_agent(
         The list of training targets.
     options : numpy.ndarray
         The list of training options.
-    n_step_inference : int or None
+    n_step_inference : list of int or None
         Number of steps to infer composition from. If None, will use
         env.max_steps.
     fixed_training : bool
@@ -117,20 +118,21 @@ def train_agent(
 
     # If n_step_inference not specified, use max steps - 1
     if n_step_inference is None:
-        n_step_inference = env.max_steps
+        n_step_inference = [env.max_steps]*len(targets)
 
     training_data = []
     V_history = []
     for t in range(len(targets)):
         target = targets[t]
         options_comb = options[t]
+        n_steps = n_step_inference[t]
 
         # Set target as task
         agent.set_task(target)
         target_comb = (target > 0).astype(int)
 
         # Get options step based on target step
-        options_step = get_options_step(env, target, n_step_inference)
+        options_step = get_options_step(env, target, n_steps)
 
         # Distance of step from terminal
         steps_from_terminal = len(env.insts) - options_step - 1
@@ -172,7 +174,7 @@ def train_agent(
             env.update_current_state()
             
             # Terminate if max steps reached
-            if step >= env.max_steps:
+            if step >= n_steps:
 
                 # For terminal state, include absorbing transition
                 if env.check_terminal(env.s):
@@ -221,7 +223,7 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
         The list of test targets.
     options : numpy.ndarray
         The list of test options.
-    n_step_inference : int or None
+    n_step_inference : list of int or None
         Number of steps to infer composition from. If None, will use
         env.max_steps.
 
@@ -235,20 +237,21 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
 
     # If n_step_inference not specified, use max steps - 1
     if n_step_inference is None:
-        n_step_inference = env.max_steps
-        
+        n_step_inference = [env.max_steps]*len(targets)
+
     test_data = []
     V_history = []
     for t in range(len(targets)):
         target = targets[t]
         options_comb = options[t]
+        n_steps = n_step_inference[t]
 
         # Set target as task
         agent.set_task(target)
         target_comb = (target > 0).astype(int)
 
         # Get options step based on target step
-        options_step = get_options_step(env, target, n_step_inference)
+        options_step = get_options_step(env, target, n_steps)
 
         # Distance of step from terminal
         steps_from_terminal = len(env.insts) - options_step - 1
@@ -265,14 +268,14 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
         while True:
             step += 1
             env.step()
-
+            
             # Terminate when absorbing state is met
             if env.check_absorbing():
                 break
             env.update_current_state() 
 
             # Terminate if max steps reached
-            if step >= env.max_steps:
+            if step >= n_steps:
 
                 # For terminal state, include absorbing transition
                 if env.check_terminal(env.s):
@@ -284,7 +287,7 @@ def test_agent(agent, env, targets, options, n_step_inference=None):
         # Get reward and whether composition was correct or not
         reward = get_reward(target, env.s_new)
         correct = int(check_state_match(target, env.s_new))
-
+        
         # Store trial data
         test_data.append([
             t + 1,
@@ -504,32 +507,104 @@ def convert_state_str(state_str):
     state_arr = np.array(state_str, dtype=int)
     return state_arr
 
-def transform_state_array(state_array, feature_reorder=[]):
+def get_step(start_state, shortest_paths):
     """
-    Applies convert_state_str to a list of state strings.
+    Get the step of a given state based on the shortest paths in the
+    environment. The max step is the longest shortest path based on 
+    the instance transition matrix.
 
     Arguments
     ---------
-    state_array : list
-        A list of state strings.
-    feature_reorder : list
-        A list of indices to reorder the features.
+    start_state : str
+        The starting state.
+    shortest_paths : ndarray
+        The shortest paths in the environment.
 
     Returns
     -------
-    converted_state_arrat : list
-        A list of converted state values.
+    step : int
+        The step of the given state.
     """
-    converted_state_array = []
-    for state_str in state_array:
-        state = convert_state_str(state_str)
-        if len(feature_reorder) > 0:
-            state = state[feature_reorder]
-        converted_state_array.append(state)
-    converted_state_array = np.array(converted_state_array)
-    return converted_state_array
+    start_state = convert_state_str(start_state)
+    example_inst = start_state[start_state != 0][0] - 1
+    max_step = int(np.max(shortest_paths))
+    step = int(max_step - np.max(shortest_paths[example_inst]) + 1)
+    return step
 
-def load_trial_info(trial_info_path):
+def add_step_info(data, tmat):
+    """
+    Add step information to the data based on the shortest paths in 
+    the environment. The max step is the longest shortest path based on
+    the instance transition matrix.
+
+    Arguments
+    ---------
+    data : pandas.DataFrame
+        The data to add step information to.
+    tmat : ndarray
+        The instance transition matrix of the environment.
+    
+    Returns
+    -------
+    data : pandas.DataFrame
+        The update data frame with step information added.
+    """
+    
+
+    # Compute shortest paths to identify inference step
+    shortest_paths = shortest_path(tmat, directed=True)
+    shortest_paths[shortest_paths == np.inf] = 0
+
+    # Add step information to data
+    data['step'] = data['correct_composition'].apply(
+        get_step,
+        args = (shortest_paths,)
+        )
+    
+    return data
+
+def recode_state_array(
+        state_arr,
+        start_step_arr = None,
+        n_steps_arr = None,
+        feature_reorder = None
+        ):
+    """
+    Recode an array of states based on the feature transition strucutre
+
+    Arguments
+    ---------
+    state_arr : numpy.ndarray
+        The array of states to recode.
+    start_step_arr : numpy.ndarray or None
+        An array containing the starting step for each state. 
+    n_steps_arr : numpy.ndarray or None
+        An array containing the number of steps inferences are made
+        over from that state.
+    feature_reorder : list or None
+        A list of indices to reorder features based on at each step.
+
+    Returns
+    -------
+    recoded_state_arr : numpy.ndarray
+        The recoded array of states.
+    """
+    if feature_reorder is None:
+        return state_arr
+    start_step = 1
+    n_steps = 1
+    recoded_state_arr = np.copy(state_arr)
+    for i, state in enumerate(state_arr):
+        if start_step_arr is not None:
+            start_step = start_step_arr[i]
+            n_steps = n_steps_arr[i]
+        recoded_state = np.copy(state)
+        for step in range(start_step, start_step + n_steps):
+            recoded_state = recoded_state[feature_reorder[step - 1]]
+        recoded_state_arr[i] = recoded_state
+    return recoded_state_arr
+
+def load_trial_info(trial_info_path, feature_reorder=[], tmat=None):
     """
     Load trial information from the specified path.
 
@@ -537,6 +612,10 @@ def load_trial_info(trial_info_path):
     ---------
     trial_info_path : str
         The path to the trial information.
+    feature_reorder : list or None
+        A list of indices to reorder features based on at each step.
+    tmat : ndarray or None
+        The instance transition matrix of the environment.
     
     Returns
     -------
@@ -560,20 +639,40 @@ def load_trial_info(trial_info_path):
             targets = trial_info['target'].values
             options = trial_info['options_comb'].values  
 
-            # If between-features condition, reorder target features
-            feature_reorder = []  
-            if 'between_cond' in trial_info.columns:
-                between_cond = trial_info['between_cond'].values[0]
-                if between_cond:
-                    feature_reorder = [2,3,0,1]
-            targets = transform_state_array(targets, feature_reorder)
-            options = transform_state_array(options)
+            # Convert targets and options from strings to arrays
+            targets = np.array([convert_state_str(s) for s in targets])
+            options = np.array([convert_state_str(s) for s in options])
+
+            # Check whether to re-order features if there's 
+            # between-feature causal structure
+            if feature_reorder is not None:
+                if 'condition' in trial_info.columns:
+                    condition = trial_info['condition'].iloc[0]
+                elif 'between_cond' in trial_info.columns:
+                    condition = trial_info['between_cond'].iloc[0]
+                this_feature_order = feature_reorder[condition]
+
+            # Step info is needed for re-coding targets
+            if 'n_steps' not in trial_info.columns:
+                trial_info['n_steps'] = 1
+                trial_info['step'] = 1
+            else: # Get step
+                trial_info = add_step_info(trial_info, tmat)
+
+            # Re-code targets based on between-feature causal structure
+            targets = recode_state_array(
+                targets,
+                start_step_arr = trial_info['step'].values,
+                n_steps_arr = trial_info['n_steps'].values,
+                feature_reorder = this_feature_order,
+                )
             
             # Add trial information to set
-            subj = int(f.split('_')[1].split('.')[0])
+            subj = trial_info['id'].values[0]
             trial_info_set[subj] = {
                 'targets': targets,
-                'options': options
+                'options': options,
+                'n_step_inference': trial_info['n_steps'].values,
             }
     return trial_info_set
 
@@ -701,6 +800,7 @@ def run_experiment(
         training_trial_info_path = False,
         test_trial_info_path = False,
         match_trials_to_agents = False,
+        feature_reorder = None,
         model_configs = None,
         output_path = False
     ):
@@ -734,6 +834,8 @@ def run_experiment(
         will generate test trials.
     match_trials_to_agents : bool
         If True, will match loaded trials to fit agent IDs.
+    feature_reorder : list or None
+        A list of indices to reorder features based on at each step.
     model_configs : list
         A list of basic model configurations.
     output_path : str
@@ -757,9 +859,17 @@ def run_experiment(
 
     # Load all trial information
     if training_trial_info_path:
-        training_trial_info_set = load_trial_info(training_trial_info_path)
+        training_trial_info_set = load_trial_info(
+            training_trial_info_path,
+            feature_reorder = feature_reorder,
+            tmat = env_config['tmat']
+            )
     if test_trial_info_path:
-        test_trial_info_set = load_trial_info(test_trial_info_path)
+        test_trial_info_set = load_trial_info(
+            test_trial_info_path,
+            feature_reorder = feature_reorder,
+            tmat = env_config['tmat']
+            )
 
     # Simulate all agents
     for model, agent_config in agent_configs:
