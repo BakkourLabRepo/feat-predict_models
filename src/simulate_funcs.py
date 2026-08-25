@@ -878,13 +878,13 @@ def run_experiment(
                 'wb'
             ) as file:
                 pickle.dump(representations, file)
-            with open(
-                f'{model_path}/training-V-history/training-V-history_{subj}.pkl',
-                'wb'
-            ) as file:
-                pickle.dump(training_V_history, file)
-            with open(
-                f'{model_path}/test-V-history/test-V-history_{subj}.pkl',
-                'wb'
-            ) as file:
-                pickle.dump(test_V_history, file)
+            # with open(
+            #     f'{model_path}/training-V-history/training-V-history_{subj}.pkl',
+            #     'wb'
+            # ) as file:
+            #     pickle.dump(training_V_history, file)
+            # with open(
+            #     f'{model_path}/test-V-history/test-V-history_{subj}.pkl',
+            #     'wb'
+            # ) as file:
+            #     pickle.dump(test_V_history, file)
