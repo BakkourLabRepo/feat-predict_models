@@ -766,14 +766,14 @@ def run_experiment(
                 f'{output_path}/{model}/{model_label}/test',
                 exist_ok = True
                 )
-            makedirs(
-                f'{output_path}/{model}/{model_label}/training-V-history',
-                exist_ok = True
-                )
-            makedirs(
-                f'{output_path}/{model}/{model_label}/test-V-history',
-                exist_ok = True
-                )
+            # makedirs(
+            #     f'{output_path}/{model}/{model_label}/training-V-history',
+            #     exist_ok = True
+            #     )
+            # makedirs(
+            #     f'{output_path}/{model}/{model_label}/test-V-history',
+            #     exist_ok = True
+            #     )
             makedirs(
                 f'{output_path}/{model}/{model_label}/representations',
                 exist_ok = True
