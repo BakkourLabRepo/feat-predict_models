@@ -348,7 +348,6 @@ experiment_config = {
                     'model_label': 'ff-biased',
                     'alpha': None,
                     'beta': None,
-                    'lmbd': None,
                     'bias_magnitude': 1,
                 }
             ),
