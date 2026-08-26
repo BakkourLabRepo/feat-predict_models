@@ -1,6 +1,6 @@
 import numpy as np
 
-PROJECT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations'
+PROJECT_PATH = '/Users/euanprentis/Documents/feat-predict_simulations'
 
 AGENT_CONFIGS_PATH = False
 
