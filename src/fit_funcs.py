@@ -554,22 +554,23 @@ def fit_model_parallel(args):
     agent_data['training'] = drop_missed_trials(agent_data['training'])
     agent_data['test'] = drop_missed_trials(agent_data['test'])
 
-    # Add inference step columns
-    agent_data['training'] = add_step_info(
-        agent_data['training'],
-        args['env_config']['tmat']
-        )
-    agent_data['test'] = add_step_info(
-        agent_data['test'],
-        args['env_config']['tmat']
-        )
     if 'n_steps' not in agent_data['training'].columns:
         agent_data['training']['n_steps'] = 1
         agent_data['training']['step'] = 1
+    else:
+        agent_data['training'] = add_step_info(
+            agent_data['training'],
+            args['env_config']['tmat']
+            )
     if 'n_steps' not in agent_data['test'].columns:
         agent_data['test']['n_steps'] = 1
         agent_data['test']['step'] = 1
-    
+    else:
+        agent_data['test'] = add_step_info(
+            agent_data['test'],
+            args['env_config']['tmat']
+            )
+
     # Convert state strings to arrays
     for phase in agent_data.keys():
         for state_type in ['target', 'options_comb', 'composition']:
