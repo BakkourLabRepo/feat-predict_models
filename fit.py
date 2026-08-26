@@ -11,13 +11,23 @@ from src.utils import import_config
 def main():
 
     # Set up the argument parser
-    parser = argparse.ArgumentParser(
-        description = 'Specify which config file to import.'
-        )
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         'config_fname',
         type = str,
-        help = "Specify the file name for the config to import."
+        help = 'Specify the file name for the config to import.'
+    )
+    parser.add_argument(
+        '--dpath',
+        type = str,
+        default = False,
+        help = 'Specify the directory path for the data'
+    )
+    parser.add_argument(
+        '--rpath',
+        type = str,
+        default = False,
+        help = 'Specify the directory path for the results'
     )
     config_fname = parser.parse_args().config_fname
 
@@ -37,10 +47,16 @@ def main():
     MAX_UNCHANGED = analysis_config['max_unchanged']
     OVERWRITE = analysis_config['overwrite']
     NUM_CORES = analysis_config['num_cores']
-    MODEL_CONFIGS = analysis_config['MODEL_CONFIGS']
+    MODEL_CONFIGS = analysis_config['model_configs']
     PARAMETER_BOUNDS = analysis_config['parameter_bounds']
     ENV_CONFIG = analysis_config['env_config']
     FEATURE_REORDER = analysis_config['feature_reorder']
+
+    # Override data and results paths if specified
+    if parser.parse_args().dpath:
+        DATA_PATH = parser.parse_args().dpath
+    if parser.parse_args().rpath:
+        RESULTS_PATH = parser.parse_args().rpath
 
     # Get subject IDs
     if BIDS:
