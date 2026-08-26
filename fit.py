@@ -37,7 +37,7 @@ def main():
     MAX_UNCHANGED = analysis_config['max_unchanged']
     OVERWRITE = analysis_config['overwrite']
     NUM_CORES = analysis_config['num_cores']
-    model_CONFIGS = analysis_config['model_configs']
+    MODEL_CONFIGS = analysis_config['MODEL_CONFIGS']
     PARAMETER_BOUNDS = analysis_config['parameter_bounds']
     ENV_CONFIG = analysis_config['env_config']
     FEATURE_REORDER = analysis_config['feature_reorder']
@@ -100,7 +100,7 @@ def main():
     fitting_args = []
     ids_for_null = subj_ids.copy()
     for subj in subj_ids:
-        for model, model_config in model_CONFIGS:
+        for model, model_config in MODEL_CONFIGS:
 
             # Skip if already fit
             model_label = model_config['model_label']
