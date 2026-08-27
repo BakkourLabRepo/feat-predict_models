@@ -13,6 +13,9 @@ experiment_config = {
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-3/data/exp_1',
 
+        # Save representations
+        'save_representations': False,
+
         # Number of training trials
         'n_training_target_repeats': 6,
 
@@ -287,6 +290,9 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-3/data/exp_2',
+
+        # Save representations
+        'save_representations': False,
 
         # Number of training trials
         'n_training_target_repeats': 6,
