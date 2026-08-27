@@ -22,6 +22,11 @@ experiment_config = {
     # Overwrite existing results
     'overwrite': True,
 
+    # Fitting objects to save
+    'save_agent_configs': False,
+    'save_agents': False,
+    'save_representations': False,
+
     # Number of cores to use
     'num_cores': 4,
 

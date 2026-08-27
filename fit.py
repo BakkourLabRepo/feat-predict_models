@@ -46,6 +46,9 @@ def main():
     N_STARTS = analysis_config['n_starts']
     MAX_UNCHANGED = analysis_config['max_unchanged']
     OVERWRITE = analysis_config['overwrite']
+    SAVE_AGENT_CONFIGS = analysis_config['save_agent_configs']
+    SAVE_AGENTS = analysis_config['save_agents']
+    SAVE_REPRESENTATIONS = analysis_config['save_representations']
     NUM_CORES = analysis_config['num_cores']
     MODEL_CONFIGS = analysis_config['model_configs']
     PARAMETER_BOUNDS = analysis_config['parameter_bounds']
@@ -194,33 +197,35 @@ def main():
                 results.to_csv(f'{RESULTS_PATH}/{RESULTS_FNAME}.csv', index=False)
 
                 # Export agent config to pickle
-                dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
-                fname = f'{subj}_{this_agent_config[1]["model_label"]}_config.pkl'
-                with open(f'{dpath}/{fname}', 'wb') as f:
-                    pickle.dump(this_agent_config, f)
+                if SAVE_AGENT_CONFIGS:
+                    dpath = f'{RESULTS_PATH}/fit_agent_configs/{subj}'
+                    fname = f'{subj}_{this_agent_config[1]["model_label"]}_config.pkl'
+                    with open(f'{dpath}/{fname}', 'wb') as f:
+                        pickle.dump(this_agent_config, f)
 
                 # Export agent object to pickle
-                dpath = f'{RESULTS_PATH}/fit_agents/{subj}'
-                fname = f'{subj}_{this_agent_config[1]["model_label"]}.pkl'
-                with open(f'{dpath}/{fname}', 'wb') as f:
-                    pickle.dump(this_result.agent, f)
+                if SAVE_AGENTS:
+                    dpath = f'{RESULTS_PATH}/fit_agents/{subj}'
+                    fname = f'{subj}_{this_agent_config[1]["model_label"]}.pkl'
+                    with open(f'{dpath}/{fname}', 'wb') as f:
+                        pickle.dump(this_result.agent, f)
 
                 # Save agent representations
-                # Get agent representations
-                representations = {
-                    **this_agent_config[1],
-                    'S': this_result.agent.S,
-                    'F': this_result.agent.F,
-                    'F_raw': this_result.agent.F_raw,
-                    'M': this_result.agent.M,
-                    'bias': this_result.agent.bias,
-                    'recency': this_result.agent.recency,
-                    'frequency': this_result.agent.frequency
-                }
-                dpath = f'{RESULTS_PATH}/fit_agent_representations/{subj}'
-                fname = f'{subj}_{this_agent_config[1]["model_label"]}.pkl'
-                with open(f'{dpath}/{fname}', 'wb') as f:
-                    pickle.dump(representations, f)
+                if SAVE_REPRESENTATIONS:
+                    representations = {
+                        **this_agent_config[1],
+                        'S': this_result.agent.S,
+                        'F': this_result.agent.F,
+                        'F_raw': this_result.agent.F_raw,
+                        'M': this_result.agent.M,
+                        'bias': this_result.agent.bias,
+                        'recency': this_result.agent.recency,
+                        'frequency': this_result.agent.frequency
+                    }
+                    dpath = f'{RESULTS_PATH}/fit_agent_representations/{subj}'
+                    fname = f'{subj}_{this_agent_config[1]["model_label"]}.pkl'
+                    with open(f'{dpath}/{fname}', 'wb') as f:
+                        pickle.dump(representations, f)
 
 if __name__ == "__main__":
     main()
