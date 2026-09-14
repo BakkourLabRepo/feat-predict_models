@@ -106,36 +106,15 @@ class MBRL(BaseModel):
             sampler_specificity
         )
 
-    def compute_V(self, max_itr=1000, tol=1e-4):
+    def compute_V(self):
         """
-        Computed estimated value function with value iteration
-
-        Arguments
-        ---------
-        max_itr : int
-            Maximum number of iterations
-        tol : float
-            Tolerance for convergence
+        Computed estimated value function by solving the Bellman 
+        equation analytically. 
         """
-
-        # N observations yet
-        if len(self.S) == 0:
+        if len(self.S) == 0: # No observations yet
             self.V = []
             return
-               
-        # Value iteration
-        M_biased = self.bias*self.M
-        self.V = np.zeros(len(self.M))
-        for _ in range(max_itr):
-
-            # Perform Bellman update
-            V_new = self.w + self.gamma*M_biased@self.V
-
-            # Check for convergence
-            if np.max(np.abs(V_new - self.V)) < tol:
-                break
-
-            self.V = V_new
+        self.V = np.linalg.inv(np.eye(len(self.M)) - self.gamma*self.M)@self.w
 
     def get_feature_vector(self, state):
         """
@@ -184,6 +163,6 @@ class MBRL(BaseModel):
         features_new = self.get_feature_vector(state_new)
 
         # Perform update
-        delta = features_new - self.M
+        delta = features_new*self.bias - self.M
         self.M += self.alpha*s_weight*delta
 
