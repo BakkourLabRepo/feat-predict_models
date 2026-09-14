@@ -76,9 +76,21 @@ def main():
 
     # Make results directory if it does not exist
     for subj in subj_ids:
-        makedirs(f'{RESULTS_PATH}/fit_agent_configs/{subj}', exist_ok=True)
-        makedirs(f'{RESULTS_PATH}/fit_agents/{subj}', exist_ok=True)
-        makedirs(f'{RESULTS_PATH}/fit_agent_representations/{subj}', exist_ok=True)
+        if SAVE_AGENT_CONFIGS:
+            makedirs(
+                f'{RESULTS_PATH}/fit_agent_configs/{subj}',
+                exist_ok = True
+                )
+        if SAVE_AGENTS:
+            makedirs(
+                f'{RESULTS_PATH}/fit_agents/{subj}',
+                exist_ok = True
+                )
+        if SAVE_REPRESENTATIONS:
+            makedirs(
+                f'{RESULTS_PATH}/fit_agent_representations/{subj}',
+                exist_ok = True
+                )
 
     # Load existing results
     try:
