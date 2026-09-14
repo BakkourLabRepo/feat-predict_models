@@ -75,6 +75,7 @@ def main():
     subj_ids = [subj for subj in subj_ids if subj not in IDS_TO_EXCLUDE]
 
     # Make results directory if it does not exist
+    makedirs(RESULTS_PATH, exist_ok=True)
     for subj in subj_ids:
         if SAVE_AGENT_CONFIGS:
             makedirs(
