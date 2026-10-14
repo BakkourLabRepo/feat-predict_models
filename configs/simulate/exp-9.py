@@ -55,6 +55,17 @@ experiment_config = {
                 }
             ),
 
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
+                }
+            ),
+
         ],
 
         # Training targets
@@ -147,6 +158,17 @@ experiment_config = {
                     'alpha': None, 
                     'beta': None,
                     'bias_magnitude': 1,
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
                 }
             ),
 
@@ -251,6 +273,17 @@ experiment_config = {
                 }
             ),
 
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
+                }
+            ),
+
         ],
 
         # Training targets
@@ -345,6 +378,17 @@ experiment_config = {
                     'alpha': None, 
                     'beta': None,
                     'bias_magnitude': 1,
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
                 }
             ),
 
@@ -451,6 +495,17 @@ experiment_config = {
                 }
             ),
 
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
+                }
+            ),
+
         ],
 
         # Training targets
@@ -547,6 +602,17 @@ experiment_config = {
                     'alpha': None, 
                     'beta': None,
                     'bias_magnitude': 1,
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
                 }
             ),
 
@@ -655,6 +721,17 @@ experiment_config = {
                 }
             ),
 
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
+                }
+            ),
+
         ],
 
         # Training targets
@@ -753,6 +830,17 @@ experiment_config = {
                     'alpha': None, 
                     'beta': None,
                     'bias_magnitude': 1,
+                }
+            ),
+
+            (
+                'SuccessorFeatures',
+                {
+                    'id': None,
+                    'model_label': 'ff-unbiased',
+                    'alpha': None, 
+                    'beta': None,
+                    'bias_magnitude': 0,
                 }
             ),
 
