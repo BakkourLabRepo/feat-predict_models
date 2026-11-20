@@ -12,6 +12,9 @@ conda env create -f environment.yml
 conda activate feat-predict-models
 ```
 
+Package versions are pinned exactly, because fitted parameters can differ
+slightly between versions of the scipy optimizer.
+
 ## Data
 
 All configs read and write data under a single data directory. By default this
@@ -43,8 +46,6 @@ data/
 
 ## Usage
 
-Run all scripts from the repository root.
-
 ### Simulate agents
 
 ```bash
@@ -54,6 +55,13 @@ python simulate.py <config>
 where `<config>` is the name of a file in `configs/simulate/` (e.g.
 `python simulate.py exp-1`). Each config contains one or more simulation
 conditions. Results are saved to `data/simulations/<config>/data/<condition>/`.
+
+Some simulations depend on other data:
+
+- `exp-2` simulates agents from fitted parameters, so run `python fit.py exp_2`
+  first. It reads `data/human/exp_2/results/fit_agent_configs/`.
+- `exp-3` uses the trial sequences that participants saw. It needs the training
+  and test CSVs in `data/human/exp_1/data/` and `data/human/exp_2/data/`.
 
 ### Fit models to data
 
