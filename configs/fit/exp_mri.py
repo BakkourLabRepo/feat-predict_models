@@ -1,12 +1,13 @@
 import numpy as np
+from configs.paths import HUMAN_PATH
 
 experiment_config = {
 
     # Choice data path
-    'data_path': '/Users/euanprentis/Documents/feat-predict-mri/exp-1/beh',
+    'data_path': f'{HUMAN_PATH}/exp_mri/beh',
 
     # Results path and file name
-    'results_path': '/Users/euanprentis/Documents/feat-predict-mri/exp-1/derivatives/beh',
+    'results_path': f'{HUMAN_PATH}/exp_mri/derivatives/beh',
     'results_fname': 'model_fits',
 
     # Whether data is in BIDS format (for MRI experiment)

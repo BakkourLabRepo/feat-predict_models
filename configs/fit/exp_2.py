@@ -1,12 +1,13 @@
 import numpy as np
+from configs.paths import HUMAN_PATH
 
 experiment_config = {
 
     # Choice data path
-    'data_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/data',
+    'data_path': f'{HUMAN_PATH}/exp_2/data',
 
     # Results path and file name
-    'results_path': '/Users/euanprentis/Library/CloudStorage/Box-Box/Bakkour-Lab/projects/feat-predict/human/exp_2/results',
+    'results_path': f'{HUMAN_PATH}/exp_2/results',
     'results_fname': 'model_fits',
 
     # Whether data is in BIDS format

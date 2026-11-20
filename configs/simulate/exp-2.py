@@ -1,8 +1,9 @@
 import numpy as np
+from configs.paths import SIM_PATH, HUMAN_PATH
 
-PROJECT_PATH = '../../data/simulations'
+PROJECT_PATH = SIM_PATH
 
-AGENT_CONFIGS_PATH = '../../data/simulations/exp_2/results/fit_agent_configs'
+AGENT_CONFIGS_PATH = f'{HUMAN_PATH}/exp_2/results/fit_agent_configs'
 
 experiment_config = {
 

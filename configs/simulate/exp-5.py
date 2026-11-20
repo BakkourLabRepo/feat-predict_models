@@ -1,6 +1,7 @@
 import numpy as np
+from configs.paths import SIM_PATH
 
-PROJECT_PATH = '/Users/euanprentis/Documents/feat_predict_simulations_2'
+PROJECT_PATH = SIM_PATH
 
 AGENT_CONFIGS_PATH = False
 
@@ -11,9 +12,6 @@ experiment_config = {
 
         # Output directory
         'output_path': f'{PROJECT_PATH}/exp-5/data/depth-4_dim-2',
-
-        # Random seed for reproducibility
-        'seed': 243423,
 
         # Number of training trials
         'n_training_target_repeats': 20,
@@ -43,7 +41,6 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
                     'gamma': 1,
                     'bias_magnitude': 0,
@@ -63,7 +60,6 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
                     'gamma': 1,
                     'bias_magnitude': 1,
@@ -83,7 +79,6 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
                     'gamma': 1,
                     'bias_magnitude': 0,
@@ -103,7 +98,6 @@ experiment_config = {
                     'id': None,
                     'model_label': 'ff-biased',
                     'alpha': None, 
-                    'alpha_decay': 0, 
                     'beta': None,
                     'gamma': 1,
                     'bias_magnitude': 1,

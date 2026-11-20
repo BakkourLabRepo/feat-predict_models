@@ -1,0 +1,10 @@
+name: feat-predict-models
+channels:
+  - conda-forge
+dependencies:
+  # Exact versions are pinned for reproducibility: fitted parameters
+  # depend on the scipy optimizer version.
+  - python=3.11
+  - numpy=2.4.2
+  - pandas=3.0.0
+  - scipy=1.17.0

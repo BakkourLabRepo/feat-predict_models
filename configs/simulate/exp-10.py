@@ -1,6 +1,7 @@
 import numpy as np
+from configs.paths import SIM_PATH
 
-PROJECT_PATH = '/Users/euanprentis/Documents/feat-predict_simulations'
+PROJECT_PATH = SIM_PATH
 
 AGENT_CONFIGS_PATH = False
 
